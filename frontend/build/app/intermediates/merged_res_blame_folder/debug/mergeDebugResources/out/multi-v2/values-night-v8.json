@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.jim.app-mergeDebugResources-24:/values-night-v8/values-night-v8.xml",
+            "outputFile": "com.example.jim.app-mergeDebugResources-25:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
                     "source": "/Volumes/External_Drive/jim-v2/jim-carrier/frontend/android/app/src/main/res/values-night/styles.xml",

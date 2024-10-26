@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.jim.app-mergeDebugResources-24:/values-v21/values-v21.xml",
+            "outputFile": "com.example.jim.app-mergeDebugResources-25:/values-v21/values-v21.xml",
             "map": [
                 {
                     "source": "/Users/pravasgiri/.gradle/caches/8.10.2/transforms/6ed8ea106e42b0291de4a114cba06d52/transformed/core-1.13.1/res/values-v21/values-v21.xml",

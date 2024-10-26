@@ -28,11 +28,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(onPressed: () => Get.back(), icon: const Icon(LineAwesomeIcons.angle_left_solid)),
-        title: Text("Edit Profile", style: Theme.of(context).textTheme.headlineLarge,)
-        ,centerTitle: true,
-      ),
       body: SingleChildScrollView(
         child: Container(
             padding: const EdgeInsets.all(tDefaultSize),

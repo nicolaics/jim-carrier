@@ -17,14 +17,6 @@ class ProfileScreen extends StatelessWidget{
     // TODO: implement build
     return GetMaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(onPressed: ()=>Get.back, icon: const Icon(LineAwesomeIcons.angle_left_solid)),
-          title: Text("Profile", style: Theme.of(context).textTheme.headlineLarge,)
-          ,centerTitle: true,
-          actions: [
-            IconButton(onPressed: (){}, icon: Icon(LineAwesomeIcons.smile))
-          ],
-        ),
         body: SingleChildScrollView(
           child:Container(
             padding: const EdgeInsets.all(tDefaultSize),
