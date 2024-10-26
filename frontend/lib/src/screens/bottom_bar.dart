@@ -69,7 +69,7 @@ class _BottomBar extends State<BottomBar> {
           );
         },
         child: const Icon(Icons.add),
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         shape: const CircleBorder(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

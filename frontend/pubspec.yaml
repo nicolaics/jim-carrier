@@ -18,6 +18,8 @@ dependencies:
   animated_bottom_navigation_bar: ^1.3.3
   page_transition: ^2.1.0
   flutter_chat_ui: ^1.6.15
+  csc_picker: ^0.2.7
+
 
 
 dev_dependencies:
