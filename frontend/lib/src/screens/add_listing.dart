@@ -312,8 +312,38 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   double weight = double.tryParse(_weightController.text) ?? 0.0;
                   double price = double.tryParse(_priceController.text) ?? 0.0;
 
-                  String date = _selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : '';
-                  String lastDate = _lastDateToReceive != null ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!) : '';
+                  String formatDateWithTimeZone(DateTime dateTime) {
+                    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+                    String timeZoneOffset = dateTime.timeZoneOffset.inHours >= 0
+                        ? '+${dateTime.timeZoneOffset.inHours.toString().padLeft(2, '0')}'
+                        : '${dateTime.timeZoneOffset.inHours.toString().padLeft(3, '0')}';
+
+                    // Adjust for minutes if needed
+                    if (dateTime.timeZoneOffset.inMinutes % 60 != 0) {
+                      int minutes = (dateTime.timeZoneOffset.inMinutes.abs() % 60);
+                      timeZoneOffset += minutes < 10 ? '0$minutes' : '$minutes';
+                    } else {
+                      timeZoneOffset += '00'; // Append zero minutes if no additional offset
+                    }
+
+                    // Assuming KST as a constant, you can replace this with a dynamic value if needed
+                    String timeZoneAbbreviation = 'KST'; // Change this according to the actual timezone if needed
+
+                    return '$formattedDate $timeZoneOffset$timeZoneAbbreviation';
+                  }
+
+                  String date = _selectedDate != null
+                      ? formatDateWithTimeZone(_selectedDate!)
+                      : '';
+
+                  String lastDate = _lastDateToReceive != null
+                      ? formatDateWithTimeZone(_lastDateToReceive!)
+                      : '';
+
+// Print statements
+                  print('Departure Date: $date');
+                  print('Last Date to Receive: $lastDate');
+
 
                   // Call the API to add the listing
 
