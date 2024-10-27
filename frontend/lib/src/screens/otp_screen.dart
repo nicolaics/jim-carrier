@@ -3,6 +3,7 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:jim/src/screens/login_screen.dart';
 import 'base_client.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -99,6 +100,9 @@ class _OtpScreenState extends State<OtpScreen> {
 
                       // Print the result of the API call for debugging
                       print(result);
+                      if(result=="success"){
+                        Get.to(()=> const LoginScreen());
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black, // Set the background color to black

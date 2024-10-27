@@ -16,6 +16,7 @@ class ProfileScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     // TODO: implement build
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SingleChildScrollView(
           child:Container(
@@ -81,7 +82,7 @@ class ProfileScreen extends StatelessWidget{
                   onPress: () {},
                 ),
                 ProfileMenuWidget(
-                  title: "LogOut",
+                  title: "Log Out",
                   icon: LineAwesomeIcons.sign_out_alt_solid,
                   textColor: Colors.red,
                   endIcon: false,

@@ -70,6 +70,7 @@ class ApiService{
       if (response.statusCode == 201) {
         // Handle successful response
         print('User registered successfully');
+        return "success";
       } else {
         // Handle errors, e.g. 400, 500, etc.
         print('Failed to register user: ${response.body}');
@@ -78,6 +79,52 @@ class ApiService{
       print('Error occurred: $e');
     }
   }
+
+  Future<dynamic> addListing({
+    required String location,
+    required String weight,
+    required String price,
+    required String currency,
+    required String date,
+    required String lastDate,
+    required String additionalInfo,
+    required api
+  }) async {
+    final url = Uri.parse((baseUrl+api));
+
+    // Create the request body as per your payload struct
+    Map<String, String> body = {
+      'location': location,
+      'weight': weight,
+      'price': price,
+      'currency': currency,
+      'date': date,
+      'lastDate': lastDate,
+      'additionalInfo': additionalInfo,
+    };
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        // Handle successful response
+        print('User registered successfully');
+        return "success";
+      } else {
+        // Handle errors, e.g. 400, 500, etc.
+        print('Failed to register user: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
+
 
   Future<dynamic> forgotPw({
     required String email,

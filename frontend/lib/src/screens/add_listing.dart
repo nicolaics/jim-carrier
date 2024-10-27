@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 
+import 'base_client.dart';
+
 class AddListingScreen extends StatefulWidget {
   const AddListingScreen({Key? key}) : super(key: key);
 
@@ -10,20 +12,22 @@ class AddListingScreen extends StatefulWidget {
 }
 
 class _AddListingScreenState extends State<AddListingScreen> {
-  String? _selectedCountry;
+  String? _selectedCountry = "";
   String? _selectedState;
   String? _selectedCity;
   DateTime? _selectedDate;
+  DateTime? _lastDateToReceive;
   String? _selectedCurrency;
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _additionalInfoController = TextEditingController(); // Controller for Additional Info
+  final TextEditingController _additionalInfoController = TextEditingController();
 
   // Static list of currencies
-  final List<String> _currencies = ['Won', 'USD', 'Pound'];
+  final List<String> _currencies = ['KRW', 'USD', 'GBP'];
 
   @override
   Widget build(BuildContext context) {
+    final ApiService apiService = ApiService();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -48,14 +52,14 @@ class _AddListingScreenState extends State<AddListingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Location Picker
             const Text(
-              'Location',
+              'Destination',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
+                color: Colors.grey[200],
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -65,14 +69,14 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 onCountryChanged: (country) {
                   setState(() {
                     _selectedCountry = country;
-                    _selectedState = null; // Reset state and city when country changes
+                    _selectedState = null;
                     _selectedCity = null;
                   });
                 },
                 onStateChanged: (state) {
                   setState(() {
                     _selectedState = state;
-                    _selectedCity = null; // Reset city when state changes
+                    _selectedCity = null;
                   });
                 },
                 onCityChanged: (city) {
@@ -84,7 +88,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Weight Available Field
             const Text(
               'Weight Available',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -94,16 +97,19 @@ class _AddListingScreenState extends State<AddListingScreen> {
               controller: _weightController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
+                labelText: "Weight in kilograms",
+                filled: true,
+                fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
+                  borderSide: const BorderSide(color: Colors.black),
                 ),
               ),
             ),
             const SizedBox(height: 20),
 
-            // Price per KG Field
             const Text(
-              'Price per KG',
+              'Price',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
@@ -114,17 +120,19 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     controller: _priceController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      labelText: "Per kilogram",
+                      filled: true,
+                      fillColor: Colors.grey[200],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(color: Colors.black),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
-                SizedBox(
-                  width: 100,
-                  child: DropdownButton<String>(
-                    isExpanded: true, // Expand dropdown to fill the space
+                Flexible(
+                  child: DropdownButtonFormField<String>(
                     value: _selectedCurrency,
                     items: _currencies
                         .map((currency) => DropdownMenuItem(
@@ -137,88 +145,188 @@ class _AddListingScreenState extends State<AddListingScreen> {
                         _selectedCurrency = value;
                       });
                     },
-                    hint: const Text('Currency'), // Show hint when no currency is selected
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(color: Colors.black),
+                      ),
+                    ),
+                    hint: const Text('Currency'),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
 
-            // Departure Date Field
-            const Text(
-              'Departure Date',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                );
-                if (picked != null && picked != _selectedDate) {
-                  setState(() {
-                    _selectedDate = picked;
-                  });
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(5),
+            // Departure Date and Last Date to Receive
+            Row(
+              children: [
+                // Departure Date Picker
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Departure Date',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (picked != null && picked != _selectedDate) {
+                            setState(() {
+                              _selectedDate = picked;
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            _selectedDate != null
+                                ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                                : 'Select Date',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Text(
-                  _selectedDate != null
-                      ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                      : 'Select Date',
-                  style: const TextStyle(fontSize: 16),
+                const SizedBox(width: 20),
+
+                // Last Date to Receive Picker
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Last Date to Receive',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (picked != null && picked != _lastDateToReceive) {
+                            setState(() {
+                              _lastDateToReceive = picked;
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            _lastDateToReceive != null
+                                ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!)
+                                : 'Select Date',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
             const SizedBox(height: 20),
 
-            // Additional Info Field
             const Text(
               'Additional Info',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             TextField(
-              controller: _additionalInfoController, // Set the controller for Additional Info
+              controller: _additionalInfoController,
               maxLines: 4,
               decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[200],
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
+                  borderSide: const BorderSide(color: Colors.black),
                 ),
               ),
             ),
             const SizedBox(height: 20),
 
-            // Submit Button
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
-                onPressed: () {
-                  // Print all selected values
-                  print('Selected Country: $_selectedCountry');
+                onPressed: () async {
+                  String removeFlags(String input) {
+                    // Regular expression to remove emojis (including country flags)
+                    final RegExp regex = RegExp(
+                      r'[\u{1F1E6}-\u{1F1FF}]',
+                      unicode: true,
+                    );
+                    return input.replaceAll(regex, '');
+                  }
+
+                  String location = [
+                    removeFlags(_selectedCity ?? '').trim(),
+                    removeFlags(_selectedState ?? '').trim(),
+                    removeFlags(_selectedCountry ?? '').trim(),
+                  ].where((element) => element.isNotEmpty).join(', ');
+
+
+                  print('Selected Country: $location');
                   print('Selected State: $_selectedState');
                   print('Selected City: $_selectedCity');
                   print('Weight Available: ${_weightController.text}');
                   print('Price per KG: ${_priceController.text}');
                   print('Selected Currency: $_selectedCurrency');
-                  print('Departure Date: ${_selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : 'Not Selected'}');
-                  print('Additional Info: ${_additionalInfoController.text}'); // Print Additional Info
+                  print(
+                      'Departure Date: ${_selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : 'Not Selected'}');
+                  print(
+                      'Last Date to Receive: ${_lastDateToReceive != null ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!) : 'Not Selected'}');
+                  print('Additional Info: ${_additionalInfoController.text}');
+
+                  // Prepare the data for the addListing call
+                  String weight = _weightController.text;
+                  String price = _priceController.text;
+                  String date = _selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : '';
+                  String lastDate = _lastDateToReceive != null ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!) : '';
+
+                  // Call the API to add the listing
+
+                 String result= await apiService.addListing(
+                    location: location,
+                    weight: weight,
+                    price: price,
+                    currency: _selectedCurrency ?? '',
+                    date: date,
+                    lastDate: lastDate,
+                    additionalInfo: _additionalInfoController.text,
+                    api: "listing",
+                  );
                 },
-                child: const Text(
-                  'SUBMIT',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
+                child: const Text('SUBMIT', style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
