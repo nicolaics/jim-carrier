@@ -308,23 +308,27 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   print('Additional Info: ${_additionalInfoController.text}');
 
                   // Prepare the data for the addListing call
-                  String weight = _weightController.text;
-                  String price = _priceController.text;
+
+                  double weight = double.tryParse(_weightController.text) ?? 0.0;
+                  double price = double.tryParse(_priceController.text) ?? 0.0;
+
                   String date = _selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : '';
                   String lastDate = _lastDateToReceive != null ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!) : '';
 
                   // Call the API to add the listing
 
                  String result= await apiService.addListing(
-                    location: location,
+                    destination: location,
                     weight: weight,
                     price: price,
                     currency: _selectedCurrency ?? '',
                     date: date,
                     lastDate: lastDate,
                     additionalInfo: _additionalInfoController.text,
-                    api: "listing",
+                    api: "/listing",
                   );
+
+                 print(result);
                 },
                 child: const Text('SUBMIT', style: TextStyle(color: Colors.white)),
               ),

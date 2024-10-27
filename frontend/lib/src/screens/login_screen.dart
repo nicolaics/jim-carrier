@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
+import 'package:jim/src/screens/bottom_bar.dart';
 import 'package:jim/src/screens/forgot_pw.dart';
 import 'package:jim/src/screens/register_screen.dart';
 import 'base_client.dart';
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     );
                                       if (result == 'success') { // Replace this with the actual success condition
                                       // Navigate to the RegisterScreen if login is successful
-                                      Get.to(() => const RegisterScreen());
+                                      Get.to(() =>  BottomBar());
                                       } else {
                                         print("fail");
                                       }

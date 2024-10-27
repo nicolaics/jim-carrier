@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 const baseUrl ="http://ion-suhalim:9988/api/v1";
@@ -81,9 +83,9 @@ class ApiService{
   }
 
   Future<dynamic> addListing({
-    required String location,
-    required String weight,
-    required String price,
+    required String destination,
+    required double weight,
+    required double price,
     required String currency,
     required String date,
     required String lastDate,
@@ -92,32 +94,35 @@ class ApiService{
   }) async {
     final url = Uri.parse((baseUrl+api));
 
+
+
     // Create the request body as per your payload struct
-    Map<String, String> body = {
-      'location': location,
-      'weight': weight,
-      'price': price,
+    Map<String, dynamic> body = {
+      'destination': destination,
+      'weightAvailable': weight,
+      'pricePerKg': price,
       'currency': currency,
-      'date': date,
-      'lastDate': lastDate,
-      'additionalInfo': additionalInfo,
+      'departureDate': date,
+      'lastReceivedDate': lastDate,
+      'description': additionalInfo,
     };
     try {
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHBpcmVkQXQiOjE3MzAwNTI3MTgsInRva2VuVXVpZCI6IjAxOTJjYzlhLTUzNzMtNzcyNy04OWFkLTQ4NjU1YjFjODYwZSIsInVzZXJJZCI6Mn0.bP30cVY9zKeNXIDRCnr2Wf6RW-KuNFt-_oMN2WLFF3w'
         },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 201) {
         // Handle successful response
-        print('User registered successfully');
+        print('Listing added successfully');
         return "success";
       } else {
         // Handle errors, e.g. 400, 500, etc.
-        print('Failed to register user: ${response.body}');
+        print('Failed to addlisting: ${response.body}');
       }
     } catch (e) {
       print('Error occurred: $e');
