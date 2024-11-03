@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -88,6 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
+
                                   onPressed: () async {
                                     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
                                       // Show a Snackbar or some other error message
@@ -100,6 +102,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return; // Exit the onPressed method if fields are empty
                                     }
 
+                                    if ('success' == 'success') { // Replace this with the actual success condition
+                                      // Navigate to the RegisterScreen if login is successful
+                                      AwesomeDialog(
+                                        context: context,
+                                        dialogType: DialogType.success,
+                                        animType: AnimType.topSlide,
+                                        title: 'Sucess',
+                                        desc: 'Login Successful',
+                                        btnOkIcon: Icons.check,
+                                        btnOkOnPress: () {
+                                          Get.to(() =>  BottomBar());
+                                        },
+                                      )..show();
+                                    } else {
+                                      //this is just for me to easily navigate in UI
+                                      AwesomeDialog(
+                                        context: context,
+                                        dialogType: DialogType.error,
+                                        animType: AnimType.topSlide,
+                                        title: 'ERROR',
+                                        desc: 'Login not Successful',
+                                        btnOkIcon: Icons.check,
+                                        btnOkOnPress: () {
+                                        },
+                                      )..show();
+                                    }
+
+
+
+
+                                    /***
                                     String result = await apiService.login(
                                       email: _emailController.text,
                                       password: _passwordController.text,
@@ -107,12 +140,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                     );
                                       if (result == 'success') { // Replace this with the actual success condition
                                       // Navigate to the RegisterScreen if login is successful
-                                      Get.to(() =>  BottomBar());
+                                        AwesomeDialog(
+                                          context: context,
+                                          dialogType: DialogType.success,
+                                          animType: AnimType.topSlide,
+                                          title: 'Success',
+                                          desc: 'Login Successful',
+                                          btnOkIcon: Icons.check,
+                                          btnOkOnPress: () {
+                                            Get.to(() =>  BottomBar());
+                                          },
+                                        )..show();
                                       } else {
                                         //this is just for me to easily navigate in UI
-                                        Get.to(() =>  BottomBar());
-                                        print("fail");
+                                        AwesomeDialog(
+                                          context: context,
+                                          dialogType: DialogType.error,
+                                          animType: AnimType.topSlide,
+                                          title: 'Success',
+                                          desc: 'Login Successful',
+                                          btnOkIcon: Icons.check,
+                                          btnOkOnPress: () {
+                                          },
+                                        )..show();
                                       }
+                                      ***/
                                   },
                                   style: OutlinedButton.styleFrom(
                                       shape: RoundedRectangleBorder(),
