@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 import '../constants/image_strings.dart';
@@ -23,6 +27,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    void onProfileTapped(){
+
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -63,22 +71,45 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: Container(
-                      width: 35,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Colors.yellow,
-                      ),
-                      child: const Icon(
-                        LineAwesomeIcons.camera_retro_solid,
-                        size: 20.0,
-                        color: Colors.black,
+                    child: GestureDetector(
+                      onTap: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+                        if (image == null) return;
+
+                        // Convert image to bytes
+                        final bytes = await File(image.path).readAsBytes();
+
+                        // Convert bytes to a base64 string
+                        final base64Image = base64Encode(bytes);
+
+                        // Create a JSON object with the base64 image data
+                        final jsonData = {
+                          'image': base64Image,
+                        };
+
+                        // Print or use jsonData as needed
+                        print(jsonData);
+                      },
+                      child: Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: Colors.yellow,
+                        ),
+                        child: const Icon(
+                          LineAwesomeIcons.camera_retro_solid,
+                          size: 20.0,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 50),
               Form(
                 child: Column(
