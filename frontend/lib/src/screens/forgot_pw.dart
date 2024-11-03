@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:jim/src/screens/otp_screen.dart';
+import 'package:jim/src/screens/otp_screen_fp.dart';
 import 'base_client.dart';
 
 class ForgetPassword extends StatefulWidget {
@@ -52,7 +52,9 @@ class _ForgetPassword extends State<ForgetPassword> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async{
-
+                            //for UI making
+                            Get.to(() => const OtpScreen2());
+/***
                             await apiService.otpCode(
                               email: _emailController.text,
                               api: '/user/send-verification', // Provide your API base URL
@@ -98,7 +100,7 @@ class _ForgetPassword extends State<ForgetPassword> {
                             else{
                               print("Failed getting code");
                             }
-                            Get.to(() => const OtpScreen());
+                            Get.to(() => const OtpScreen2()); ***/
                           },
                           style: OutlinedButton.styleFrom(
                             shape: RoundedRectangleBorder(),
