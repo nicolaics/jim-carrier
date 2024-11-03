@@ -8,6 +8,8 @@ import 'package:jim/src/constants/text_strings.dart';
 import 'package:jim/src/screens/bottom_bar.dart';
 import 'package:jim/src/screens/forgot_pw.dart';
 import 'package:jim/src/screens/register_screen.dart';
+import 'package:jim/src/screens/user_email.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'base_client.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +24,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
 
   final ApiService apiService= ApiService();
-
+  Future<void> saveUserEmail(String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userEmail', email);
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -101,9 +106,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       );
                                       return; // Exit the onPressed method if fields are empty
                                     }
-
+                                    String email = _emailController.text.trim();
                                     if ('success' == 'success') { // Replace this with the actual success condition
                                       // Navigate to the RegisterScreen if login is successful
+                                      Get.put(UserController(email: _emailController.text)); // Store the email in UserController
                                       AwesomeDialog(
                                         context: context,
                                         dialogType: DialogType.success,
@@ -114,6 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         btnOkOnPress: () {
                                           Get.to(() =>  BottomBar());
                                         },
+
                                       )..show();
                                     } else {
                                       //this is just for me to easily navigate in UI
