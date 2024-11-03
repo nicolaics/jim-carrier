@@ -20,7 +20,8 @@ dependencies:
   flutter_chat_ui: ^1.6.15
   csc_picker: ^0.2.7
   awesome_dialog: ^3.2.1
-  image_picker: ^0.8.5+3
+  image_picker: ^1.1.2
+  shared_preferences: ^2.3.2
 
 
 
