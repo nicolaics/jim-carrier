@@ -10,7 +10,6 @@ extension ColorExtension on Color {
   }
 }
 
-
 class ProfileMenuWidget extends StatelessWidget {
   const ProfileMenuWidget({
     Key? key,
