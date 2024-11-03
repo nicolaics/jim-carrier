@@ -14,9 +14,7 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBar extends State<BottomBar> {
-
-
-  @override
+@override
   Widget build(BuildContext context) {
     final controller = Get.put(NavigationController());
 
