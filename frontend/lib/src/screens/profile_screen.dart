@@ -4,14 +4,18 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/profile_menu.dart';
 import 'package:jim/src/screens/update_profile.dart';
+import 'package:jim/src/screens/user_email.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../constants/image_strings.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  ProfileScreen({Key? key}) : super(key: key);
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
+    final String email = userController.email;
+    print(email);
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -53,11 +57,11 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'xyzname',
+                  'xyznme',
                   style: GoogleFonts.anton(fontSize: 20),
                 ),
                 Text(
-                  'useremail@gmail.com',
+                  email,
                   style: GoogleFonts.anton(fontSize: 20),
                 ),
                 const SizedBox(height: 20),
