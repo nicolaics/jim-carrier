@@ -109,6 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       // Navigate to the RegisterScreen if login is successful
                                       Get.to(() =>  BottomBar());
                                       } else {
+                                        //this is just for me to easily navigate in UI
+                                        Get.to(() =>  BottomBar());
                                         print("fail");
                                       }
                                   },
