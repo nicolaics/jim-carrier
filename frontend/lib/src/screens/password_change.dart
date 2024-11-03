@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -129,33 +130,17 @@ class _PasswordChangeState extends State<PasswordChange> {
                                   );
                                 }
                                 else{
-                                  Get.defaultDialog(
-                                  title: "Password Changed Successfully!",
-                                  titleStyle: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.teal,
-                                  ),
-                                  content: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                    child: Icon(
-                                      Icons.check_circle,
-                                      color: Colors.teal,
-                                      size: 60,
-                                    ),
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  barrierDismissible: false,
-                                  radius: 15,
-                                  textConfirm: "OK",
-                                  confirmTextColor: Colors.white,
-                                  buttonColor: Colors.teal,
-                                  onConfirm: () {
-                                    Get.back(); // Closes the dialog
-                                    Get.to(() => const LoginScreen());
-                                  },
-                                  contentPadding: EdgeInsets.all(20),
-                                );
+                                  AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.success,
+                                      animType: AnimType.topSlide,
+                                      title: 'Success',
+                                      desc: 'Password Changed Successfully',
+                                      btnOkIcon: Icons.check,
+                                      btnOkOnPress: () {
+                                        Get.to(() => const LoginScreen());
+                                      },
+                                )..show();
 
                                 }
 
