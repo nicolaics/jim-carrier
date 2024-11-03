@@ -32,6 +32,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: const Text(
           'New Listing',
           style: TextStyle(
@@ -41,12 +42,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
           ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -59,13 +56,26 @@ class _AddListingScreenState extends State<AddListingScreen> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.white,
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
               child: CSCPicker(
                 layout: Layout.vertical,
+                dropdownDecoration: BoxDecoration(
+                  color: Colors.white, // Set background color of the dropdown to white
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Colors.grey),
+                ),
+                disabledDropdownDecoration: BoxDecoration(
+                  color: Colors.white, // Also set disabled state color to white
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  border: Border.all(color: Colors.grey),
+                ),
+                dropdownItemStyle: TextStyle(
+                  color: Colors.black, // Set text color to black for better readability
+                ),
                 onCountryChanged: (country) {
                   setState(() {
                     _selectedCountry = country;
@@ -85,6 +95,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   });
                 },
               ),
+
             ),
             const SizedBox(height: 20),
 
@@ -99,7 +110,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
               decoration: InputDecoration(
                 labelText: "Weight in kilograms",
                 filled: true,
-                fillColor: Colors.grey[200],
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide: const BorderSide(color: Colors.black),
@@ -122,7 +133,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     decoration: InputDecoration(
                       labelText: "Per kilogram",
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                         borderSide: const BorderSide(color: Colors.black),
@@ -147,7 +158,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     },
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5),
                         borderSide: const BorderSide(color: Colors.black),
@@ -190,7 +201,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: Colors.white,
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -234,7 +245,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
+                            color: Colors.white,
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -263,7 +274,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
               maxLines: 4,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.grey[200],
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide: const BorderSide(color: Colors.black),
