@@ -6,6 +6,7 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/profile_menu.dart';
 import 'package:jim/src/screens/update_profile.dart';
+import 'package:jim/src/screens/user_email.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../constants/image_strings.dart';
 
@@ -18,14 +19,12 @@ class TryScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<TryScreen> {
   final TextEditingController _searchController = TextEditingController();
-
-  void _performSearch() {
-    final query = _searchController.text;
-    print("Searching for: $query");
-  }
+  final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
+    final String email = userController.email;
+    print(email);
     return Scaffold(
       body: SingleChildScrollView(
           child:Container(
@@ -35,9 +34,23 @@ class _HomeScreenState extends State<TryScreen> {
                 const SizedBox(height: 35),
                 Stack(
                     children: [
-                      SizedBox(
-                        width: 120, height: 120,
-                        child: ClipRRect(borderRadius:BorderRadius.circular(100),child: Image(image: AssetImage(WelcomeScreenImage),)),
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 1, // Adjust the width to make the border thicker or thinner
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image(
+                            image: AssetImage(WelcomeScreenImage),
+                            fit: BoxFit.cover, // Ensures the image fits well within the circle
+                          ),
+                        ),
                       ),
                       Positioned(
                         bottom: 0,
@@ -57,7 +70,7 @@ class _HomeScreenState extends State<TryScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text('xyzname', style: GoogleFonts.anton(fontSize: 20),),
-                Text('useremail@gmail.com', style: GoogleFonts.anton(fontSize: 20),),
+                Text(email, style: GoogleFonts.anton(fontSize: 20),),
                 const SizedBox(height: 20),
                 SizedBox(width:200,
                   child: ElevatedButton(
