@@ -1,41 +1,39 @@
 import 'dart:ffi';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:jwt_decoder/jwt_decoder.dart';
 const baseUrl ="http://ion-suhalim:9988/api/v1";
 
 class ApiService{
   var client = http.Client();
 
-  Future<dynamic> login({
-      required String email,
-      required String password,
-      required String api}) async{
+
+  Future<dynamic> login({required String email, required String password, required String api}) async{
     final url = Uri.parse((baseUrl+api));
 
-    // Create the request body as per your payload struct
     Map<String, String> body = {
       'email': email,
       'password': password,
     };
+
     try {
-      final response = await http.post(
-        url,
+      final response = await http.post(url,
         headers: {
-          'Content-Type': 'application/json',
-         // 'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(body),
       );
 
       if (response.statusCode == 200) {
-        // Handle successful response
         print('User login successfully');
-        return 'success';
+        //return jsonDecode(response.body)['token'];
 
       } else {
-        // Handle errors, e.g. 400, 500, etc.
         print('Failed to register user: ${response.body}');
+        return "failed";
       }
     } catch (e) {
       print('Error occurred: $e');
