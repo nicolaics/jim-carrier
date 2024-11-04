@@ -6,7 +6,7 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/profile_menu.dart';
 import 'package:jim/src/screens/update_profile.dart';
-import 'package:jim/src/screens/user_email.dart';
+import 'package:jim/src/screens/all_datas.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../constants/image_strings.dart';
 
