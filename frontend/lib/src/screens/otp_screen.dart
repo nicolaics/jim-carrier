@@ -1,9 +1,13 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/screens/login_screen.dart';
+import '../constants/image_strings.dart';
 import 'base_client.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -87,6 +91,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
                       // Debugging print to check OTP value before API call
                       print("Before API call - OTP: $otp");
+                      File imageFile = File(WelcomeScreenImage);
+                      Uint8List imageBytes = await imageFile.readAsBytes();
 
                       // Call the API with the OTP and other user data
                       String result = await apiService.registerUser(
@@ -94,6 +100,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         email: email,
                         password: password,
                         phoneNumber: phoneNumber,
+                        profilePicture: imageBytes,
                         verification: "$otp", // Pass the OTP value to the API
                         api: '/user/register', // Provide your API base URL
                       );
