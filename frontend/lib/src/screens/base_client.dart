@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +46,7 @@ class ApiService{
     required String email,
     required String password,
     required String phoneNumber,
+    required Uint8List profilePicture,
     required String verification,
     required api
   }) async {
