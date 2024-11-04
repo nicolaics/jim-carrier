@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:jim/src/constants/image_strings.dart';
@@ -8,7 +9,8 @@ import 'package:jim/src/constants/text_strings.dart';
 import 'package:jim/src/screens/bottom_bar.dart';
 import 'package:jim/src/screens/forgot_pw.dart';
 import 'package:jim/src/screens/register_screen.dart';
-import 'package:jim/src/screens/user_email.dart';
+import 'package:jim/src/screens/all_datas.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'base_client.dart';
 import 'package:get/get.dart';
@@ -24,6 +26,18 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
 
   final ApiService apiService= ApiService();
+  final storage = FlutterSecureStorage();
+
+  Future<void> storeToken(String token) async {
+    await storage.write(key: 'jwt_token', value: token);
+  }
+
+  Future<String?> getToken() async {
+    return await storage.read(key: 'jwt_token');
+  }
+  bool isTokenExpired(String token) {
+    return JwtDecoder.isExpired(token);
+  }
   Future<void> saveUserEmail(String email) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('userEmail', email);
@@ -106,6 +120,41 @@ class _LoginScreenState extends State<LoginScreen> {
                                       );
                                       return; // Exit the onPressed method if fields are empty
                                     }
+
+                                    /***
+                                    //TOKEN
+                                    try {
+                                      String token = await apiService.login(
+                                        email: _emailController.text,
+                                        password: _passwordController.text,
+                                        api: '/user/login', // Provide your API base URL
+                                      );
+                                      if (token == 'failed'){
+                                        AwesomeDialog(
+                                          context: context,
+                                          dialogType: DialogType.error,
+                                          animType: AnimType.topSlide,
+                                          title: 'ERROR',
+                                          desc: 'Login not Successful',
+                                          btnOkIcon: Icons.check,
+                                          btnOkOnPress: () {
+                                          },
+                                        )..show();
+                                      }
+                                      else{
+                                        await storeToken(token);
+                                        if (isTokenExpired(token)){
+                                          print('Token expired');
+                                        }else{
+                                          print('Token valid');
+                                          Get.put(UserController2(token: token)); // Store the email in UserController
+                                        }
+                                      }
+                                      }
+                                    catch (e){
+                                      print('Error: $e');
+                                    } ***/
+
                                     String email = _emailController.text.trim();
                                     if ('success' == 'success') { // Replace this with the actual success condition
                                       // Navigate to the RegisterScreen if login is successful
