@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jim/src/screens/login_screen.dart';
 import 'package:jim/src/screens/profile_menu.dart';
 import 'package:jim/src/screens/update_profile.dart';
 import 'package:jim/src/screens/all_datas.dart';
@@ -19,12 +20,12 @@ class TryScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<TryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final UserController userController = Get.find();
+ // final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    final String email = userController.email;
-    print(email);
+  //  final String email = userController.email;
+  //  print(email);
     return Scaffold(
       body: SingleChildScrollView(
           child:Container(
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<TryScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text('xyzname', style: GoogleFonts.anton(fontSize: 20),),
-                Text(email, style: GoogleFonts.anton(fontSize: 20),),
+                Text('email', style: GoogleFonts.anton(fontSize: 20),),
                 const SizedBox(height: 20),
                 SizedBox(width:200,
                   child: ElevatedButton(
@@ -109,7 +110,13 @@ class _HomeScreenState extends State<TryScreen> {
                   icon: LineAwesomeIcons.sign_out_alt_solid,
                   textColor: Colors.red,
                   endIcon: false,
-                  onPress: () {},
+                  onPress: () async{
+                    final controller = Controller();
+                    await controller.signOut();
+                    if(mounted){
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const LoginScreen()));
+                    }
+                  },
                 )
               ],
             ),
