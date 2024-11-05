@@ -1,12 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:jim/src/screens/bottom_bar.dart';
-import 'package:jim/src/screens/home_page.dart';
-import 'package:jim/src/screens/profile_screen.dart';
-import 'package:jim/src/screens/register_screen.dart';
+import 'package:jim/firebase_options.dart';
 import 'package:jim/src/screens/welcome.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 
