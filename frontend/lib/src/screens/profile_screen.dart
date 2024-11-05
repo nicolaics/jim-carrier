@@ -10,12 +10,12 @@ import '../constants/image_strings.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({Key? key}) : super(key: key);
-  final UserController userController = Get.find();
+  //final UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    final String email = userController.email;
-    print(email);
+   // final String email = userController.email;
+   // print(email);
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -61,7 +61,7 @@ class ProfileScreen extends StatelessWidget {
                   style: GoogleFonts.anton(fontSize: 20),
                 ),
                 Text(
-                  email,
+                  "email",
                   style: GoogleFonts.anton(fontSize: 20),
                 ),
                 const SizedBox(height: 20),
