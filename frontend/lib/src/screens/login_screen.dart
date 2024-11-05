@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -240,7 +241,31 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: double.infinity,
                           child: OutlinedButton.icon(
                               icon: Image(image: AssetImage(GoogleImg),width: 20,),
-                              onPressed: () {},
+                              onPressed: () async{
+                                try{
+                                  final controller = Controller(); // Create an instance of Controller
+                                  final user = await controller.loginWithGoogle(); // Call the method on the instance
+                                  if(user!=null && mounted){
+                                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                        builder:(context) => const BottomBar()));
+                                  }
+                                }
+                                on FirebaseAuthException catch (error){
+                                  print(error.message);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                          error.message ?? "Something went wrong",
+                                        )));
+                                }
+                                catch (error){
+                                  print(error);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                            error.toString(),)));
+                                }
+                              },
                               label: Text('Sign In With Google', style: TextStyle(color: Colors.black))),
                         ),
                         SizedBox(height: 10,),
