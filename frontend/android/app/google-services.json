@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "673842473312-bnk4g3db6p04jcu50ua7317bcn61omfl.apps.googleusercontent.com",
+          "client_id": "673842473312-ppmcncpsqqi6s0qqou08cf8mhlpvit7h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.google_auth",
+            "certificate_hash": "8ecfa3f277c236a0ec00dd6fdef2b47bf74e3f18"
+          }
+        },
+        {
+          "client_id": "673842473312-rnufa6r1ucohqt7mggub7caqqog4a3hs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +37,49 @@
             {
               "client_id": "673842473312-bnk4g3db6p04jcu50ua7317bcn61omfl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "673842473312-a6aiqmrt9f32urlts7hivun8ckthjsgf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "jim"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673842473312:android:78b521a4bef78f4bf15605",
+        "android_client_info": {
+          "package_name": "com.example.jim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "673842473312-rnufa6r1ucohqt7mggub7caqqog4a3hs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyV2PnlDt3cBbW_v_8yWqIkGc6zYFebFg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "673842473312-bnk4g3db6p04jcu50ua7317bcn61omfl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "673842473312-a6aiqmrt9f32urlts7hivun8ckthjsgf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "jim"
+              }
             }
           ]
         }
