@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -91,8 +93,10 @@ class _OtpScreenState extends State<OtpScreen> {
 
                       // Debugging print to check OTP value before API call
                       print("Before API call - OTP: $otp");
-                      File imageFile = File(WelcomeScreenImage);
-                      Uint8List imageBytes = await imageFile.readAsBytes();
+                      ByteData byteData = await rootBundle.load('assets/images/welcomePage/welcome_screen.png');
+                      Uint8List imageBytes = byteData.buffer.asUint8List();
+                      // Encode bytes to Base64
+
 
                       // Call the API with the OTP and other user data
                       String result = await apiService.registerUser(
