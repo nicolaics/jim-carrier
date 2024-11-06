@@ -10,6 +10,7 @@ import 'package:jim/src/screens/update_profile.dart';
 import 'package:jim/src/screens/all_datas.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../constants/image_strings.dart';
+import 'base_client.dart';
 
 class TryScreen extends StatefulWidget {
   const TryScreen({super.key});
@@ -20,12 +21,18 @@ class TryScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<TryScreen> {
   final TextEditingController _searchController = TextEditingController();
- // final UserController userController = Get.find();
+  final ApiService apiService= ApiService();
 
   @override
   Widget build(BuildContext context) {
-  //  final String email = userController.email;
-  //  print(email);
+
+    try {
+      String response = apiService.get() as String;
+      print("Response $response");
+    }
+    catch (e){
+      print('Error: $e');
+    }
     return Scaffold(
       body: SingleChildScrollView(
           child:Container(
