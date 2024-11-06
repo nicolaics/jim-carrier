@@ -42,9 +42,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     print('Email: $email');
     print('Phone Number: $phoneNumber');
     print('Phone Number: $pw');
-
-
-
   }
 
   @override
