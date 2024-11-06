@@ -30,11 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final storage = FlutterSecureStorage();
 
   Future<void> storeToken(String token) async {
-    await storage.write(key: 'jwt_token', value: token);
+    await storage.write(key: 'token', value: token);
   }
 
   Future<String?> getToken() async {
-    return await storage.read(key: 'jwt_token');
+    return await storage.read(key: 'token');
   }
   bool isTokenExpired(String token) {
     return JwtDecoder.isExpired(token);
@@ -122,7 +122,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return; // Exit the onPressed method if fields are empty
                                     }
 
-                                    /***flu
                                     //TOKEN
                                     try {
                                       String token = await apiService.login(
@@ -130,6 +129,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                         password: _passwordController.text,
                                         api: '/user/login', // Provide your API base URL
                                       );
+                                      print("token $token");
+                                      Get.put(UserController(token: token)); // Store the email in UserController
+                                      String token2 = Get.find<UserController>().token;
+                                      print("Token from UserController $token2");
+
                                       if (token == 'failed'){
                                         AwesomeDialog(
                                           context: context,
@@ -143,19 +147,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                         )..show();
                                       }
                                       else{
-                                        await storeToken(token);
-                                        if (isTokenExpired(token)){
-                                          print('Token expired');
-                                        }else{
-                                          print('Token valid');
-                                          Get.put(UserController2(token: token)); // Store the email in UserController
-                                        }
+                                        AwesomeDialog(
+                                          context: context,
+                                          dialogType: DialogType.success,
+                                          animType: AnimType.topSlide,
+                                          title: 'Sucess',
+                                          desc: 'Login Successful',
+                                          btnOkIcon: Icons.check,
+                                          btnOkOnPress: () {
+                                            Get.to(() =>  BottomBar());
+                                          },
+
+                                        )..show();
                                       }
                                       }
                                     catch (e){
                                       print('Error: $e');
-                                    } ***/
-
+                                    }
+/***
                                     String email = _emailController.text.trim();
                                     if ('success' == 'success') { // Replace this with the actual success condition
                                       // Navigate to the RegisterScreen if login is successful
@@ -186,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       )..show();
                                     }
 
-
+***/
 
 
                                     /***
@@ -245,8 +254,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 try{
                                   final controller = Controller(); // Create an instance of Controller
                                   final user = await controller.loginWithGoogle(); // Call the method on the instance
+                                  print(user?.email);
+                                  print(user?.displayName);
+                                  print(user?.phoneNumber);
+                                  print(user?.photoURL);
                                   if(user!=null && mounted){
                                     Navigator.of(context).pushReplacement(MaterialPageRoute(
+
                                         builder:(context) => const BottomBar()));
                                   }
                                 }
