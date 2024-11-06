@@ -3,13 +3,8 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class UserController extends GetxController {
-  final String email;
-  UserController({required this.email});
-}
-
-class UserController2 extends GetxController{
   final String token;
-  UserController2({required this.token});
+  UserController({required this.token});
 }
 
 class Controller extends GetxController {
@@ -24,11 +19,11 @@ class Controller extends GetxController {
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-
+    print("Credential $credential" );
     final userCredential = await FirebaseAuth.instance.signInWithCredential(
       credential,
     );
-
+    print("usercredential:  $userCredential" );
     return userCredential.user;
   }
 
