@@ -1,16 +1,29 @@
-import 'dart:ffi';
+import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'all_datas.dart';
+
 const baseUrl ="http://ion-suhalim:9988/api/v1";
 
 class ApiService{
   var client = http.Client();
+  String token2 = Get.find<UserController>().token;
 
+  Future<dynamic> get() async {
+    final response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/albums/1'),
+      headers: {
+        HttpHeaders.authorizationHeader: token2,
+      },
+    );
+    final responseJson = jsonDecode(response.body) as Map<String, dynamic>;
+    print("response in base_client $responseJson");
+    return responseJson;
+  }
 
   Future<dynamic> login({required String email, required String password, required String api}) async{
     final url = Uri.parse((baseUrl+api));
@@ -30,7 +43,7 @@ class ApiService{
 
       if (response.statusCode == 200) {
         print('User login successfully');
-        //return jsonDecode(response.body)['token'];
+        return jsonDecode(response.body)['token'];
 
       } else {
         print('Failed to register user: ${response.body}');
@@ -48,18 +61,23 @@ class ApiService{
     required String phoneNumber,
     required Uint8List profilePicture,
     required String verification,
-    required api
+    required String api,
   }) async {
-    final url = Uri.parse((baseUrl+api));
+    final url = Uri.parse(baseUrl + api);
 
-    // Create the request body as per your payload struct
-    Map<String, String> body = {
+    // Encode the profile picture as a base64 string
+    String profilePictureBase64 = base64Encode(profilePicture);
+
+    // Create the request body as per your backend payload structure
+    Map<String, dynamic> body = {
       'name': name,
       'email': email,
       'password': password,
       'phoneNumber': phoneNumber,
+      'profilePicture': profilePictureBase64,
       'verificationCode': verification,
     };
+
     try {
       final response = await http.post(
         url,
@@ -74,13 +92,16 @@ class ApiService{
         print('User registered successfully');
         return "success";
       } else {
-        // Handle errors, e.g. 400, 500, etc.
+        // Handle errors (e.g., 400, 500, etc.)
         print('Failed to register user: ${response.body}');
+        return "error";
       }
     } catch (e) {
       print('Error occurred: $e');
+      return "exception";
     }
   }
+
 
   Future<dynamic> addListing({
     required String destination,
@@ -93,8 +114,6 @@ class ApiService{
     required api
   }) async {
     final url = Uri.parse((baseUrl+api));
-
-
 
     // Create the request body as per your payload struct
     Map<String, dynamic> body = {
@@ -189,7 +208,9 @@ class ApiService{
       print('Error occurred: $e');
     }
   }
+
 }
+
 
 
   Future<dynamic> put(String api) async{
