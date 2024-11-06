@@ -12,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
   ProfileScreen({Key? key}) : super(key: key);
   //final UserController userController = Get.find();
 
+
   @override
   Widget build(BuildContext context) {
    // final String email = userController.email;
