@@ -11,18 +11,92 @@ const baseUrl ="http://ion-suhalim:9988/api/v1";
 
 class ApiService{
   var client = http.Client();
-  String token2 = Get.find<UserController>().token;
 
-  Future<dynamic> get() async {
-    final response = await http.get(
-      Uri.parse('https://jsonplaceholder.typicode.com/albums/1'),
-      headers: {
-        HttpHeaders.authorizationHeader: token2,
-      },
-    );
-    final responseJson = jsonDecode(response.body) as Map<String, dynamic>;
-    print("response in base_client $responseJson");
-    return responseJson;
+
+  Future<dynamic> update_profile({required Uint8List img, required String api}) async {
+    String token2 = Get.find<UserController>().token;
+    print("Token in api get: $token2");
+    final url = Uri.parse((baseUrl + api));
+
+    Map<String, dynamic> body = {
+      'profilePicture': img,
+    };
+
+
+    try {
+      final response = await http.patch(url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        print('Changed succesfully');
+        return 'sucess';
+
+      } else {
+        print('Failed to update: ${response.body}');
+        return "failed";
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
+
+  Future<dynamic> get({required String api}) async {
+    String token2 = Get.find<UserController>().token;
+    print("Token in api get: $token2");
+    final url = Uri.parse((baseUrl + api));
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('response ${response.body}');
+        return jsonDecode(response.body);
+      } else {
+        //print('Error: ${response.body}');
+        return {"status": "failed"};  // Returning a consistent response format
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      return {"status": "error", "message": e.toString()};  // Return an error object
+    }
+  }
+
+  Future<dynamic> getListing({required String api}) async {
+    String token2 = Get.find<UserController>().token;
+    print("Token in api get: $token2");
+    final url = Uri.parse((baseUrl + api));
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('response ${response.body}');
+        return jsonDecode(response.body);
+      } else {
+        //print('Error: ${response.body}');
+        return {"status": "failed"};  // Returning a consistent response format
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      return {"status": "error", "message": e.toString()};  // Return an error object
+    }
   }
 
   Future<dynamic> login({required String email, required String password, required String api}) async{
@@ -114,7 +188,7 @@ class ApiService{
     required api
   }) async {
     final url = Uri.parse((baseUrl+api));
-
+    String token2 = Get.find<UserController>().token;
     // Create the request body as per your payload struct
     Map<String, dynamic> body = {
       'destination': destination,
@@ -130,7 +204,7 @@ class ApiService{
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHBpcmVkQXQiOjE3MzAwNTI3MTgsInRva2VuVXVpZCI6IjAxOTJjYzlhLTUzNzMtNzcyNy04OWFkLTQ4NjU1YjFjODYwZSIsInVzZXJJZCI6Mn0.bP30cVY9zKeNXIDRCnr2Wf6RW-KuNFt-_oMN2WLFF3w'
+          'Authorization': 'Bearer $token2',
         },
         body: jsonEncode(body),
       );
