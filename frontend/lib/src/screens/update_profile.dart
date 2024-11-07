@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-
 import '../constants/image_strings.dart';
 import '../constants/sizes.dart';
 import 'base_client.dart';
+import 'dart:typed_data';
+
 
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({Key? key}) : super(key: key);
@@ -19,11 +20,40 @@ class UpdateProfileScreen extends StatefulWidget {
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final ApiService apiService = ApiService();
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+
+  String? user_name;
+  String? user_email;
+  Uint8List? photo;
+
+
+  // Fetch data in initState
+  @override
+  void initState() {
+    super.initState();
+    fetchUserEmail();  // Call the function when the widget is initialized
+  }
+
+  // Async function to fetch user data
+  Future<void> fetchUserEmail() async {
+    try {
+      String api = "/user/current";
+      Map response = await apiService.get(api: api) as Map;  // Await the response
+      print("Response: $response");
+      setState(() {
+        user_name = response['name'];
+        user_email = response['email'];
+        photo = base64Decode(response['profilePicture']); // Decode the photo from base64
+      });
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +95,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
-                      child: Image(image: AssetImage(WelcomeScreenImage)),
+                      child: photo == null
+                          ? Icon(Icons.account_circle, size: 120) // Placeholder if photo is null
+                          : Image.memory(
+                        photo!,
+                        fit: BoxFit.cover, // Ensures the image fits well within the circle
+                      ),
                     ),
                   ),
                   Positioned(
@@ -75,22 +110,35 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       onTap: () async {
                         final ImagePicker picker = ImagePicker();
                         final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
                         if (image == null) return;
 
                         // Convert image to bytes
                         final bytes = await File(image.path).readAsBytes();
 
-                        // Convert bytes to a base64 string
-                        final base64Image = base64Encode(bytes);
+                        // Update the UI with the new photo
+                        setState(() {
+                          photo = bytes;  // Update the photo variable with the new image bytes
+                        });
 
-                        // Create a JSON object with the base64 image data
-                        final jsonData = {
-                          'image': base64Image,
-                        };
+                        // Upload the new profile picture (optional)
+                        String response = await apiService.update_profile(
+                          img: bytes,
+                          api: '/user/update-profile-picture',  // Provide your API base URL
+                        );
 
-                        // Print or use jsonData as needed
-                        print(jsonData);
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          animType: AnimType.topSlide,
+                          title: 'Success',
+                          desc: 'Image Updated',
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                            Navigator.pop(context, bytes);
+                          },
+                        )..show();
+
+                        // You can handle the response here, if needed
                       },
                       child: Container(
                         width: 35,
@@ -148,11 +196,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           // Retrieve values from text controllers
                           String name = _nameController.text.trim();
                           String email = _emailController.text.trim();
-                          String password = _passwordController.text.trim();
                           String phoneNumber = _phoneController.text.trim();
 
                           // Check if any of the fields are empty
-                          if (name.isEmpty || email.isEmpty || password.isEmpty || phoneNumber.isEmpty) {
+                          if (name.isEmpty || email.isEmpty|| phoneNumber.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Please fill in all fields.'),
