@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         api: '/user/login', // Provide your API base URL
                                       );
                                       print("token $token");
+
                                       Get.put(UserController(token: token)); // Store the email in UserController
                                       String token2 = Get.find<UserController>().token;
                                       print("Token from UserController $token2");
