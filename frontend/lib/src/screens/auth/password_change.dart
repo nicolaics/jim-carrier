@@ -1,7 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
 
@@ -17,12 +16,12 @@ class PasswordChange extends StatefulWidget {
 
 class _PasswordChangeState extends State<PasswordChange> {
 
-  @override
   final ApiService apiService = ApiService();
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _pwController2 = TextEditingController();
   bool _isPasswordVisible = false;
 
+  @override
   Widget build(BuildContext context){
     return Scaffold(
         body: SingleChildScrollView(
@@ -31,14 +30,14 @@ class _PasswordChangeState extends State<PasswordChange> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: tDefaultSize * 4),
+                const SizedBox(height: tDefaultSize * 4),
                 Text(
                   'Change Password',
                   style: GoogleFonts.anton(fontSize: 40),
                 ),
                 Form(
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 20.0),
+                      padding: const EdgeInsets.symmetric(vertical: 20.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -46,10 +45,10 @@ class _PasswordChangeState extends State<PasswordChange> {
                             controller: _pwController,
                             obscureText: !_isPasswordVisible, // Step 3: Use the boolean for visibility
                             decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.lock),
+                              prefixIcon: const Icon(Icons.lock),
                               labelText: "Enter new password",
                               hintText: "Enter new password",
-                              border: OutlineInputBorder(),
+                              border: const OutlineInputBorder(),
                               suffixIcon: IconButton(
                                 // Step 4: Toggle visibility and change the icon
                                 onPressed: () {
@@ -65,17 +64,17 @@ class _PasswordChangeState extends State<PasswordChange> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
                           TextFormField(
                             controller: _pwController2,
                             obscureText: !_isPasswordVisible, // Step 3: Use the boolean for visibility
                             decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.lock),
+                              prefixIcon: const Icon(Icons.lock),
                               labelText: "Re-enter new password",
                               hintText: "Enter new password again",
-                              border: OutlineInputBorder(),
+                              border: const OutlineInputBorder(),
                               suffixIcon: IconButton(
                                 // Step 4: Toggle visibility and change the icon
                                 onPressed: () {
@@ -91,7 +90,7 @@ class _PasswordChangeState extends State<PasswordChange> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
                           SizedBox(
@@ -106,7 +105,7 @@ class _PasswordChangeState extends State<PasswordChange> {
                                 // Check if any of the fields are empty
                                 if (pw1.isEmpty || pw2.isEmpty ) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text('Please fill in all fields.'),
                                       backgroundColor: Colors.red,
                                     ),
@@ -114,7 +113,7 @@ class _PasswordChangeState extends State<PasswordChange> {
                                 }
                                 else if (pw1.length <= 5 && pw2.length <= 5) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text('Password must be more than 5 characters.'),
                                       backgroundColor: Colors.red,
                                     ),
@@ -123,7 +122,7 @@ class _PasswordChangeState extends State<PasswordChange> {
                                 }
                                 else if(pw1 != pw2){
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text('Please re-enter the passwords.'),
                                       backgroundColor: Colors.red,
                                     ),
@@ -140,7 +139,7 @@ class _PasswordChangeState extends State<PasswordChange> {
                                       btnOkOnPress: () {
                                         Get.to(() => const LoginScreen());
                                       },
-                                )..show();
+                                ).show();
 
                                 }
 
@@ -194,10 +193,10 @@ class _PasswordChangeState extends State<PasswordChange> {
                                     Get.to(() => const OtpScreen2()); ***/
                               },
                               style: OutlinedButton.styleFrom(
-                                shape: RoundedRectangleBorder(),
+                                shape: const RoundedRectangleBorder(),
                                 backgroundColor: Colors.black,
                               ),
-                              child: Text(
+                              child: const Text(
                                 'CHANGE PASSWORD',
                                 style: TextStyle(color: Colors.white, fontSize: 20),
                               ),

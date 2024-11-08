@@ -4,12 +4,11 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
-import 'package:jim/src/base_class/login_google.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/image_strings.dart';
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
   //final UserController userController = Get.find();
 
 
@@ -34,7 +33,7 @@ class ProfileScreen extends StatelessWidget {
                       height: 120,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: Image(image: AssetImage(WelcomeScreenImage)),
+                        child: const Image(image: AssetImage(WelcomeScreenImage)),
                       ),
                     ),
                     Positioned(
@@ -75,7 +74,7 @@ class ProfileScreen extends StatelessWidget {
                       side: BorderSide.none,
                       shape: const StadiumBorder(),
                     ),
-                    child: Text("Edit Profile",
+                    child: const Text("Edit Profile",
                         style: TextStyle(color: Colors.black, fontSize: 20)),
                   ),
                 ),
@@ -98,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                   onPress: () {},
                 ),
                 const Divider(),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 ProfileMenuWidget(
                   title: "Information",
                   icon: LineAwesomeIcons.info_solid,

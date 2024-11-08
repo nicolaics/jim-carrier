@@ -1,10 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
@@ -12,7 +11,6 @@ import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
 import 'package:jim/src/base_class/login_google.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import '../constants/image_strings.dart';
 import '../api/api_service.dart';
 
 class TryScreen extends StatefulWidget {
@@ -23,11 +21,11 @@ class TryScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<TryScreen> {
-  final TextEditingController _searchController = TextEditingController();
+  // final TextEditingController _searchController = TextEditingController();
   final ApiService apiService = ApiService();
 
-  String? user_name;
-  String? user_email;
+  String? userName;
+  String? userEmail;
   Uint8List? photo;
 
   // Fetch data in initState
@@ -44,8 +42,8 @@ class _HomeScreenState extends State<TryScreen> {
       Map response = await apiService.get(api: api) as Map;  // Await the response
       print("Response: $response");
       setState(() {
-        user_name = response['name'];
-        user_email = response['email'];
+        userName = response['name'];
+        userEmail = response['email'];
         photo = base64Decode(response['profilePicture']); // Decode the photo from base64
       });
     } catch (e) {
@@ -93,7 +91,7 @@ class _HomeScreenState extends State<TryScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
                       child: photo == null
-                          ? Icon(Icons.account_circle, size: 120) // Placeholder if photo is null
+                          ? const Icon(Icons.account_circle, size: 120) // Placeholder if photo is null
                           : Image.memory(
                         photo!,
                         fit: BoxFit.cover, // Ensures the image fits well within the circle
@@ -119,13 +117,13 @@ class _HomeScreenState extends State<TryScreen> {
               ),
               const SizedBox(height: 10),
 
-              // Display user_name and user_email only after they are fetched
-              user_name == null || user_email == null
-                  ? CircularProgressIndicator()  // Show a loading indicator until data is fetched
+              // Display userName and userEmail only after they are fetched
+              userName == null || userEmail == null
+                  ? const CircularProgressIndicator()  // Show a loading indicator until data is fetched
                   : Column(
                 children: [
-                  Text(user_name!, style: GoogleFonts.anton(fontSize: 20)),
-                  Text(user_email!, style: GoogleFonts.anton(fontSize: 20)),
+                  Text(userName!, style: GoogleFonts.anton(fontSize: 20)),
+                  Text(userEmail!, style: GoogleFonts.anton(fontSize: 20)),
                 ],
               ),
 
@@ -139,7 +137,7 @@ class _HomeScreenState extends State<TryScreen> {
                     side: BorderSide.none,
                     shape: const StadiumBorder(),
                   ),
-                  child: Text("Edit Profile", style: TextStyle(color: Colors.black, fontSize: 20)),
+                  child: const Text("Edit Profile", style: TextStyle(color: Colors.black, fontSize: 20)),
                 ),
               ),
               const SizedBox(height: 30),
@@ -161,7 +159,7 @@ class _HomeScreenState extends State<TryScreen> {
                 onPress: () {},
               ),
               const Divider(),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ProfileMenuWidget(
                 title: "Information",
                 icon: LineAwesomeIcons.info_solid,

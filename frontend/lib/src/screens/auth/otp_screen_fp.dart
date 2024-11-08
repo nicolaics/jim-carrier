@@ -1,14 +1,15 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:jim/src/screens/auth/login_screen.dart';
 import 'package:jim/src/screens/auth/password_change.dart';
 import '../../api/api_service.dart';
 
 class OtpScreen2 extends StatefulWidget {
-  const OtpScreen2({Key? key}) : super(key: key);
+  const OtpScreen2({super.key});
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -31,7 +32,7 @@ class _OtpScreenState extends State<OtpScreen2> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: tDefaultSize),
+                const SizedBox(height: tDefaultSize),
                 Text(
                   'CO\nDE',
                   style: GoogleFonts.montserrat(fontSize: 80, fontWeight: FontWeight.bold),
@@ -40,13 +41,13 @@ class _OtpScreenState extends State<OtpScreen2> {
                   'VERIFICATION',
                   style: GoogleFonts.anton(fontSize: 30),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   'Enter the verification code sent to your\nemail.',
                   style: GoogleFonts.cormorant(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // OtpTextField to capture OTP input
                 OtpTextField(
@@ -61,7 +62,7 @@ class _OtpScreenState extends State<OtpScreen2> {
                     print("OTP is: => $otp"); // Debugging print to verify OTP value
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Elevated Button to verify OTP
                 SizedBox(
@@ -87,7 +88,7 @@ class _OtpScreenState extends State<OtpScreen2> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black, // Set the background color to black
                     ),
-                    child: Text(
+                    child: const Text(
                       "VERIFY",
                       style: TextStyle(color: Colors.white), // Set the text color to white
                     ),

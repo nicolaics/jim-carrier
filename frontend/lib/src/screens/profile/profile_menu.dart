@@ -1,25 +1,23 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 extension ColorExtension on Color {
   Color widthOpacity(double opacity) {
-    return this.withOpacity(opacity);
+    return withOpacity(opacity);
   }
 }
 
 class ProfileMenuWidget extends StatelessWidget {
   const ProfileMenuWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.icon,
     required this.onPress,
     this.endIcon=true,
     this.textColor,
-  }) : super(key: key);
+  });
 
   final String title;
   final IconData icon;

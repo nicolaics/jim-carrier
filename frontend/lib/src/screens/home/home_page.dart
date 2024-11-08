@@ -39,8 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         String? base64Image = data['carrierProfilePicture'];
         Uint8List? imageBytes;
 
-        // Decode base64 image string if available and ensure it's a string
-        if (base64Image != null && base64Image.isNotEmpty && base64Image is String) {
+        if (base64Image != null && base64Image.isNotEmpty) {
           imageBytes = base64Decode(base64Image);  // Decode the base64 string to Uint8List
         }
 
@@ -143,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Align(
+                const Align(
                   alignment: Alignment.center,
                   child: Text(
                     "AVAILABLE CARRIERS",
@@ -194,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           '${index + 1}', // List number
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(width: 10),
                         // Display the base64 image in CircleAvatar
@@ -208,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     title: Text(
                       items[index]["name"] ?? "Name",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,15 +219,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 4),
                         Text(
                           items[index]["price"] ?? "Price",
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         Text(
                           items[index]["available_weight"] ?? "Available Weight",
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                         Text(
                           items[index]["flight_date"] ?? "Flight Date",
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -236,13 +235,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         print("Button pressed for ${items[index]["name"]}");
                       },
-                      child: const Text("View"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+                      child: const Text("View"),
                     ),
                     onTap: () {
                       print("Tapped on ${items[index]["name"]}");

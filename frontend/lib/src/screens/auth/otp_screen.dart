@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,13 +6,13 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
-import '../../constants/image_strings.dart';
 import '../../api/api_service.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({Key? key}) : super(key: key);
+  const OtpScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _OtpScreenState createState() => _OtpScreenState();
 }
 
@@ -29,7 +26,7 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget build(BuildContext context) {
     // Retrieve the passed arguments using Get.arguments
     final Map<String, dynamic> args = Get.arguments;
-    final String fromWhere = args['message'];
+    // final String fromWhere = args['message'];
     final String name = args['name'];
     final String email = args['email'];
     final String password = args['password'];
@@ -45,7 +42,7 @@ class _OtpScreenState extends State<OtpScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: tDefaultSize),
+                const SizedBox(height: tDefaultSize),
                 Text(
                   'CO\nDE',
                   style: GoogleFonts.montserrat(fontSize: 80, fontWeight: FontWeight.bold),
@@ -54,13 +51,13 @@ class _OtpScreenState extends State<OtpScreen> {
                   'VERIFICATION',
                   style: GoogleFonts.anton(fontSize: 30),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   'Enter the verification code sent to your\nemail.',
                   style: GoogleFonts.cormorant(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // OtpTextField to capture OTP input
                 OtpTextField(
@@ -75,7 +72,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     print("OTP is: => $otp"); // Debugging print to verify OTP value
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Elevated Button to verify OTP
                 SizedBox(
@@ -84,7 +81,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     onPressed: () async {
                       // Check if the OTP is empty
                       if (otp.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text('Please enter the OTP.'),
                           backgroundColor: Colors.red,
                         ));
@@ -105,7 +102,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         password: password,
                         phoneNumber: phoneNumber,
                         profilePicture: imageBytes,
-                        verification: "$otp", // Pass the OTP value to the API
+                        verification: otp, // Pass the OTP value to the API
                         api: '/user/register', // Provide your API base URL
                       );
 
@@ -118,7 +115,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black, // Set the background color to black
                     ),
-                    child: Text(
+                    child: const Text(
                       "VERIFY",
                       style: TextStyle(color: Colors.white), // Set the text color to white
                     ),
