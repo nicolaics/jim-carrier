@@ -45,7 +45,7 @@ class Controller extends GetxController {
       "serverAuthCode": googleAccount?.serverAuthCode,
       "fcmToken": "1234",
       "name": userCredential.user?.displayName,
-      "photoUrl": userCredential.user?.photoURL,
+      "profilePictureUrl": userCredential.user?.photoURL,
       "phoneNumber": userCredential.user?.phoneNumber,
     };
 
