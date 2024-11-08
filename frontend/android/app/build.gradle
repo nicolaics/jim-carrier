@@ -19,7 +19,7 @@ dependencies {
 android {
     namespace = "com.example.jim" // Use your actual package name here
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "25.1.8937393" // Specify the NDK version
+    ndkVersion = "26.1.10909125" // Specify the NDK version
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

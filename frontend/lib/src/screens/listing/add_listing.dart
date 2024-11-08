@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 
-import 'base_client.dart';
+import '../../api/api_service.dart';
 
 class AddListingScreen extends StatefulWidget {
   const AddListingScreen({Key? key}) : super(key: key);

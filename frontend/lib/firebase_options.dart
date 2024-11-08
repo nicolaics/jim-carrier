@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '673842473312',
     projectId: 'jim-carrier',
     storageBucket: 'jim-carrier.firebasestorage.app',
-    iosClientId: '673842473312-a6aiqmrt9f32urlts7hivun8ckthjsgf.apps.googleusercontent.com',
+    iosClientId:
+        '673842473312-a6aiqmrt9f32urlts7hivun8ckthjsgf.apps.googleusercontent.com',
     iosBundleId: 'jim',
   );
 
@@ -73,7 +74,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '673842473312',
     projectId: 'jim-carrier',
     storageBucket: 'jim-carrier.firebasestorage.app',
-    iosClientId: '673842473312-or46efk6nr98iqeqrugo2u6bkg06lbc3.apps.googleusercontent.com',
+    iosClientId:
+        '673842473312-or46efk6nr98iqeqrugo2u6bkg06lbc3.apps.googleusercontent.com',
     iosBundleId: 'com.example.jim',
   );
 

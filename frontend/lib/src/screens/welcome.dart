@@ -3,9 +3,9 @@ import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jim/src/screens/login_screen.dart';
+import 'package:jim/src/screens/auth/login_screen.dart';
 import 'package:get/get.dart';
-import 'package:jim/src/screens/register_screen.dart';
+import 'package:jim/src/screens/auth/register_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});

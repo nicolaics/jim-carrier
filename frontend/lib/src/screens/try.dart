@@ -7,13 +7,13 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jim/src/screens/login_screen.dart';
-import 'package:jim/src/screens/profile_menu.dart';
-import 'package:jim/src/screens/update_profile.dart';
-import 'package:jim/src/screens/all_datas.dart';
+import 'package:jim/src/screens/auth/login_screen.dart';
+import 'package:jim/src/screens/profile/profile_menu.dart';
+import 'package:jim/src/screens/profile/update_profile.dart';
+import 'package:jim/src/base_class/login_google.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../constants/image_strings.dart';
-import 'base_client.dart';
+import '../api/api_service.dart';
 
 class TryScreen extends StatefulWidget {
   const TryScreen({super.key});

@@ -1,25 +1,20 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:jim/src/screens/login_screen.dart';
-import '../constants/image_strings.dart';
-import 'base_client.dart';
+import 'package:jim/src/screens/auth/login_screen.dart';
+import 'package:jim/src/screens/auth/password_change.dart';
+import '../../api/api_service.dart';
 
-class OtpScreen extends StatefulWidget {
-  const OtpScreen({Key? key}) : super(key: key);
+class OtpScreen2 extends StatefulWidget {
+  const OtpScreen2({Key? key}) : super(key: key);
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpScreenState extends State<OtpScreen2> {
   final ApiService apiService = ApiService();
 
   // Declare the OTP variable at the class level to retain its state
@@ -27,15 +22,6 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve the passed arguments using Get.arguments
-    final Map<String, dynamic> args = Get.arguments;
-    final String fromWhere = args['message'];
-    final String name = args['name'];
-    final String email = args['email'];
-    final String password = args['password'];
-    final String phoneNumber = args['phoneNumber'];
-
-    print(name); // Debugging print to ensure arguments are passed correctly
 
     return SafeArea(
       child: Scaffold(
@@ -82,6 +68,9 @@ class _OtpScreenState extends State<OtpScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
+                      //For UI Testing
+                      Get.to(()=> const PasswordChange());
+                      /***
                       // Check if the OTP is empty
                       if (otp.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -90,30 +79,10 @@ class _OtpScreenState extends State<OtpScreen> {
                         ));
                         return; // Exit if OTP is empty
                       }
-
                       // Debugging print to check OTP value before API call
                       print("Before API call - OTP: $otp");
-                      ByteData byteData = await rootBundle.load('assets/images/welcomePage/welcome_screen.png');
-                      Uint8List imageBytes = byteData.buffer.asUint8List();
-                      // Encode bytes to Base64
-
-
-                      // Call the API with the OTP and other user data
-                      String result = await apiService.registerUser(
-                        name: name,
-                        email: email,
-                        password: password,
-                        phoneNumber: phoneNumber,
-                        profilePicture: imageBytes,
-                        verification: "$otp", // Pass the OTP value to the API
-                        api: '/user/register', // Provide your API base URL
-                      );
-
-                      // Print the result of the API call for debugging
-                      print(result);
-                      if(result=="success"){
                         Get.to(()=> const LoginScreen());
-                      }
+                        ***/
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black, // Set the background color to black

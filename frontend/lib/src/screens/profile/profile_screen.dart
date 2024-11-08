@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jim/src/screens/profile_menu.dart';
-import 'package:jim/src/screens/update_profile.dart';
-import 'package:jim/src/screens/all_datas.dart';
+import 'package:jim/src/screens/profile/profile_menu.dart';
+import 'package:jim/src/screens/profile/update_profile.dart';
+import 'package:jim/src/base_class/login_google.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import '../constants/image_strings.dart';
+import '../../constants/image_strings.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({Key? key}) : super(key: key);

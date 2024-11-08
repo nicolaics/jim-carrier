@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:jim/src/screens/login_screen.dart';
+import 'package:jim/src/screens/auth/login_screen.dart';
 
-import '../constants/sizes.dart';
-import 'base_client.dart';
+import '../../constants/sizes.dart';
+import '../../api/api_service.dart';
 
 class PasswordChange extends StatefulWidget {
   const PasswordChange({super.key});

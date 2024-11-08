@@ -1,18 +1,18 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import '../constants/image_strings.dart';
-import '../constants/sizes.dart';
-import 'base_client.dart';
+import '../../constants/sizes.dart';
+import '../../api/api_service.dart';
 import 'dart:typed_data';
 
 
 class UpdateProfileScreen extends StatefulWidget {
-  const UpdateProfileScreen({Key? key}) : super(key: key);
+  const UpdateProfileScreen({super.key});
 
   @override
   _UpdateProfileScreenState createState() => _UpdateProfileScreenState();
@@ -24,11 +24,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+  // final TextEditingController _passwordController = TextEditingController();
+  // bool _isPasswordVisible = false;
 
-  String? user_name;
-  String? user_email;
+  String? userName;
+  String? userEmail;
   Uint8List? photo;
 
 
@@ -46,8 +46,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       Map response = await apiService.get(api: api) as Map;  // Await the response
       print("Response: $response");
       setState(() {
-        user_name = response['name'];
-        user_email = response['email'];
+        userName = response['name'];
+        userEmail = response['email'];
         photo = base64Decode(response['profilePicture']); // Decode the photo from base64
       });
     } catch (e) {
@@ -58,9 +58,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   @override
   Widget build(BuildContext context) {
 
-    void onProfileTapped(){
+    // void onProfileTapped(){
 
-    }
+    // }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -96,7 +97,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
                       child: photo == null
-                          ? Icon(Icons.account_circle, size: 120) // Placeholder if photo is null
+                          ? const Icon(Icons.account_circle, size: 120) // Placeholder if photo is null
                           : Image.memory(
                         photo!,
                         fit: BoxFit.cover, // Ensures the image fits well within the circle
@@ -121,10 +122,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         });
 
                         // Upload the new profile picture (optional)
-                        String response = await apiService.update_profile(
+                        String response = await apiService.updateProfile(
                           img: bytes,
                           api: '/user/update-profile-picture',  // Provide your API base URL
                         );
+                        print("update profile response: $response");
+
 
                         AwesomeDialog(
                           context: context,
@@ -136,7 +139,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           btnOkOnPress: () {
                             Navigator.pop(context, bytes);
                           },
-                        )..show();
+                        ).show();
 
                         // You can handle the response here, if needed
                       },
@@ -164,31 +167,31 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   children: [
                     TextFormField(
                       controller: _nameController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.person_outline_rounded),
                         labelText: "Full Name",
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     TextFormField(
                       controller: _emailController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.email_outlined),
                         labelText: "Email",
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     TextFormField(
                       controller: _phoneController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.numbers),
                         labelText: "Phone Number",
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -201,7 +204,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           // Check if any of the fields are empty
                           if (name.isEmpty || email.isEmpty|| phoneNumber.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Please fill in all fields.'),
                                 backgroundColor: Colors.red,
                               ),
@@ -213,7 +216,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           final RegExp nameRegex = RegExp(r'^[a-zA-Z ]+$');
                           if (name.length < 2 || !nameRegex.hasMatch(name)) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Please enter a valid name (only alphabets and at least 2 characters).'),
                                 backgroundColor: Colors.red,
                               ),
@@ -224,7 +227,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           // Phone number validation (must be exactly 10 digits)
                           if (phoneNumber.length != 11 || !RegExp(r'^\d+$').hasMatch(phoneNumber)) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Please enter a valid 11-digit phone number.'),
                                 backgroundColor: Colors.red,
                               ),
@@ -239,7 +242,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
                           if (!emailRegex.hasMatch(email)) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text('Please enter a valid email address.'),
                                 backgroundColor: Colors.red,
                               ),
@@ -250,20 +253,20 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           // All validations passed, proceed with registration
                         },
                         style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(),
+                          shape: const RoundedRectangleBorder(),
                           backgroundColor: Colors.black,
                         ),
-                        child: Text(
+                        child: const Text(
                           "Edit Profile",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
                     ),
-                    SizedBox(height: 200),
+                    const SizedBox(height: 200),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
+                        const Expanded(
                           child: Text(
                             "Joined at October 19, 2024",
                             style: TextStyle(color: Colors.black),
@@ -278,7 +281,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             shape: const StadiumBorder(),
                             side: BorderSide.none,
                           ),
-                          child: Text("Delete"),
+                          child: const Text("Delete"),
                         ),
                       ],
                     ),

@@ -1,5 +1,5 @@
 name: jim
-description: "A new Flutter project."
+description: "Connect, Pack, Send."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
@@ -27,6 +27,9 @@ dependencies:
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
   google_sign_in: ^6.2.2
+  intl: ^0.18.0
+  http_status: ^3.3.3
+  # firebase_messaging: ^15.1.3
 
 
 

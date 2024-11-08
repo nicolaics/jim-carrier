@@ -1,13 +1,12 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:get/get.dart';
-import 'package:jim/src/screens/otp_screen.dart';
-import 'base_client.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class EmailVerfication extends StatefulWidget {
-  const EmailVerfication({Key? key}) : super(key: key);
+  const EmailVerfication({super.key});
   @override
   _EmailVerification createState() => _EmailVerification();
 }
@@ -23,7 +22,7 @@ class _EmailVerification extends State<EmailVerfication> {
               mainAxisAlignment: MainAxisAlignment.center,
 
               children: [
-                SizedBox(height: tDefaultSize),
+                const SizedBox(height: tDefaultSize),
                 Text(
                   'CO\nDE',
                   style: GoogleFonts.montserrat(fontSize: 80, fontWeight: FontWeight.bold),
@@ -32,12 +31,12 @@ class _EmailVerification extends State<EmailVerfication> {
                     'VERIFICATION',
                     style: GoogleFonts.anton(fontSize: 30)
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   'Enter the verification code sent to your\nemail.',
                   style: GoogleFonts.cormorant(fontSize: 20),textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 OtpTextField(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +45,7 @@ class _EmailVerification extends State<EmailVerfication> {
                   filled: true,
                   onSubmit: (code){print("OTP is: => $code");},
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -56,7 +55,7 @@ class _EmailVerification extends State<EmailVerfication> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black, // Set the background color to black
                     ),
-                    child: Text(
+                    child: const Text(
                       "NEXT",
                       style: TextStyle(color: Colors.white), // Optionally set the text color to white for contrast
                     ),

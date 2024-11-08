@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/screens/try.dart';
 import 'home_page.dart';
-import 'previous_order.dart';
-import 'chat_ui.dart';
-import 'add_listing.dart';
+import '../order/previous_order.dart';
+import '../chat/chat_ui.dart';
+import '../listing/add_listing.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({Key? key}) : super(key: key);

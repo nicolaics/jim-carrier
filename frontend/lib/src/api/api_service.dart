@@ -1,19 +1,17 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_status/http_status.dart';
 import 'dart:convert';
 
-import 'all_datas.dart';
+import '../base_class/login_google.dart';
 
-const baseUrl ="http://ion-suhalim:9988/api/v1";
+const baseUrl = "http://ion-suhalim:9988/api/v1";
 
-class ApiService{
+class ApiService {
   var client = http.Client();
 
-
-  Future<dynamic> update_profile({required Uint8List img, required String api}) async {
+  Future<dynamic> updateProfile({required Uint8List img, required String api}) async {
     String token2 = Get.find<UserController>().token;
     print("Token in api get: $token2");
     final url = Uri.parse((baseUrl + api));
@@ -22,28 +20,27 @@ class ApiService{
       'profilePicture': img,
     };
 
-
     try {
-      final response = await http.patch(url,
+      final response = await http.patch(
+        url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token2',
         },
         body: jsonEncode(body),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         print('Changed succesfully');
-        return 'sucess';
-
+        return response.body;
       } else {
         print('Failed to update: ${response.body}');
-        return "failed";
+        throw "failed";
+        // return "failed";
       }
     } catch (e) {
       print('Error occurred: $e');
     }
   }
-
 
   Future<dynamic> get({required String api}) async {
     String token2 = Get.find<UserController>().token;
@@ -59,16 +56,19 @@ class ApiService{
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         print('response ${response.body}');
         return jsonDecode(response.body);
       } else {
         //print('Error: ${response.body}');
-        return {"status": "failed"};  // Returning a consistent response format
+        return {"status": "failed"}; // Returning a consistent response format
       }
     } catch (e) {
       print('Error occurred: $e');
-      return {"status": "error", "message": e.toString()};  // Return an error object
+      return {
+        "status": "error",
+        "message": e.toString()
+      }; // Return an error object
     }
   }
 
@@ -86,21 +86,27 @@ class ApiService{
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         print('response ${response.body}');
         return jsonDecode(response.body);
       } else {
         //print('Error: ${response.body}');
-        return {"status": "failed"};  // Returning a consistent response format
+        return {"status": "failed"}; // Returning a consistent response format
       }
     } catch (e) {
       print('Error occurred: $e');
-      return {"status": "error", "message": e.toString()};  // Return an error object
+      return {
+        "status": "error",
+        "message": e.toString()
+      }; // Return an error object
     }
   }
 
-  Future<dynamic> login({required String email, required String password, required String api}) async{
-    final url = Uri.parse((baseUrl+api));
+  Future<dynamic> login(
+      {required String email,
+      required String password,
+      required String api}) async {
+    final url = Uri.parse((baseUrl + api));
 
     Map<String, String> body = {
       'email': email,
@@ -108,17 +114,17 @@ class ApiService{
     };
 
     try {
-      final response = await http.post(url,
+      final response = await http.post(
+        url,
         headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json',
         },
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         print('User login successfully');
         return jsonDecode(response.body)['token'];
-
       } else {
         print('Failed to register user: ${response.body}');
         return "failed";
@@ -161,7 +167,7 @@ class ApiService{
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         // Handle successful response
         print('User registered successfully');
         return "success";
@@ -176,18 +182,16 @@ class ApiService{
     }
   }
 
-
-  Future<dynamic> addListing({
-    required String destination,
-    required double weight,
-    required double price,
-    required String currency,
-    required String date,
-    required String lastDate,
-    required String additionalInfo,
-    required api
-  }) async {
-    final url = Uri.parse((baseUrl+api));
+  Future<dynamic> addListing(
+      {required String destination,
+      required double weight,
+      required double price,
+      required String currency,
+      required String date,
+      required String lastDate,
+      required String additionalInfo,
+      required api}) async {
+    final url = Uri.parse((baseUrl + api));
     String token2 = Get.find<UserController>().token;
     // Create the request body as per your payload struct
     Map<String, dynamic> body = {
@@ -209,7 +213,7 @@ class ApiService{
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         // Handle successful response
         print('Listing added successfully');
         return "success";
@@ -222,13 +226,8 @@ class ApiService{
     }
   }
 
-
-
-  Future<dynamic> forgotPw({
-    required String email,
-    required api
-  }) async {
-    final url = Uri.parse((baseUrl+api));
+  Future<dynamic> forgotPw({required String email, required api}) async {
+    final url = Uri.parse((baseUrl + api));
     // Create the request body as per your payload struct
     Map<String, String> body = {
       'email': email,
@@ -242,7 +241,7 @@ class ApiService{
         body: jsonEncode(body),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         // Handle successful response
         return "success";
       } else {
@@ -254,11 +253,8 @@ class ApiService{
     }
   }
 
-  Future<dynamic> otpCode({
-    required String email,
-    required api
-  }) async {
-    final url = Uri.parse((baseUrl+api));
+  Future<dynamic> otpCode({required String email, required api}) async {
+    final url = Uri.parse((baseUrl + api));
     // Create the request body as per your payload struct
     Map<String, String> body = {
       'email': email,
@@ -271,12 +267,73 @@ class ApiService{
         },
         body: jsonEncode(body),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
         // Handle successful response
         return "success";
       } else {
         // Handle errors, e.g. 400, 500, etc.
         print('Failed to get code: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
+  Future<dynamic> loginWithGoogle(
+      {required Map userInfo,
+      required String api}) async {
+    final url = Uri.parse((baseUrl + api));
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(userInfo),
+      );
+
+      dynamic responseDecode = jsonDecode(response.body);
+
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        return responseDecode['token'];
+      } else {
+        if (responseDecode['error'].contains("to registration")) {
+          return "toRegist";
+        }
+
+        return responseDecode['error'];
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
+  Future<dynamic> registerWithGoogle(
+      {required Map userInfo,
+      required String api}) async {
+    final url = Uri.parse((baseUrl + api));
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(userInfo),
+      );
+
+      dynamic responseDecode = jsonDecode(response.body);
+
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        print("register success");
+        return responseDecode['token'];
+      } else {
+        if (responseDecode['error'].contains("to registration")) {
+          return "toRegist";
+        }
+
+        return responseDecode['error'];
       }
     } catch (e) {
       print('Error occurred: $e');
@@ -285,12 +342,4 @@ class ApiService{
 
 }
 
-
-
-  Future<dynamic> put(String api) async{
-
-  }
-
-  Future<dynamic> delete(String api) async{
-
-  }
+Future<dynamic> delete(String api) async {}
