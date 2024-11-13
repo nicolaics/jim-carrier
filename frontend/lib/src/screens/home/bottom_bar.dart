@@ -45,7 +45,7 @@ class NavigationController extends GetxController {
   // Define the list of screens
   final screens = [
     const HomeScreen(),
-    const Previous_Order_Screen(),
+    const PreviousOrderScreen(),
     const AddListingScreen(),
     const ChatScreen(),
     const TryScreen(),
