@@ -29,6 +29,7 @@ dependencies:
   google_sign_in: ^6.2.2
   intl: ^0.18.0
   http_status: ^3.3.3
+  flutter_rating_bar: ^4.0.1
   # firebase_messaging: ^15.1.3
 
 
