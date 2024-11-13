@@ -1,11 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
   const PreviousOrderScreen({super.key});
@@ -16,6 +11,7 @@ class PreviousOrderScreen extends StatefulWidget {
 
 class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _reviewController = TextEditingController();
 
   // Dummy data for listing
   List<Map<String, dynamic>> listingData = [
@@ -25,7 +21,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       "price": "₩5000 per kg",
       "available_weight": "10 kg",
       "flight_date": "Nov 15, 2024",
-      "profile_pic": "frontend/assets/images/welcomePage/welcome_screen.png"
+      "profile_pic": null
     },
     {
       "name": "Carrier 2",
@@ -33,7 +29,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       "price": "₩4000 per kg",
       "available_weight": "15 kg",
       "flight_date": "Nov 20, 2024",
-      "profile_pic": "frontend/assets/images/welcomePage/welcome_screen.png"
+      "profile_pic": null
     },
   ];
 
@@ -58,32 +54,89 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   ];
 
   bool isListingView = true; // Boolean to toggle between listing and order view
+  int _selectedRating = 0; // For storing the selected star rating
 
   void _performSearch() {
     final query = _searchController.text;
     print("Searching for: $query");
   }
 
+  void _showReviewModal(String carrierName) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Allow the bottom sheet to be resized with the keyboard
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 16.0,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0, // Adjust for keyboard
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                const SizedBox(height: 12),
+                Text(
+                  "Leave a Review for $carrierName",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                const Text("Rate out of 5",
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                RatingBar.builder(
+                  initialRating: _selectedRating.toDouble(), // Sets initial rating
+                  minRating: 0,
+                  direction: Axis.horizontal,
+                  allowHalfRating: true, // Allow half-star ratings if desired
+                  itemCount: 5,
+                  itemBuilder: (context, _) => const Icon(Icons.star, color: Colors.amber),
+                  onRatingUpdate: (rating) {
+                    setState(() {
+                      _selectedRating = rating.toInt(); // Update selected rating
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _reviewController,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: "Write your review",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    print("Review Submitted: ${_reviewController.text}, Rating: $_selectedRating");
+                    _reviewController.clear();
+                    setState(() {
+                      _selectedRating = 0; // Reset rating after submission
+                    });
+                    Navigator.pop(context); // Close the modal
+                  },
+                  child: const Text("Submit"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Expanded(
-              child: CupertinoSearchTextField(
-                controller: _searchController,
-                placeholder: "Search",
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                style: const TextStyle(color: Colors.black),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: _performSearch,
-            ),
-          ],
-        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,10 +147,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Listing button
                 _buildTabButton("LISTING", 0),
                 const SizedBox(width: 8),
-                // Order button
                 _buildTabButton("ORDER", 1),
               ],
             ),
@@ -163,7 +214,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
             leading: CircleAvatar(
-              backgroundImage: AssetImage(item["profile_pic"]),
+              backgroundImage: AssetImage(item["profile_pic"] ?? 'frontend/assets/images/welcomePage/welcome_screen.png'), // Placeholder image
               radius: 20,
             ),
             title: Text(
@@ -182,23 +233,21 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Edit Button
                 IconButton(
                   icon: const Icon(Icons.edit, color: Colors.blue),
                   onPressed: () {
-                    // Handle edit action
-                    print("Edit pressed for ${item["name"]}");
+                    // Handle edit action here
+                    print("Edit item: ${item['name']}");
                   },
                 ),
-                // Delete Button
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
-                    // Handle delete action
+                    // Handle delete action here
                     setState(() {
-                      listingData.removeAt(index);
+                      listingData.removeAt(index); // Remove the item from the list
                     });
-                    print("Deleted ${item["name"]}");
+                    print("Deleted item: ${item['name']}");
                   },
                 ),
               ],
@@ -209,7 +258,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     );
   }
 
-  // Method to build the Order view
+  // Method to build the Order view with the "Leave Review" button
   Widget _buildOrderView() {
     return ListView.builder(
       itemCount: orderData.length,
@@ -221,40 +270,42 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            title: Text(
-              item["name"] ?? "Name",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            subtitle: Column(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  item["name"] ?? "Name",
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
                 Text(item["destination"] ?? "Destination"),
                 Text(item["price"] ?? "Price"),
                 Text(item["available_weight"] ?? "Available Weight"),
                 Text(item["flight_date"] ?? "Flight Date"),
                 Text("Order Weight: ${item["order_weight"]} kg"),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Order Status Button
-                IconButton(
-                  icon: const Icon(Icons.info, color: Colors.blue),
-                  onPressed: () {
-                    // Handle order status action
-                    print("Order Status pressed for ${item["name"]}");
-                  },
-                ),
-                // Reviews Button
-                IconButton(
-                  icon: const Icon(Icons.rate_review, color: Colors.green),
-                  onPressed: () {
-                    // Handle reviews action
-                    print("Reviews pressed for ${item["name"]}");
-                  },
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        print("View Status pressed for ${item["name"]}");
+                      },
+                      child: const Text("View Status"),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        _showReviewModal(item["name"]);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      child: const Text("Leave Review"),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -264,5 +315,3 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     );
   }
 }
-
-
