@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';  // Import the intl package
 import 'dart:typed_data';
 import '../../api/api_service.dart';
+import 'package:jim/src/screens/order/new_order.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Async function to fetch data and update items list
+  /***
   Future<void> fetchListing() async {
     try {
       String api = "/listing";
@@ -61,7 +63,59 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       print('Error: $e');
     }
+  }***/
+
+  // Async function to fetch data and update items list
+  Future<void> fetchListing() async {
+    // Dummy data to simulate API response
+    List<Map<String, dynamic>> dummyData = [
+      {
+        "carrierName": "Alice Johnson",
+        "destination": "Seoul, South Korea",
+        "pricePerKg": 15.0,
+        "currency": "USD",
+        "weightAvailable": 20,
+        "departureDate": "2024-12-01",
+        "carrierProfilePicture": null,  // No image for testing
+      },
+      {
+        "carrierName": "Bob Lee",
+        "destination": "Tokyo, Japan",
+        "pricePerKg": 10.0,
+        "currency": "KRW",
+        "weightAvailable": 15,
+        "departureDate": "2024-11-20",
+        "carrierProfilePicture": null,  // No image for testing
+      },
+      {
+        "carrierName": "Catherine Kim",
+        "destination": "Paris, France",
+        "pricePerKg": 18.5,
+        "currency": "EUR",
+        "weightAvailable": 10,
+        "departureDate": "2024-12-15",
+        "carrierProfilePicture": null,  // No image for testing
+      },
+    ];
+
+    List<Map<String, dynamic>> updatedItems = [];
+
+    for (var data in dummyData) {
+      updatedItems.add({
+        "name": data['carrierName'] ?? 'Unknown',
+        "destination": data['destination'] ?? 'No destination',
+        "price": formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW'),
+        "available_weight": formatWeight(data['weightAvailable']),
+        "flight_date": formatDate(data['departureDate']),
+        "profile_pic": AssetImage("frontend/assets/images/welcomePage/welcome_screen.png"), // Dummy image path
+      });
+    }
+
+    setState(() {
+      items = updatedItems;
+    });
   }
+
 
   // Format the price based on the currency
   String formatPrice(dynamic price, String currency) {
@@ -198,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 10),
                         // Display the base64 image in CircleAvatar
                         CircleAvatar(
-                          backgroundImage: items[index]["profile_pic"] != null
+                          backgroundImage: items[index]["profile_pic"] == null //need to change this to !=null
                               ? MemoryImage(items[index]["profile_pic"] as Uint8List)  // Use MemoryImage to display the base64 image
                               : null,  // Fallback if no image data exists
                           radius: 20,
@@ -245,6 +299,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onTap: () {
                       print("Tapped on ${items[index]["name"]}");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NewOrder(carrier: items[index]),
+                          ),
+                        );
+
                     },
                   ),
                 );
