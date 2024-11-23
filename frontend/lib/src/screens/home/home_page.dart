@@ -27,10 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Async function to fetch data and update items list
-  /***
+
   Future<void> fetchListing() async {
     try {
-      String api = "/listing";
+      String api = "/listing/all";
       List<dynamic> response = await apiService.get(api: api) as List;  // Await the response
       print("Response: $response");
 
@@ -44,8 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
         if (base64Image != null && base64Image.isNotEmpty) {
           imageBytes = base64Decode(base64Image);  // Decode the base64 string to Uint8List
         }
+        print("carrier rating ${data["carrierRating"]}");
 
         updatedItems.add({
+          "id": data['id'] ?? 'Unknown',
+          "currency": data['currency'] ?? 'Unknown',
           "name": data['carrierName'] ?? 'Unknown', // Default to 'Unknown' if not available
           "destination": data['destination'] ?? 'No destination', // Default to 'No destination'
           "price": formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW'), // Format the price based on the currency
@@ -63,8 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       print('Error: $e');
     }
-  }***/
-
+  }
+/***
   // Async function to fetch data and update items list
   Future<void> fetchListing() async {
     // Dummy data to simulate API response
@@ -115,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
       items = updatedItems;
     });
   }
-
+***/
 
   // Format the price based on the currency
   String formatPrice(dynamic price, String currency) {
@@ -171,23 +174,18 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
         automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            Expanded(
-              child: CupertinoSearchTextField(
-                controller: _searchController,
-                placeholder: "Search",
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                style: const TextStyle(color: Colors.black),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: _performSearch,
-            ),
-          ],
+        title: const Text(
+          'AVAILABLE CARRIERS',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        centerTitle: true,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,17 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                const Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "AVAILABLE CARRIERS",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
                 const SizedBox(height: 8),
                 Align(
                   alignment: Alignment.bottomRight,
@@ -252,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(width: 10),
                         // Display the base64 image in CircleAvatar
                         CircleAvatar(
-                          backgroundImage: items[index]["profile_pic"] == null //need to change this to !=null
+                          backgroundImage: items[index]["profile_pic"] != null //need to change this to !=null
                               ? MemoryImage(items[index]["profile_pic"] as Uint8List)  // Use MemoryImage to display the base64 image
                               : null,  // Fallback if no image data exists
                           radius: 20,
@@ -299,6 +286,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onTap: () {
                       print("Tapped on ${items[index]["name"]}");
+                      print("Tapped on ${items[index]["id"]}");
+                      print("Tapped on ${items[index]["currency"]}");
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
