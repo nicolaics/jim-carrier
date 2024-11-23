@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
+import 'package:jim/src/screens/home/bottom_bar.dart';
+import 'package:jim/src/screens/home/home_page.dart';
 
 import '../../api/api_service.dart';
 
@@ -32,7 +36,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         title: const Text(
           'New Listing',
           style: TextStyle(
@@ -370,6 +374,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   );
 
                  print(result);
+                  Get.to(() => const BottomBar());
+
                 },
                 child: const Text('SUBMIT', style: TextStyle(color: Colors.white)),
               ),
