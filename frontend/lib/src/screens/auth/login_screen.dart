@@ -31,12 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final ApiService apiService = ApiService();
   final storage = const FlutterSecureStorage();
 
-  Future<void> storeToken(String token) async {
-    await storage.write(key: 'token', value: token);
+  Future<void> storeToken(String token)  async {
+    storage.write(key: 'token', value: token);
   }
 
-  Future<String?> getToken() async {
-    return await storage.read(key: 'token');
+  Future<String?> getToken() {
+    return storage.read(key: 'token');
   }
 
   bool isTokenExpired(String token) {
@@ -143,13 +143,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                         api:
                                             '/user/login', // Provide your API base URL
                                       );
-
                                       print("token $token");
-
+                                      storeToken(token);
+                                      print("hahahahaha");
+                                      print(getToken());
                                       Get.put(UserController(
                                           token:
                                               token)); // Store the email in UserController
-
                                       if (token == 'failed') {
                                         AwesomeDialog(
                                           context: context,
@@ -158,7 +158,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           title: 'ERROR',
                                           desc: 'Login not Successful',
                                           btnOkIcon: Icons.check,
-                                          btnOkOnPress: () {},
+                                          btnOkOnPress: () {
+
+                                          },
                                         ).show();
                                       } else {
                                         AwesomeDialog(
