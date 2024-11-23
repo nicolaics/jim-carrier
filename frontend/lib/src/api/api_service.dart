@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,8 @@ import 'dart:convert';
 import '../base_class/login_google.dart';
 
 const baseUrl = "http://ion-suhalim:9988/api/v1";
+
+//const baseUrl = "http://pravass-macbook-air:9988/api/v1";
 
 class ApiService {
   var client = http.Client();
@@ -85,6 +88,66 @@ class ApiService {
           'Authorization': 'Bearer $token2',
         },
       );
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        print('response ${response.body}');
+        return jsonDecode(response.body);
+      } else {
+        //print('Error: ${response.body}');
+        return {"status": "failed"}; // Returning a consistent response format
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      return {
+        "status": "error",
+        "message": e.toString()
+      }; // Return an error object
+    }
+  }
+
+  Future<dynamic> getOrder({required String api}) async {
+    String token2 = Get.find<UserController>().token;
+    print("Token in api get: $token2");
+    final url = Uri.parse((baseUrl + api));
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+      );
+
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        print('response getOrder ${response.body}');
+        return jsonDecode(response.body);
+      } else {
+        //print('Error: ${response.body}');
+        return {"status": "failed"}; // Returning a consistent response format
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      return {
+        "status": "error",
+        "message": e.toString()
+      }; // Return an error object
+    }
+  }
+
+
+  Future<dynamic> getOwnListing({required String api}) async {
+    String token2 = Get.find<UserController>().token;
+    print("Token in api get: $token2");
+    final url = Uri.parse((baseUrl + api));
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+      );
 
       if (response.statusCode.isSuccessfulHttpStatusCode) {
         print('response ${response.body}');
@@ -102,11 +165,52 @@ class ApiService {
     }
   }
 
+  Future<dynamic> review(
+      {required int orderId,
+        required String reviewName,
+        required String? reviewContent,
+        required int rating,
+        required String api}) async {
+    String token2 = Get.find<UserController>().token;
+    final url = Uri.parse((baseUrl + api));
+
+    Map<String, dynamic> body = {
+      'orderId': orderId,
+      'revieweeName': reviewName,
+      'content': reviewContent,
+      'rating': rating,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        print('Review successful.');
+        return jsonDecode(response.body)['token'];
+      } else {
+        print('Failed to review: ${response.body}');
+        return "failed";
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
   Future<dynamic> login(
       {required String email,
       required String password,
       required String api}) async {
     final url = Uri.parse((baseUrl + api));
+    print(email);
+    print(password);
 
     Map<String, String> body = {
       'email': email,
@@ -118,6 +222,7 @@ class ApiService {
         url,
         headers: {
           'Content-Type': 'application/json',
+
         },
         body: jsonEncode(body),
       );
@@ -127,6 +232,46 @@ class ApiService {
         return jsonDecode(response.body)['token'];
       } else {
         print('Failed to register user: ${response.body}');
+        return "failed";
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
+  Future<dynamic> order(
+      {required int listid,
+        required double weight,
+        required double price,
+        required String currency,
+        required String notes,
+        required String api}) async {
+    String token2 = Get.find<UserController>().token;
+    final url = Uri.parse((baseUrl + api));
+
+    Map<String, dynamic> body = {
+      'listingId': listid,
+      'weight': weight,
+      'price': price,
+      'currency': currency,
+      'notes': notes,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        print('User ordered successfully');
+        return jsonDecode(response.body)['token'];
+      } else {
+        print('Failed to order: ${response.body}');
         return "failed";
       }
     } catch (e) {
