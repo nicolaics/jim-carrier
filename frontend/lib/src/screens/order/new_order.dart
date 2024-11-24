@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +25,38 @@ class _NewOrderState extends State<NewOrder> {
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _contentsController = TextEditingController();// Controller for the weight input
   final ApiService apiService = ApiService();
+  File? _selectedImage; // Variable to store the selected image
+  Uint8List? photo;
+
+  double _calculateTotalPrice() {
+    final weight = double.tryParse(_weightController.text) ?? 0.0;
+    final regex = RegExp(r'^([^\d]+)?([\d,\.]+)');
+    final match = regex.firstMatch(widget.carrier["price"] ?? "0");
+    double carrierPrice = 0.0;
+
+    if (match != null) {
+      // Extract numeric value and parse
+      String numericPart = match.group(2)?.replaceAll(",", "") ?? "0";
+      carrierPrice = double.tryParse(numericPart) ?? 0.0;
+    }
+
+    return weight * carrierPrice;
+  }
+
+
+  // Function to pick an image from the camera
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      final bytes = await File(image.path).readAsBytes();
+      // Update the UI with the new photo
+      setState(() {
+        photo = bytes;
+        print(photo);// Update the photo variable with the new image bytes
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final carrier = widget.carrier; // Access the passed carrier details
@@ -75,6 +110,7 @@ class _NewOrderState extends State<NewOrder> {
             const SizedBox(height: 24),
 
             // Weight Input Field
+            // Weight Input Field
             const Text(
               "Order Weight (kg)",
               style: TextStyle(
@@ -98,11 +134,45 @@ class _NewOrderState extends State<NewOrder> {
                 ),
                 prefixIcon: const Icon(Icons.scale, size: 28),
               ),
+              onChanged: (value) {
+                // Update total price whenever weight is entered
+                setState(() {});
+              },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+
+// Total Price Display
             const Text(
-              'Contents Info',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              "Total Price",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextFormField(
+              readOnly: true,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[200],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+                hintText: _weightController.text.isNotEmpty
+                    ? "${_calculateTotalPrice()} ${widget.carrier['currency'] ?? ''}"
+                    : "Enter weight to see total price",
+                hintStyle: const TextStyle(fontSize: 18, color: Colors.black87),
+              ),
+            ),
+            const Text(
+              "Contents Info",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
@@ -117,6 +187,47 @@ class _NewOrderState extends State<NewOrder> {
                 ),
               ),
             ),
+
+// Camera Icon Button with Upload Picture
+            Row(
+              children: [
+                const Text(
+                  "Upload Picture",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.camera_alt, size: 32, color: Colors.blue),
+                  onPressed: _pickImage,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+// Display the selected image inside a box
+            if (photo != null)
+              Container(
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.all(8),
+                child: Image.memory(
+                  photo!,
+                  height: 200,
+                  width: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+
+
+
+            const SizedBox(height: 24),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -163,15 +274,15 @@ class _NewOrderState extends State<NewOrder> {
                       carrierPrice = double.tryParse(numericPart) ?? 0.0;
                     }
                     // Calculate the total price
-                    double price = weight * carrierPrice;
-                    print("Total price: $price");
+                    double price = _calculateTotalPrice();
                     // Handle Pay Later logic here
                     await apiService.order(
                       listid: carrier["id"],
                       weight: weight,
                       price: price,
                       currency: carrier["currency"],
-                      notes: "hi",
+                      package_content: _contentsController.text,
+                      package_image: photo,
                       api:
                       '/order', // Provide your API base URL
                     );
