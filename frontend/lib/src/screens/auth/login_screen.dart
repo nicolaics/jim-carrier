@@ -135,10 +135,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return; // Exit the onPressed method if fields are empty
                                     }
 
+
                                     //TOKEN
                                     try {
                                       String token = await apiService.login(
-                                        email: _emailController.text,
+                                        email: _emailController.text.trim(),
                                         password: _passwordController.text,
                                         api:
                                             '/user/login', // Provide your API base URL
