@@ -6,6 +6,8 @@ import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/image_strings.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -108,7 +110,9 @@ class ProfileScreen extends StatelessWidget {
                   icon: LineAwesomeIcons.sign_out_alt_solid,
                   textColor: Colors.red,
                   endIcon: false,
-                  onPress: () {},
+                  onPress: () {
+
+                  },
                 )
               ],
             ),
