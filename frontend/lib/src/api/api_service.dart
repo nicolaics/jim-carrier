@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_status/http_status.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'dart:convert';
 
 import '../base_class/login_google.dart';
@@ -15,8 +16,7 @@ class ApiService {
   var client = http.Client();
 
   Future<dynamic> updateProfile({required Uint8List img, required String api}) async {
-    String token2 = Get.find<UserController>().token;
-    print("Token in api get: $token2");
+    String? token2= await StorageService.getToken();
     final url = Uri.parse((baseUrl + api));
 
     Map<String, dynamic> body = {
@@ -48,7 +48,7 @@ class ApiService {
   }
 
   Future<dynamic> get({required String api}) async {
-    String token2 = Get.find<UserController>().token;
+    String? token2= await StorageService.getToken();
     print("Token in api get: $token2");
     final url = Uri.parse((baseUrl + api));
 
@@ -78,7 +78,8 @@ class ApiService {
   }
 
   Future<dynamic> getListing({required String api}) async {
-    String token2 = Get.find<UserController>().token;
+    print("inside");
+    String? token2= await StorageService.getToken();
     print("Token in api get: $token2");
     final url = Uri.parse((baseUrl + api));
 
@@ -107,7 +108,7 @@ class ApiService {
   }
 
   Future<dynamic> getOrder({required String api}) async {
-    String token2 = Get.find<UserController>().token;
+    String? token2= await StorageService.getToken();
     print("Token in api get: $token2");
     final url = Uri.parse((baseUrl + api));
 
@@ -138,7 +139,7 @@ class ApiService {
 
 
   Future<dynamic> getOwnListing({required String api}) async {
-    String token2 = Get.find<UserController>().token;
+    String? token2= await StorageService.getToken();
     print("Token in api get: $token2");
     final url = Uri.parse((baseUrl + api));
 
@@ -173,7 +174,7 @@ class ApiService {
         required String? reviewContent,
         required int rating,
         required String api}) async {
-    String token2 = Get.find<UserController>().token;
+    String? token2= await StorageService.getToken();
     final url = Uri.parse((baseUrl + api));
 
     Map<String, dynamic> body = {
@@ -251,7 +252,7 @@ class ApiService {
         required String package_content,
         required Uint8List? package_image,
         required String api}) async {
-    String token2 = Get.find<UserController>().token;
+    String? token2= await StorageService.getToken();
     final url = Uri.parse((baseUrl + api));
 
     Map<String, dynamic> body = {
@@ -333,6 +334,33 @@ class ApiService {
     }
   }
 
+
+  Future<dynamic> myOrder(
+      {required api}) async {
+    final url = Uri.parse((baseUrl + api));
+    String? token2= await StorageService.getToken();
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+      );
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        print('Data received');
+        print(jsonDecode(response.body));
+        return jsonDecode(response.body);
+      } else {
+        // Handle errors, e.g. 400, 500, etc.
+        print('Failed to addlisting: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
   Future<dynamic> addListing(
       {required String destination,
       required double weight,
@@ -343,7 +371,7 @@ class ApiService {
       required String additionalInfo,
       required api}) async {
     final url = Uri.parse((baseUrl + api));
-    String token2 = Get.find<UserController>().token;
+    String? token2= await StorageService.getToken();
     // Create the request body as per your payload struct
     Map<String, dynamic> body = {
       'destination': destination,
@@ -371,6 +399,30 @@ class ApiService {
       } else {
         // Handle errors, e.g. 400, 500, etc.
         print('Failed to addlisting: ${response.body}');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
+  }
+
+  Future<dynamic> logOut({required api}) async {
+    final url = Uri.parse((baseUrl + api));
+    String? token= await StorageService.getToken();
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode.isSuccessfulHttpStatusCode) {
+        // Handle successful response
+        return "logged out";
+      } else {
+        // Handle errors, e.g. 400, 500, etc.
+        print('Failed to get code: ${response.body}');
       }
     } catch (e) {
       print('Error occurred: $e');
