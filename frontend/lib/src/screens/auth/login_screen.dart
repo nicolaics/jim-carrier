@@ -3,11 +3,11 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/screens/auth/forgot_pw.dart';
 import 'package:jim/src/screens/auth/register_screen.dart';
@@ -29,15 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
 
   final ApiService apiService = ApiService();
-  final storage = const FlutterSecureStorage();
-
-  Future<void> storeToken(String token)  async {
-    storage.write(key: 'token', value: token);
-  }
-
-  Future<String?> getToken() {
-    return storage.read(key: 'token');
-  }
 
   bool isTokenExpired(String token) {
     return JwtDecoder.isExpired(token);
@@ -134,8 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       );
                                       return; // Exit the onPressed method if fields are empty
                                     }
-
-
                                     //TOKEN
                                     try {
                                       String token = await apiService.login(
@@ -144,14 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         api:
                                             '/user/login', // Provide your API base URL
                                       );
-                                      print("token $token");
-                                      storeToken(token);
-                                      print("hahahahaha");
-                                      print(getToken());
-                                      Get.put(UserController(
-                                          token:
-                                              token)); // Store the email in UserController
-                                      if (token == 'failed') {
+                                      if(token=="failed"){
                                         AwesomeDialog(
                                           context: context,
                                           dialogType: DialogType.error,
@@ -160,10 +142,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                           desc: 'Login not Successful',
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {
-
                                           },
                                         ).show();
-                                      } else {
+                                      }
+                                      else{
+                                        print("token $token");
+                                        StorageService.storeToken(token);
+                                        print("hahahahaha");
+                                        print(StorageService.getToken());
                                         AwesomeDialog(
                                           context: context,
                                           dialogType: DialogType.success,
@@ -176,75 +162,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                           },
                                         ).show();
                                       }
+
                                     } catch (e) {
                                       print('Error: $e');
+
                                     }
-/***
-                                    String email = _emailController.text.trim();
-                                    if ('success' == 'success') { // Replace this with the actual success condition
-                                      // Navigate to the RegisterScreen if login is successful
-                                      Get.put(UserController(email: _emailController.text)); // Store the email in UserController
-                                      AwesomeDialog(
-                                        context: context,
-                                        dialogType: DialogType.success,
-                                        animType: AnimType.topSlide,
-                                        title: 'Sucess',
-                                        desc: 'Login Successful',
-                                        btnOkIcon: Icons.check,
-                                        btnOkOnPress: () {
-                                          Get.to(() =>  BottomBar());
-                                        },
-
-                                      )..show();
-                                    } else {
-                                      //this is just for me to easily navigate in UI
-                                      AwesomeDialog(
-                                        context: context,
-                                        dialogType: DialogType.error,
-                                        animType: AnimType.topSlide,
-                                        title: 'ERROR',
-                                        desc: 'Login not Successful',
-                                        btnOkIcon: Icons.check,
-                                        btnOkOnPress: () {
-                                        },
-                                      )..show();
-                                    }
-
-***/
-
-                                    /***
-                                    String result = await apiService.login(
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                      api: '/user/login', // Provide your API base URL
-                                    );
-                                      if (result == 'success') { // Replace this with the actual success condition
-                                      // Navigate to the RegisterScreen if login is successful
-                                        AwesomeDialog(
-                                          context: context,
-                                          dialogType: DialogType.success,
-                                          animType: AnimType.topSlide,
-                                          title: 'Success',
-                                          desc: 'Login Successful',
-                                          btnOkIcon: Icons.check,
-                                          btnOkOnPress: () {
-                                            Get.to(() =>  BottomBar());
-                                          },
-                                        )..show();
-                                      } else {
-                                        //this is just for me to easily navigate in UI
-                                        AwesomeDialog(
-                                          context: context,
-                                          dialogType: DialogType.error,
-                                          animType: AnimType.topSlide,
-                                          title: 'Success',
-                                          desc: 'Login Successful',
-                                          btnOkIcon: Icons.check,
-                                          btnOkOnPress: () {
-                                          },
-                                        )..show();
-                                      }
-                                      ***/
                                   },
                                   style: OutlinedButton.styleFrom(
                                       shape: const RoundedRectangleBorder(),
@@ -325,13 +247,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       },
                                     ).show();
                                   }
-
-                                  // if (user != null && mounted) {
-                                  //   Navigator.of(context).pushReplacement(
-                                  //       MaterialPageRoute(
-                                  //           builder: (context) =>
-                                  //               const BottomBar()));
-                                  // }
                                 } on FirebaseAuthException catch (error) {
                                   print(error.message);
                                   ScaffoldMessenger.of(context)
