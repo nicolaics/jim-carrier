@@ -22,7 +22,7 @@ class _ChatScreen extends State<ChatScreen> {
     fetchListing();
   }
 
-  // Fetch data for the listing
+  // Fetch data for the listingf
   Future<void> fetchListing() async {
     try {
       String api = "/order/carrier";
@@ -135,7 +135,7 @@ class _ChatScreen extends State<ChatScreen> {
                       radius: 20,
                     ),
                     title: Text(
-                      "Order Number: ${item['id']}",
+                      "Order ID: ${item['id']}",
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     subtitle: Column(
@@ -144,6 +144,7 @@ class _ChatScreen extends State<ChatScreen> {
                         Text("Country: ${item['destination']}"),
                         Text("Price: ${item['currency']} ${item['price']}"),
                         Text("Weight: ${item['weight']} kg"),
+                        Text("Order Status: ${item['orderStatus']}"),
                         Text("Departure Date: ${item['departureDate']}"),
                       ],
                     ),
