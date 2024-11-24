@@ -543,6 +543,39 @@ class ApiService {
     }
   }
 
+
+Future<dynamic> updateOrderStatus(
+    {required int? orderNo,
+      required String orderStatus,
+      required String api}) async {
+  final url = Uri.parse((baseUrl + api));
+  String? token = await StorageService.getToken();
+  Map<String, dynamic> body = {
+    'id': orderNo,
+    'orderStatus': orderStatus,
+  };
+  try {
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    dynamic responseDecode = jsonDecode(response.body);
+    if (response.statusCode.isSuccessfulHttpStatusCode) {
+      print("Confirmation success");
+      return responseDecode['token'];
+    } else {
+      if (responseDecode['error'].contains("to registration")) {
+        return "toRegist";
+      }
+      return responseDecode['error'];
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
+}
 }
 
-Future<dynamic> delete(String api) async {}
