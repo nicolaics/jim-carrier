@@ -33,6 +33,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     orderNo = (orderData["id"] is String)
         ? int.tryParse(orderData["id"])
         : orderData["id"] as int?;
+
+    print("Order IDDDDDD:");
+    print(orderNo);
     //status=orderData["orderStatus"];
     return Scaffold(
       backgroundColor: Colors.white,
@@ -112,8 +115,12 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   // Confirm Order Button
                   ElevatedButton(
                     onPressed: () async {
+                      print("Order IDDDDDD:");
+                      print(orderNo);
                       print("Order Confirmed!");
-                      await apiService.updateOrderStatus(orderNo: orderNo, orderStatus: "confirmed", api: "/order/order-status");
+                      String response=await apiService.updateOrderStatus(orderNo: orderNo, orderStatus: "confirmed", api: "/order/order-status");
+                      print("response");
+                      print(response);
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,
@@ -144,8 +151,20 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   ElevatedButton(
                     onPressed: () async {
                       print("Order Rejected!");
-                     // await apiService.updateOrderStatus(orderNo: orderNo, orderStatus: "cancelled", api: "/order/order-status");
-                    },
+                      await apiService.updateOrderStatus(orderNo: orderNo, orderStatus: "cancelled", api: "/order/order-status");
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.success,
+                        animType: AnimType.topSlide,
+                        title: 'Success',
+                        desc: 'Order Confirmed',
+                        btnOkIcon: Icons.check,
+                        btnOkOnPress: () {
+                          Get.to(() => const BottomBar());
+                        },
+                      ).show();
+
+                      },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
