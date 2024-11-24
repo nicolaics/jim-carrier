@@ -14,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
   final ApiService apiService = ApiService();
   List<Map<String, dynamic>> items = [];  // Change the list type to dynamic to handle both String and Uint8List
 
@@ -163,11 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
       default:
         return NumberFormat.currency(locale: 'en_US', symbol: '\$');
     }
-  }
-
-  void _performSearch() {
-    final query = _searchController.text;
-    print("Searching for: $query");
   }
 
   @override
