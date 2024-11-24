@@ -34,9 +34,11 @@ class ApiService {
       );
       if (response.statusCode.isSuccessfulHttpStatusCode) {
         print('Changed succesfully');
+        print(response.body);
         return response.body;
       } else {
         print('Failed to update: ${response.body}');
+        print(response.body);
         throw "failed";
         // return "failed";
       }
@@ -218,6 +220,7 @@ class ApiService {
     };
 
     try {
+      print(jsonEncode(body));
       final response = await http.post(
         url,
         headers: {
@@ -232,6 +235,7 @@ class ApiService {
         return jsonDecode(response.body)['token'];
       } else {
         print('Failed to register user: ${response.body}');
+        print(response.body);
         return "failed";
       }
     } catch (e) {
@@ -244,7 +248,8 @@ class ApiService {
         required double weight,
         required double price,
         required String currency,
-        required String notes,
+        required String package_content,
+        required Uint8List? package_image,
         required String api}) async {
     String token2 = Get.find<UserController>().token;
     final url = Uri.parse((baseUrl + api));
@@ -254,7 +259,8 @@ class ApiService {
       'weight': weight,
       'price': price,
       'currency': currency,
-      'notes': notes,
+      'packageContent': package_content,
+      'packageImage': package_image,
     };
 
     try {
