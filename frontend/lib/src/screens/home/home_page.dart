@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchListing() async {
     try {
       String api = "/listing/all";
-      List<dynamic> response = await apiService.get(api: api) as List;  // Await the response
+      List<dynamic> response = await apiService.getListing(api: api) as List;  // Await the response
       print("Response: $response");
 
       List<Map<String, dynamic>> updatedItems = [];  // To store the updated items
@@ -66,7 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Error: $e');
     }
   }
-/***
+
+
+  /***
   // Async function to fetch data and update items list
   Future<void> fetchListing() async {
     // Dummy data to simulate API response
