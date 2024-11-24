@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
 import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
@@ -23,6 +25,7 @@ class TryScreen extends StatefulWidget {
 class _HomeScreenState extends State<TryScreen> {
   // final TextEditingController _searchController = TextEditingController();
   final ApiService apiService = ApiService();
+  final storage = const FlutterSecureStorage();
 
   String? userName;
   String? userEmail;
@@ -171,6 +174,8 @@ class _HomeScreenState extends State<TryScreen> {
                 textColor: Colors.red,
                 endIcon: false,
                 onPress: () async {
+                  apiService.logOut(api: '/user/logout');
+                  StorageService.deleteToken();
                   final controller = Controller();
                   await controller.signOut();
                   if (mounted) {
