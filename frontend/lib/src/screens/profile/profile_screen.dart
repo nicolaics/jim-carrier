@@ -6,26 +6,25 @@ import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/image_strings.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
   //final UserController userController = Get.find();
 
-
   @override
   Widget build(BuildContext context) {
-   // final String email = userController.email;
-   // print(email);
+    // final String email = userController.email;
+    // print(email);
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white, // Set the background color of the Scaffold to white
+        backgroundColor:
+            Colors.white, // Set the background color of the Scaffold to white
         body: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.all(tDefaultSize),
-            color: Colors.white, // Optional: Set the container's background color to white
+            color: Colors
+                .white, // Optional: Set the container's background color to white
             child: Column(
               children: [
                 Stack(
@@ -35,7 +34,8 @@ class ProfileScreen extends StatelessWidget {
                       height: 120,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: const Image(image: AssetImage(WelcomeScreenImage)),
+                        child:
+                            const Image(image: AssetImage(WelcomeScreenImage)),
                       ),
                     ),
                     Positioned(
@@ -110,9 +110,7 @@ class ProfileScreen extends StatelessWidget {
                   icon: LineAwesomeIcons.sign_out_alt_solid,
                   textColor: Colors.red,
                   endIcon: false,
-                  onPress: () {
-
-                  },
+                  onPress: () {},
                 )
               ],
             ),
