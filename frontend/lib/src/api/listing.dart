@@ -15,6 +15,7 @@ Future<dynamic> addListing(
     required api}) async {
   final url = Uri.parse((baseUrl + api));
   String? token2 = await StorageService.getToken();
+
   // Create the request body as per your payload struct
   Map<String, dynamic> body = {
     'destination': destination,
@@ -25,6 +26,7 @@ Future<dynamic> addListing(
     'lastReceivedDate': lastDate,
     'description': additionalInfo,
   };
+  
   try {
     final response = await http.post(
       url,
