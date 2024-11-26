@@ -19,7 +19,6 @@ Future<dynamic> login(
   };
 
   try {
-    print(jsonEncode(body));
     final response = await http.post(
       url,
       headers: {
@@ -199,7 +198,8 @@ Future<dynamic> registerWithGoogle(
   }
 }
 
-Future<dynamic> requestVerificationCode({required String email, required api}) async {
+Future<dynamic> requestVerificationCode(
+    {required String email, required api}) async {
   final url = Uri.parse((baseUrl + api));
   // Create the request body as per your payload struct
   Map<String, String> body = {
