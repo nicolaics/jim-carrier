@@ -48,7 +48,7 @@ Future<dynamic> addListing(
   }
 }
 
-Future<dynamic> getOwnListing({required String api}) async {
+Future<dynamic> getMyListing({required String api}) async {
   String? token2 = await StorageService.getToken();
   print("Token in api get: $token2");
   final url = Uri.parse((baseUrl + api));

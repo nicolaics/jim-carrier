@@ -1,21 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:jim/src/api/order.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'dart:typed_data';
 import '../../api/api_service.dart';
-
-import 'package:flutter/material.dart';
 
 class NewOrder extends StatefulWidget {
   final Map<String, dynamic> carrier; // Accepts carrier details as a parameter
 
-  const NewOrder({Key? key, required this.carrier}) : super(key: key);
+  const NewOrder({super.key, required this.carrier});
 
   @override
   State<NewOrder> createState() => _NewOrderState();
@@ -23,7 +22,8 @@ class NewOrder extends StatefulWidget {
 
 class _NewOrderState extends State<NewOrder> {
   final TextEditingController _weightController = TextEditingController();
-  final TextEditingController _contentsController = TextEditingController();// Controller for the weight input
+  final TextEditingController _contentsController =
+      TextEditingController(); // Controller for the weight input
   final ApiService apiService = ApiService();
   File? _selectedImage; // Variable to store the selected image
   Uint8List? photo;
@@ -43,7 +43,6 @@ class _NewOrderState extends State<NewOrder> {
     return weight * carrierPrice;
   }
 
-
   // Function to pick an image from the camera
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -53,10 +52,11 @@ class _NewOrderState extends State<NewOrder> {
       // Update the UI with the new photo
       setState(() {
         photo = bytes;
-        print(photo);// Update the photo variable with the new image bytes
+        print(photo); // Update the photo variable with the new image bytes
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final carrier = widget.carrier; // Access the passed carrier details
@@ -64,9 +64,10 @@ class _NewOrderState extends State<NewOrder> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "ORDER DETAILS",
-          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blue,
       ),
@@ -78,11 +79,14 @@ class _NewOrderState extends State<NewOrder> {
             // Profile Picture Section
             Center(
               child: CircleAvatar(
-                backgroundImage: carrier["profile_pic"] != null && carrier["profile_pic"] is Uint8List
+                backgroundImage: carrier["profile_pic"] != null &&
+                        carrier["profile_pic"] is Uint8List
                     ? MemoryImage(carrier["profile_pic"] as Uint8List)
                     : null,
                 radius: 60,
-                child: carrier["profile_pic"] == null ? const Icon(Icons.person, size: 50) : null,
+                child: carrier["profile_pic"] == null
+                    ? const Icon(Icons.person, size: 50)
+                    : null,
               ),
             ),
             const SizedBox(height: 20),
@@ -91,18 +95,23 @@ class _NewOrderState extends State<NewOrder> {
             Card(
               elevation: 4,
               color: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                    _buildDetailRow(Icons.person, "Name:", carrier["name"] ?? "Unknown"),
-                    _buildDetailRow(Icons.location_on, "Destination:", carrier["destination"] ?? "No destination"),
-                    _buildDetailRow(Icons.attach_money, "Price:", carrier["price"] ?? "No price"),
-                    _buildDetailRow(Icons.scale, "Available Weight:", carrier["available_weight"] ?? "No weight available"),
-                    _buildDetailRow(Icons.date_range, "Flight Date:", carrier["flight_date"] ?? "No date"),
+                    _buildDetailRow(
+                        Icons.person, "Name:", carrier["name"] ?? "Unknown"),
+                    _buildDetailRow(Icons.location_on, "Destination:",
+                        carrier["destination"] ?? "No destination"),
+                    _buildDetailRow(Icons.attach_money, "Price:",
+                        carrier["price"] ?? "No price"),
+                    _buildDetailRow(Icons.scale, "Available Weight:",
+                        carrier["available_weight"] ?? "No weight available"),
+                    _buildDetailRow(Icons.date_range, "Flight Date:",
+                        carrier["flight_date"] ?? "No date"),
                   ],
                 ),
               ),
@@ -123,7 +132,8 @@ class _NewOrderState extends State<NewOrder> {
             TextFormField(
               controller: _weightController,
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 20), // Increased text size for input
+              style: const TextStyle(
+                  fontSize: 20), // Increased text size for input
               decoration: InputDecoration(
                 hintText: "Enter weight you want to order",
                 filled: true,
@@ -200,7 +210,8 @@ class _NewOrderState extends State<NewOrder> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.camera_alt, size: 32, color: Colors.blue),
+                  icon: const Icon(Icons.camera_alt,
+                      size: 32, color: Colors.blue),
                   onPressed: _pickImage,
                 ),
               ],
@@ -224,8 +235,6 @@ class _NewOrderState extends State<NewOrder> {
                 ),
               ),
 
-
-
             const SizedBox(height: 24),
             const SizedBox(height: 8),
             Row(
@@ -240,7 +249,8 @@ class _NewOrderState extends State<NewOrder> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300], // Pay Now button color
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -264,27 +274,26 @@ class _NewOrderState extends State<NewOrder> {
                     double carrierPrice = 0.0;
                     String currencySymbol = "";
 
-
                     if (match != null) {
                       // Capture the currency symbol and numeric value
                       currencySymbol = match.group(1)?.trim() ?? ""; // E.g., $
-                      String numericPart = match.group(2)?.replaceAll(
-                          ",", "") ?? ""; // Remove commas from numbers
+                      String numericPart =
+                          match.group(2)?.replaceAll(",", "") ??
+                              ""; // Remove commas from numbers
                       // Try parsing the numeric part to double
                       carrierPrice = double.tryParse(numericPart) ?? 0.0;
                     }
                     // Calculate the total price
                     double price = _calculateTotalPrice();
                     // Handle Pay Later logic here
-                    await apiService.order(
+                    await createOrder(
                       listid: carrier["id"],
                       weight: weight,
                       price: price,
                       currency: carrier["currency"],
-                      package_content: _contentsController.text,
-                      package_image: photo,
-                      api:
-                      '/order', // Provide your API base URL
+                      packageContent: _contentsController.text,
+                      packageImage: photo,
+                      api: '/order', // Provide your API base URL
                     );
                     AwesomeDialog(
                       context: context,
@@ -300,7 +309,8 @@ class _NewOrderState extends State<NewOrder> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300], // Pay Later button color
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -312,10 +322,6 @@ class _NewOrderState extends State<NewOrder> {
                 ),
               ],
             ),
-
-
-
-
           ],
         ),
       ),
@@ -359,5 +365,3 @@ class _NewOrderState extends State<NewOrder> {
     );
   }
 }
-
-

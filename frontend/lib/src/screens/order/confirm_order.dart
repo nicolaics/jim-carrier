@@ -1,8 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:typed_data';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:jim/src/api/order.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/api_service.dart';
 
@@ -118,7 +120,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       print("Order IDDDDDD:");
                       print(orderNo);
                       print("Order Confirmed!");
-                      String response=await apiService.updateOrderStatus(orderNo: orderNo, orderStatus: "confirmed", api: "/order/order-status");
+                      String response=await updateOrderStatus(orderNo: orderNo, orderStatus: "confirmed", api: "/order/order-status");
                       print("response");
                       print(response);
                       AwesomeDialog(
@@ -151,7 +153,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   ElevatedButton(
                     onPressed: () async {
                       print("Order Rejected!");
-                      await apiService.updateOrderStatus(orderNo: orderNo, orderStatus: "cancelled", api: "/order/order-status");
+                      await updateOrderStatus(orderNo: orderNo, orderStatus: "cancelled", api: "/order/order-status");
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,

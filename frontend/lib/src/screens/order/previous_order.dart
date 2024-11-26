@@ -1,9 +1,11 @@
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:jim/src/api/order.dart';
 
 import '../../api/api_service.dart';
 
@@ -17,7 +19,6 @@ class PreviousOrderScreen extends StatefulWidget {
 
 
 class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
-  final TextEditingController _searchController = TextEditingController();
   final TextEditingController _reviewController = TextEditingController();
 
   final ApiService apiService = ApiService();
@@ -61,7 +62,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 ),
                 const SizedBox(height: 20),
                 const Text("Rate out of 5",
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
                 RatingBar.builder(
                   initialRating: _selectedRating.toDouble(), // Sets initial rating
                   minRating: 0,
@@ -118,7 +119,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   Future<void> fetchListing() async {
     try {
       String api = "/listing/carrier"; // Correct endpoint
-      var response = await apiService.getOrder(api: api); // Fetch API data
+      var response = await getAllOrders(api: api); // Fetch API data
 
       if (response is List) {
         List<Map<String, dynamic>> updatedItems = [];
@@ -153,7 +154,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   Future<void> fetchOrder() async {
     try {
       String api = "/order/giver"; // Correct endpoint
-      var response = await apiService.getOrder(api: api); // Fetch API data
+      var response = await getAllOrders(api: api); // Fetch API data
 
       if (response is List) {
         List<Map<String, dynamic>> updatedOrders = [];
@@ -219,7 +220,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       } else if (date is String) {
         parsedDate = DateTime.parse(date);
       } else {
-        throw FormatException("Invalid date format");
+        throw const FormatException("Invalid date format");
       }
       return DateFormat('MMM dd, yyyy').format(parsedDate);
     } catch (e) {
@@ -289,7 +290,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         decoration: BoxDecoration(
           color: isSelected ? Colors.blue : Colors.grey[300],
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 5,
@@ -364,10 +365,10 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         // Add logic for deleting the listing
                         print("Delete button pressed for ${item['carrier_name']}");
                       },
-                      child: const Text("Delete"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[300], // Red delete button
                       ),
+                      child: const Text("Delete"),
                     ),
                   ],
                 ),
