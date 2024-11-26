@@ -6,6 +6,7 @@ import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
+import 'package:jim/src/api/review.dart';
 
 import '../../api/api_service.dart';
 
@@ -94,7 +95,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     setState(() {
                       _selectedRating = 0; // Reset rating after submission
                     });
-                    await apiService.review(
+                    await createReview(
                       orderId: orderId,
                       reviewName: carrierName,
                       reviewContent: _reviewController.text,
