@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
@@ -127,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                     //TOKEN
                                     try {
-                                      String token = await apiService.login(
+                                      String token = await login(
                                         email: _emailController.text.trim(),
                                         password: _passwordController.text,
                                         api:
@@ -200,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                   dynamic response;
 
-                                  response = await apiService.loginWithGoogle(
+                                  response = await loginWithGoogle(
                                     userInfo: user,
                                     api:
                                         '/user/login/google', // Provide your API base URL
@@ -213,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
 
                                     response =
-                                        await apiService.registerWithGoogle(
+                                        await registerWithGoogle(
                                       userInfo: user,
                                       api:
                                           '/user/register/google', // Provide your API base URL
