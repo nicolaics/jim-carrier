@@ -23,6 +23,9 @@ class _AddListingScreenState extends State<AddListingScreen> {
   String? _selectedCurrency;
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _accountHolderName = TextEditingController();
+  final TextEditingController _bankName = TextEditingController();
+  final TextEditingController _bankAccountNo = TextEditingController();
   final TextEditingController _additionalInfoController =
       TextEditingController();
 
@@ -292,6 +295,47 @@ class _AddListingScreenState extends State<AddListingScreen> {
               ),
             ),
             const SizedBox(height: 20),
+            const Text(
+              'Account Holder Name',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            TextFormField(
+              controller: _accountHolderName,
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.person_outline_outlined),
+                  labelText: "Account Holder Name",
+                  border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+            const Text(
+              'Bank Name',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            TextFormField(
+              controller: _bankName,
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.house),
+                  labelText: "Bank Name",
+                  border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+            const Text(
+              'Bank Account Number',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            TextFormField(
+              controller: _bankAccountNo,
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.numbers),
+                  labelText: "Account Number",
+                  border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 20),
+
 
             Center(
               child: ElevatedButton(
