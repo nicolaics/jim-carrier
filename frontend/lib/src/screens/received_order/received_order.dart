@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jim/src/api/listing.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
 import 'dart:typed_data'; // For Uint8List
 import '../../api/api_service.dart';
@@ -26,7 +27,7 @@ class _ChatScreen extends State<ChatScreen> {
   Future<void> fetchListing() async {
     try {
       String api = "/order/carrier";
-      List<dynamic> response = await apiService.getListing(api: api) as List;
+      List<dynamic> response = await getAllListings(api: api) as List;
       print("Response: $response");
 
       List<Map<String, dynamic>> updatedItems = [];

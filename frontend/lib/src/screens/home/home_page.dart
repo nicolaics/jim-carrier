@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';  // Import the intl package
+import 'package:jim/src/api/listing.dart';
 import 'dart:typed_data';
 import '../../api/api_service.dart';
 import 'package:jim/src/screens/order/new_order.dart';
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchListing() async {
     try {
       String api = "/listing/all";
-      List<dynamic> response = await apiService.getListing(api: api) as List;  // Await the response
+      List<dynamic> response = await getAllListings(api: api) as List;  // Await the response
       print("Response: $response");
 
       List<Map<String, dynamic>> updatedItems = [];  // To store the updated items

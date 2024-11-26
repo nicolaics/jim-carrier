@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/flutter_storage.dart';
@@ -174,7 +175,7 @@ class _HomeScreenState extends State<TryScreen> {
                 textColor: Colors.red,
                 endIcon: false,
                 onPress: () async {
-                  apiService.logOut(api: '/user/logout');
+                  logout(api: '/user/logout');
                   StorageService.deleteToken();
                   final controller = Controller();
                   await controller.signOut();

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:jim/src/screens/try.dart';
 import 'home_page.dart';
 import '../order/previous_order.dart';
-import '../chat/chat_ui.dart';
+import '../received_order/received_order.dart';
 import '../listing/add_listing.dart';
 
 class BottomBar extends StatefulWidget {
