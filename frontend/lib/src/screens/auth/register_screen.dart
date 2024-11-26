@@ -1,12 +1,16 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/base_class/login_google.dart';
 import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
 import 'package:jim/src/screens/auth/otp_screen.dart';
+import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/api_service.dart';
 import 'package:get/get.dart';
 
@@ -260,7 +264,78 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 image: AssetImage(GoogleImg),
                                 width: 20,
                               ),
-                              onPressed: () {},
+                              onPressed: () async {
+                                try {
+                                  final controller =
+                                      Controller(); // Create an instance of Controller
+                                  final user = await controller
+                                      .loginWithGoogle(); // Call the method on the instance
+
+                                  dynamic response;
+
+                                  response = await loginWithGoogle(
+                                    userInfo: user,
+                                    api:
+                                        '/user/login/google', // Provide your API base URL
+                                  );
+
+                                  if (response == "toRegist") {
+                                    if (user['phoneNumber'] == null) {
+                                      // TODO: redirect to phone number screen or sign up screen without the password field
+                                      user['phoneNumber'] = "12345";
+                                    }
+
+                                    response =
+                                        await registerWithGoogle(
+                                      userInfo: user,
+                                      api:
+                                          '/user/register/google', // Provide your API base URL
+                                    );
+                                  }
+
+                                  Get.put(UserController(
+                                      token:
+                                          response)); // Store the email in UserController
+
+                                  if (response == 'failed') {
+                                    AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.error,
+                                      animType: AnimType.topSlide,
+                                      title: 'ERROR',
+                                      desc: 'Login not Successful',
+                                      btnOkIcon: Icons.check,
+                                      btnOkOnPress: () {},
+                                    ).show();
+                                  } else {
+                                    AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.success,
+                                      animType: AnimType.topSlide,
+                                      title: 'Sucess',
+                                      desc: 'Login Successful',
+                                      btnOkIcon: Icons.check,
+                                      btnOkOnPress: () {
+                                        Get.to(() => const BottomBar());
+                                      },
+                                    ).show();
+                                  }
+                                } on FirebaseAuthException catch (error) {
+                                  print(error.message);
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          content: Text(
+                                    error.message ?? "Something went wrong",
+                                  )));
+                                } catch (error) {
+                                  print(error);
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                          content: Text(
+                                    error.toString(),
+                                  )));
+                                }
+                              },
                               label: const Text('Sign In With Google',
                                   style: TextStyle(color: Colors.black))),
                         ),
