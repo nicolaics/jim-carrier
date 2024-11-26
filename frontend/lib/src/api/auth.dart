@@ -198,3 +198,29 @@ Future<dynamic> registerWithGoogle(
     print('Error occurred: $e');
   }
 }
+
+Future<dynamic> requestVerificationCode({required String email, required api}) async {
+  final url = Uri.parse((baseUrl + api));
+  // Create the request body as per your payload struct
+  Map<String, String> body = {
+    'email': email,
+  };
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if (response.statusCode.isSuccessfulHttpStatusCode) {
+      // Handle successful response
+      return "success";
+    } else {
+      // Handle errors, e.g. 400, 500, etc.
+      print('Failed to get code: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
+}
