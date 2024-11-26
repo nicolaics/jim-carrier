@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jim/src/api/profile.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/sizes.dart';
 import '../../api/api_service.dart';
@@ -122,7 +123,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         });
 
                         // Upload the new profile picture (optional)
-                        String response = await apiService.updateProfile(
+                        String response = await updateProfile(
                           img: bytes,
                           api: '/user/update-profile-picture',  // Provide your API base URL
                         );
