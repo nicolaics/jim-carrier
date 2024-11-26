@@ -1,15 +1,11 @@
-import 'dart:ffi';
 import 'dart:typed_data';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_status/http_status.dart';
 import 'package:jim/src/flutter_storage.dart';
 import 'dart:convert';
 
-import '../base_class/login_google.dart';
 
 const baseUrl = "http://ion-suhalim:9988/api/v1";
-
 //const baseUrl = "http://pravass-macbook-air:9988/api/v1";
 
 class ApiService {
@@ -249,8 +245,8 @@ class ApiService {
         required double weight,
         required double price,
         required String currency,
-        required String package_content,
-        required Uint8List? package_image,
+        required String packgeContent,
+        required Uint8List? packageImage,
         required String api}) async {
     String? token2= await StorageService.getToken();
     final url = Uri.parse((baseUrl + api));
@@ -260,8 +256,8 @@ class ApiService {
       'weight': weight,
       'price': price,
       'currency': currency,
-      'packageContent': package_content,
-      'packageImage': package_image,
+      'packageContent': packgeContent,
+      'packageImage': packageImage,
     };
 
     try {
