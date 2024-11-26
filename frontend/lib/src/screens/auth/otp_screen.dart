@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
@@ -96,7 +97,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
 
                       // Call the API with the OTP and other user data
-                      String result = await apiService.registerUser(
+                      String result = await registerUser(
                         name: name,
                         email: email,
                         password: password,

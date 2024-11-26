@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
@@ -216,7 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   );
                                   return; // Exit if the password length is invalid
                                 }
-                                await apiService.otpCode(
+                                await requestVerificationCode(
                                   email: email,
                                   api:
                                       '/user/send-verification', // Provide your API base URL
