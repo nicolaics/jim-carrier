@@ -1,15 +1,14 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
+import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
-import 'package:jim/src/screens/home/home_page.dart';
-
-import '../../api/api_service.dart';
 
 class AddListingScreen extends StatefulWidget {
-  const AddListingScreen({Key? key}) : super(key: key);
+  const AddListingScreen({super.key});
 
   @override
   _AddListingScreenState createState() => _AddListingScreenState();
@@ -31,7 +30,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ApiService apiService = ApiService();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -69,15 +67,15 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 layout: Layout.vertical,
                 dropdownDecoration: BoxDecoration(
                   color: Colors.white, // Set background color of the dropdown to white
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Colors.grey),
                 ),
                 disabledDropdownDecoration: BoxDecoration(
                   color: Colors.white, // Also set disabled state color to white
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Colors.grey),
                 ),
-                dropdownItemStyle: TextStyle(
+                dropdownItemStyle: const TextStyle(
                   color: Colors.black, // Set text color to black for better readability
                 ),
                 onCountryChanged: (country) {
@@ -331,7 +329,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
                     String timeZoneOffset = dateTime.timeZoneOffset.inHours >= 0
                         ? '+${dateTime.timeZoneOffset.inHours.toString().padLeft(2, '0')}'
-                        : '${dateTime.timeZoneOffset.inHours.toString().padLeft(3, '0')}';
+                        : dateTime.timeZoneOffset.inHours.toString().padLeft(3, '0');
 
                     // Adjust for minutes if needed
                     if (dateTime.timeZoneOffset.inMinutes % 60 != 0) {
@@ -362,7 +360,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
                   // Call the API to add the listing
 
-                 String result= await apiService.addListing(
+                 String result= await addListing(
                     destination: location,
                     weight: weight,
                     price: price,
