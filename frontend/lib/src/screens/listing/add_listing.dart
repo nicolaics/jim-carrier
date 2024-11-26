@@ -23,7 +23,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
   String? _selectedCurrency;
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _additionalInfoController = TextEditingController();
+  final TextEditingController _additionalInfoController =
+      TextEditingController();
 
   // Static list of currencies
   final List<String> _currencies = ['KRW', 'USD', 'GBP'];
@@ -66,7 +67,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
               child: CSCPicker(
                 layout: Layout.vertical,
                 dropdownDecoration: BoxDecoration(
-                  color: Colors.white, // Set background color of the dropdown to white
+                  color: Colors
+                      .white, // Set background color of the dropdown to white
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
                   border: Border.all(color: Colors.grey),
                 ),
@@ -76,7 +78,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   border: Border.all(color: Colors.grey),
                 ),
                 dropdownItemStyle: const TextStyle(
-                  color: Colors.black, // Set text color to black for better readability
+                  color: Colors
+                      .black, // Set text color to black for better readability
                 ),
                 onCountryChanged: (country) {
                   setState(() {
@@ -97,7 +100,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   });
                 },
               ),
-
             ),
             const SizedBox(height: 20),
 
@@ -149,9 +151,9 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     value: _selectedCurrency,
                     items: _currencies
                         .map((currency) => DropdownMenuItem(
-                      value: currency,
-                      child: Text(currency),
-                    ))
+                              value: currency,
+                              child: Text(currency),
+                            ))
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -183,7 +185,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     children: [
                       const Text(
                         'Departure Date',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       InkWell(
@@ -201,7 +204,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black),
@@ -209,7 +213,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           ),
                           child: Text(
                             _selectedDate != null
-                                ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
+                                ? DateFormat('yyyy-MM-dd')
+                                    .format(_selectedDate!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -227,7 +232,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     children: [
                       const Text(
                         'Last Date to Receive',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       InkWell(
@@ -245,7 +251,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black),
@@ -253,7 +260,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           ),
                           child: Text(
                             _lastDateToReceive != null
-                                ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!)
+                                ? DateFormat('yyyy-MM-dd')
+                                    .format(_lastDateToReceive!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -289,7 +297,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
                 onPressed: () async {
                   String removeFlags(String input) {
@@ -307,7 +316,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     removeFlags(_selectedCountry ?? '').trim(),
                   ].where((element) => element.isNotEmpty).join(', ');
 
-
                   print('Selected Country: $location');
                   print('Selected State: $_selectedState');
                   print('Selected City: $_selectedCity');
@@ -321,26 +329,32 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   print('Additional Info: ${_additionalInfoController.text}');
 
                   // Prepare the data for the addListing call
-
-                  double weight = double.tryParse(_weightController.text) ?? 0.0;
+                  double weight =
+                      double.tryParse(_weightController.text) ?? 0.0;
                   double price = double.tryParse(_priceController.text) ?? 0.0;
 
                   String formatDateWithTimeZone(DateTime dateTime) {
-                    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
+                    String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(dateTime);
                     String timeZoneOffset = dateTime.timeZoneOffset.inHours >= 0
                         ? '+${dateTime.timeZoneOffset.inHours.toString().padLeft(2, '0')}'
-                        : dateTime.timeZoneOffset.inHours.toString().padLeft(3, '0');
+                        : dateTime.timeZoneOffset.inHours
+                            .toString()
+                            .padLeft(3, '0');
 
                     // Adjust for minutes if needed
                     if (dateTime.timeZoneOffset.inMinutes % 60 != 0) {
-                      int minutes = (dateTime.timeZoneOffset.inMinutes.abs() % 60);
+                      int minutes =
+                          (dateTime.timeZoneOffset.inMinutes.abs() % 60);
                       timeZoneOffset += minutes < 10 ? '0$minutes' : '$minutes';
                     } else {
-                      timeZoneOffset += '00'; // Append zero minutes if no additional offset
+                      timeZoneOffset +=
+                          '00'; // Append zero minutes if no additional offset
                     }
 
                     // Assuming KST as a constant, you can replace this with a dynamic value if needed
-                    String timeZoneAbbreviation = 'KST'; // Change this according to the actual timezone if needed
+                    String timeZoneAbbreviation =
+                        'KST'; // Change this according to the actual timezone if needed
 
                     return '$formattedDate $timeZoneOffset$timeZoneAbbreviation';
                   }
@@ -353,14 +367,12 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       ? formatDateWithTimeZone(_lastDateToReceive!)
                       : '';
 
-// Print statements
+                  // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
 
-
                   // Call the API to add the listing
-
-                 String result= await addListing(
+                  String result = await addListing(
                     destination: location,
                     weight: weight,
                     price: price,
@@ -371,11 +383,11 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     api: "/listing",
                   );
 
-                 print(result);
+                  print(result);
                   Get.to(() => const BottomBar());
-
                 },
-                child: const Text('SUBMIT', style: TextStyle(color: Colors.white)),
+                child:
+                    const Text('SUBMIT', style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
