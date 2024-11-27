@@ -389,6 +389,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       itemCount: orderData.length,
       itemBuilder: (context, index) {
         final item = orderData[index];
+        final isPaymentPending = (item["payment_status"]?.toLowerCase() == "pending");
+
         return Card(
           elevation: 4,
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -416,17 +418,23 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 Text('Flight Date: ${item["listing"]["flight_date"]}'),
                 const SizedBox(height: 16),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        print("View Status pressed for Order #${item["id"]}");
-                      },
-                      child: const Text("View Status"),
+                      onPressed: isPaymentPending
+                          ? () {
+                        print("Pay Now pressed for Order #${item["id"]}");
+                        // Add your payment logic here
+                      }
+                          : null, // Disabled if payment is not pending
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                        isPaymentPending ? Colors.blue : Colors.grey,
+                      ),
+                      child: const Text("Pay Now"),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Pass a valid key to the modal
                         _showReviewModal(
                           item["listing"]["carrier_name"] ?? "Unknown Carrier",
                           item["id"],
@@ -446,5 +454,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       },
     );
   }
+
+
 
 }
