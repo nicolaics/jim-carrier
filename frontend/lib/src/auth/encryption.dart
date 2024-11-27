@@ -1,22 +1,29 @@
-import 'package:encrypt/encrypt.dart';
+import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 final holderKey =
-    Key.fromUtf8(dotenv.env['ENCRYPTION_HOLDER_KEY'] ?? 'default_key');
+    enc.Key.fromUtf8(dotenv.env['ENCRYPTION_HOLDER_KEY'] ?? 'default_key');
 final holderIv =
-    IV.fromUtf8(dotenv.env['ENCRYPTION_HOLDER_IV'] ?? 'default_key');
+    enc.IV.fromUtf8(dotenv.env['ENCRYPTION_HOLDER_IV'] ?? 'default_key');
 
 final numberKey =
-    Key.fromUtf8(dotenv.env['ENCRYPTION_NUMBER_KEY'] ?? 'default_key');
+    enc.Key.fromUtf8(dotenv.env['ENCRYPTION_NUMBER_KEY'] ?? 'default_key');
 final numberIv =
-    IV.fromUtf8(dotenv.env['ENCRYPTION_NUMBER_IV'] ?? 'default_key');
+    enc.IV.fromUtf8(dotenv.env['ENCRYPTION_NUMBER_IV'] ?? 'default_key');
 
-Map<String, Encrypted> encryptData(
+
+Map<String, enc.Encrypted> encryptData(
     {required String accountHolder, required String accountNumber}) {
-  final holderEncrypter = Encrypter(AES(holderKey));
-  final numberEncrypter = Encrypter(AES(numberKey));
+  print(dotenv.env['ENCRYPTION_HOLDER_KEY'] ?? 'default_key');
+  print(holderIv);
 
+  final holderEncrypter = enc.Encrypter(enc.AES(holderKey));
+  print("hoho");
+  final numberEncrypter = enc.Encrypter(enc.AES(numberKey));
+
+  print(accountHolder);
   final holderEncrypted = holderEncrypter.encrypt(accountHolder, iv: holderIv);
+  print("hoho");
   final numberEncrypted = numberEncrypter.encrypt(accountHolder, iv: numberIv);
 
   // send it later using .base64
@@ -24,9 +31,9 @@ Map<String, Encrypted> encryptData(
 }
 
 Map<String, String> decryptData(
-    {required Encrypted accountHolder, required Encrypted accountNumber}) {
-  final holderEncrypter = Encrypter(AES(holderKey));
-  final numberEncrypter = Encrypter(AES(numberKey));
+    {required enc.Encrypted accountHolder, required enc.Encrypted accountNumber}) {
+  final holderEncrypter = enc.Encrypter(enc.AES(holderKey));
+  final numberEncrypter = enc.Encrypter(enc.AES(numberKey));
 
   final holderDecrypted = holderEncrypter.decrypt(accountHolder, iv: holderIv);
   final numberDecrypted = numberEncrypter.decrypt(accountNumber, iv: numberIv);
