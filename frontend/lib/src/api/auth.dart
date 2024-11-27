@@ -5,6 +5,43 @@ import 'package:http_status/http_status.dart';
 import 'package:jim/src/api/api_service.dart';
 import 'package:jim/src/flutter_storage.dart';
 
+
+Future<dynamic> getBankDetails({required int carrierID, required api}) async {
+  print("inside");
+  print(carrierID);
+  final url = Uri.parse((baseUrl + api));
+  String? token = await StorageService.getToken();
+
+  Map<String, int> body = {
+    'carrierId': carrierID,
+  };
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    if (response.statusCode.isSuccessfulHttpStatusCode) {
+      //print('response ${response.body}');
+      if(jsonDecode(response.body)['status']=='exist'){
+        return jsonDecode(response.body);
+      }
+      else{
+        return "not_success";
+      }
+
+    } else {
+      //print('Error: ${response.body}');
+      return {"status": "failed"}; // Returning a consistent response format
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
+}
+
 Future<dynamic> login(
     {required String email,
     required String password,
