@@ -12,6 +12,9 @@ Future<dynamic> addListing(
     required String date,
     required String lastDate,
     required String additionalInfo,
+      required String accountHolder,
+      required String bankName,
+      required String accountNumber,
     required api}) async {
   final url = Uri.parse((baseUrl + api));
   String? token2 = await StorageService.getToken();
@@ -25,6 +28,9 @@ Future<dynamic> addListing(
     'departureDate': date,
     'lastReceivedDate': lastDate,
     'description': additionalInfo,
+    'accountNumber': accountNumber,
+    'accountHolder': accountHolder,
+    'bankName': bankName,
   };
   
   try {
