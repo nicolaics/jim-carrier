@@ -1,8 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-
+import 'package:encrypt/encrypt.dart' as enc;
 import 'package:image_picker/image_picker.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
 import '../../api/api_service.dart';
+import '../../auth/encryption.dart';
 
 class NewOrder extends StatefulWidget {
   final Map<String, dynamic> carrier; // Accepts carrier details as a parameter
@@ -25,6 +27,7 @@ class _NewOrderState extends State<NewOrder> {
   final TextEditingController _contentsController =
       TextEditingController(); // Controller for the weight input
   final ApiService apiService = ApiService();
+
   Uint8List? photo;
   Uint8List? photoPayment;
 
@@ -252,10 +255,55 @@ class _NewOrderState extends State<NewOrder> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    final bankName = "Your Bank Name";
-                    final accountNumber = "1234567890";
-                    final accountHolderName = "Account Holder Name";
+                  onPressed: () async{
+                    print("ID $carrier['id']");
+
+                    String api = "/order/get-payment-details";
+
+// Initialize variables
+                    String bankName = "";
+                    String accountNumber = "";
+                    String accountHolderName = "";
+
+                    try {
+                      // Await the response to resolve the Future
+                      dynamic response = await getBankDetails(carrierID: 3, api: api);
+
+                      if (response != null && response is Map && response["status"] == "exist") {
+                        // Create Encrypted objects from the response data (convert them to Encrypted type)
+                        final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
+                        final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
+
+                        try {
+                          // Decrypt the sensitive data using Encrypted objects
+                          final decrypted = decryptData(
+                            accountHolder: encryptedHolder,
+                            accountNumber: encryptedNumber,
+                          );
+
+                          print("Decrypted Data:");
+                          print("Holder: ${decrypted['holder']}");
+                          print("Number: ${decrypted['number']}");
+
+                          // Assign decrypted values
+                          bankName = response["bank_name"] ?? "";
+                          accountNumber = decrypted['number'] ?? "";
+                          accountHolderName = decrypted['holder'] ?? "";
+
+                          print("Bank Name: $bankName");
+                          print("Account Number: $accountNumber");
+                          print("Account Holder Name: $accountHolderName");
+                        } catch (e) {
+                          print("Error during decryption: $e");
+                        }
+                      } else {
+                        print("Failed to fetch payment details. Response: $response");
+                      }
+                    } catch (e) {
+                      print("An error occurred: $e");
+                    }
+
+
 
                     showModalBottomSheet(
                       context: context,
@@ -299,9 +347,9 @@ class _NewOrderState extends State<NewOrder> {
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                    _buildDetailRow(Icons.account_balance, "Bank Name:", bankName),
-                                    _buildDetailRow(Icons.credit_card, "Account No:", accountNumber),
-                                    _buildDetailRow(Icons.person, "Account Holder:", accountHolderName),
+                                    _buildDetailRow(Icons.account_balance, "Bank Name:", bankName!),
+                                    _buildDetailRow(Icons.credit_card, "Account No:", accountNumber!),
+                                    _buildDetailRow(Icons.person, "Account Holder:", accountHolderName!),
                                     const SizedBox(height: 12),
                                     Row(
                                       children: [
