@@ -14,6 +14,8 @@ import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/api_service.dart';
 import 'package:get/get.dart';
 
+import '../../flutter_storage.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
   @override
@@ -278,48 +280,116 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     api:
                                         '/user/login/google', // Provide your API base URL
                                   );
-
                                   if (response == "toRegist") {
                                     if (user['phoneNumber'] == null) {
-                                      // TODO: redirect to phone number screen or sign up screen without the password field
-                                      user['phoneNumber'] = "12345";
+                                      // Display the bottom sheet to collect phone number
+                                      showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true, // Ensure the sheet takes minimal space
+                                        builder: (BuildContext context) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              left: 16.0,
+                                              right: 16.0,
+                                              top: 16.0,
+                                              bottom: MediaQuery.of(context).viewInsets.bottom + 16.0, // Adjust for keyboard
+                                            ),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min, // Ensures the column takes the minimal space
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Please enter your phone number",
+                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                  ),
+                                                  SizedBox(height: 20),
+                                                  TextField(
+                                                    controller: _phoneController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Phone Number',
+                                                      border: OutlineInputBorder(),
+                                                    ),
+                                                    keyboardType: TextInputType.phone,
+                                                    autofocus: true, // Focus on this field as soon as the bottom sheet appears
+                                                  ),
+                                                  SizedBox(height: 20),
+                                                  ElevatedButton(
+                                                    onPressed: () async {
+                                                      final phoneNumber = _phoneController?.text;
+
+                                                      if (phoneNumber != null && phoneNumber.isNotEmpty) {
+                                                        print("Phone number entered: $phoneNumber");
+
+                                                        // Safe navigation to pop the bottom sheet
+                                                        if (mounted) {
+                                                          Navigator.pop(context); // Close the bottom sheet if widget is still mounted
+                                                        }
+
+                                                        user['phoneNumber'] = phoneNumber; // Update user data
+
+                                                        // Proceed with registration
+                                                        response = await registerWithGoogle(
+                                                          userInfo: user,
+                                                          api: '/user/register/google', // Provide your API base URL
+                                                        );
+
+                                                        print("Registration Response: $response");
+
+                                                        // Store token after registration
+                                                        await StorageService.storeToken(response);
+
+                                                        // Only show dialogs if widget is still mounted
+                                                        // if (mounted) {
+                                                        if (response == 'failed') {
+                                                          // Handle registration failure
+                                                          AwesomeDialog(
+                                                            context: context,
+                                                            dialogType: DialogType.error,
+                                                            animType: AnimType.topSlide,
+                                                            title: 'ERROR',
+                                                            desc: 'Login not Successful',
+                                                            btnOkIcon: Icons.check,
+                                                            btnOkOnPress: () {},
+                                                          ).show();
+                                                        } else {
+                                                          // Handle registration success
+                                                          print("jere");
+                                                          //  Get.to(() => const BottomBar());
+                                                          AwesomeDialog(
+                                                            context: context,
+                                                            dialogType: DialogType.success,
+                                                            animType: AnimType.topSlide,
+                                                            title: 'Success',
+                                                            desc: 'Login Successful',
+                                                            btnOkIcon: Icons.check,
+                                                            btnOkOnPress: () {
+                                                              // Navigate to the BottomBar screen after the dialog is dismissed
+                                                              //   if (mounted) {
+                                                              Get.to(() => const BottomBar());
+                                                              // }
+                                                            },
+                                                          ).show();
+                                                        }
+                                                      }
+                                                      //    } else {
+                                                      //    print("Phone number is empty.");
+                                                      //}
+                                                    },
+                                                    child: Text("Submit"),
+                                                    style: ElevatedButton.styleFrom(
+                                                      minimumSize: Size(200, 50), // Set button size
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
                                     }
-
-                                    response =
-                                        await registerWithGoogle(
-                                      userInfo: user,
-                                      api:
-                                          '/user/register/google', // Provide your API base URL
-                                    );
                                   }
 
-                                  Get.put(UserController(
-                                      token:
-                                          response)); // Store the email in UserController
-
-                                  if (response == 'failed') {
-                                    AwesomeDialog(
-                                      context: context,
-                                      dialogType: DialogType.error,
-                                      animType: AnimType.topSlide,
-                                      title: 'ERROR',
-                                      desc: 'Login not Successful',
-                                      btnOkIcon: Icons.check,
-                                      btnOkOnPress: () {},
-                                    ).show();
-                                  } else {
-                                    AwesomeDialog(
-                                      context: context,
-                                      dialogType: DialogType.success,
-                                      animType: AnimType.topSlide,
-                                      title: 'Sucess',
-                                      desc: 'Login Successful',
-                                      btnOkIcon: Icons.check,
-                                      btnOkOnPress: () {
-                                        Get.to(() => const BottomBar());
-                                      },
-                                    ).show();
-                                  }
                                 } on FirebaseAuthException catch (error) {
                                   print(error.message);
                                   ScaffoldMessenger.of(context)
