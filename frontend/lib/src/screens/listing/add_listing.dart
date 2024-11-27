@@ -1,11 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
+import 'package:jim/src/auth/encryption.dart';
 
 class AddListingScreen extends StatefulWidget {
   const AddListingScreen({super.key});
@@ -414,7 +416,25 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
+                      final encrypted = encryptData(
+                        accountHolder: _accountHolderName.text,
+                        accountNumber: _bankAccountNo.text,
+                      );
 
+                      print("Encrypted Data:");
+                      print("Holder: ${encrypted['holder']?.base64}");
+                      print("Number: ${encrypted['number']?.base64}");
+
+                      final decrypted = decryptData(
+                        accountHolder: encrypted['holder']!,
+                        accountNumber: encrypted['number']!,
+                      );
+
+                      print("Decrypted Data:");
+                      print("Holder: ${decrypted['holder']}");
+                      print("Number: ${decrypted['number']}");
+
+                  print("tumbler");
                   // Call the API to add the listing
                   String result = await addListing(
                     destination: location,
@@ -424,10 +444,38 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     date: date,
                     lastDate: lastDate,
                     additionalInfo: _additionalInfoController.text,
+                    accountHolder: encrypted["holder"]!.base64,
+                    accountNumber: encrypted["number"]!.base64,
+                    bankName: _bankName.text,
                     api: "/listing",
                   );
 
                   print(result);
+                  if(result=="success"){
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.success,
+                      animType: AnimType.topSlide,
+                      title: 'Sucess',
+                      desc: 'Listing Successful',
+                      btnOkIcon: Icons.check,
+                      btnOkOnPress: () {
+                        Get.to(() => const BottomBar());
+                      },
+                    ).show();
+                  }
+                  else{
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      animType: AnimType.topSlide,
+                      title: 'ERROR',
+                      desc: 'Listing not Successful',
+                      btnOkIcon: Icons.check,
+                      btnOkOnPress: () {
+                      },
+                    ).show();
+                  }
                   Get.to(() => const BottomBar());
                 },
                 child:
