@@ -299,26 +299,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                 mainAxisSize: MainAxisSize.min, // Ensures the column takes the minimal space
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
-                                                  Text(
+                                                  const Text(
                                                     "Please enter your phone number",
                                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                   ),
-                                                  SizedBox(height: 20),
+                                                  const SizedBox(height: 20),
                                                   TextField(
                                                     controller: _phoneController,
-                                                    decoration: InputDecoration(
+                                                    decoration: const InputDecoration(
                                                       labelText: 'Phone Number',
                                                       border: OutlineInputBorder(),
                                                     ),
                                                     keyboardType: TextInputType.phone,
                                                     autofocus: true, // Focus on this field as soon as the bottom sheet appears
                                                   ),
-                                                  SizedBox(height: 20),
+                                                  const SizedBox(height: 20),
                                                   ElevatedButton(
                                                     onPressed: () async {
-                                                      final phoneNumber = _phoneController?.text;
+                                                      final phoneNumber = _phoneController.text;
 
-                                                      if (phoneNumber != null && phoneNumber.isNotEmpty) {
+                                                      if (phoneNumber.isNotEmpty) {
                                                         print("Phone number entered: $phoneNumber");
 
                                                         // Safe navigation to pop the bottom sheet
@@ -327,6 +327,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                         }
 
                                                         user['phoneNumber'] = phoneNumber; // Update user data
+                                                        user['fcmToken'] = StorageService.getFcmToken();
 
                                                         // Proceed with registration
                                                         response = await registerWithGoogle(
@@ -376,10 +377,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                       //    print("Phone number is empty.");
                                                       //}
                                                     },
-                                                    child: Text("Submit"),
                                                     style: ElevatedButton.styleFrom(
-                                                      minimumSize: Size(200, 50), // Set button size
+                                                      minimumSize: const Size(200, 50), // Set button size
                                                     ),
+                                                    child: const Text("Submit"),
                                                   ),
                                                 ],
                                               ),

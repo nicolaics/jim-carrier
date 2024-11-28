@@ -208,12 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     api:
                                         '/user/login/google', // Provide your API base URL
                                   );
-/***
-                                  if (response == "toRegist") {
-                                    if (user['phoneNumber'] == null) {
-                                      // TODO: redirect to phone number screen or sign up screen without the password field
-                                      user['phoneNumber'] = "12345";
-                                    }***/
+                                  
                                   if (response == "toRegist") {
                                     if (user['phoneNumber'] == null) {
                                       // Display the bottom sheet to collect phone number
@@ -233,26 +228,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 mainAxisSize: MainAxisSize.min, // Ensures the column takes the minimal space
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
-                                                  Text(
+                                                  const Text(
                                                     "Please enter your phone number",
                                                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                   ),
-                                                  SizedBox(height: 20),
+                                                  const SizedBox(height: 20),
                                                   TextField(
                                                     controller: _phoneController,
-                                                    decoration: InputDecoration(
+                                                    decoration: const InputDecoration(
                                                       labelText: 'Phone Number',
                                                       border: OutlineInputBorder(),
                                                     ),
                                                     keyboardType: TextInputType.phone,
                                                     autofocus: true, // Focus on this field as soon as the bottom sheet appears
                                                   ),
-                                                  SizedBox(height: 20),
+                                                  const SizedBox(height: 20),
                                                   ElevatedButton(
                                                     onPressed: () async {
-                                                      final phoneNumber = _phoneController?.text;
+                                                      final phoneNumber = _phoneController.text;
 
-                                                      if (phoneNumber != null && phoneNumber.isNotEmpty) {
+                                                      if (phoneNumber.isNotEmpty) {
                                                         print("Phone number entered: $phoneNumber");
 
                                                         // Safe navigation to pop the bottom sheet
@@ -261,6 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         }
 
                                                         user['phoneNumber'] = phoneNumber; // Update user data
+                                                        user['fcmToken'] = StorageService.getFcmToken();
 
                                                         // Proceed with registration
                                                         response = await registerWithGoogle(
@@ -310,10 +306,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     //    print("Phone number is empty.");
                                                       //}
                                                     },
-                                                    child: Text("Submit"),
                                                     style: ElevatedButton.styleFrom(
-                                                      minimumSize: Size(200, 50), // Set button size
+                                                      minimumSize: const Size(200, 50), // Set button size
                                                     ),
+                                                    child: const Text("Submit"),
                                                   ),
                                                 ],
                                               ),

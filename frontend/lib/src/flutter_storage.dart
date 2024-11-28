@@ -9,9 +9,19 @@ class StorageService {
     print("stored token");
   }
 
+  static Future<void> storeFcmToken(String? fcmToken) async {
+    await _storage.write(key: 'fcmToken', value: fcmToken);
+    print("stored token");
+  }
+
   // Retrieve token
   static Future<String> getToken() async {
     return await _storage.read(key: 'token') ?? '';
+  }
+
+  // Retrieve token
+  static Future<String> getFcmToken() async {
+    return await _storage.read(key: 'fcmToken') ?? '';
   }
 
   // Delete token
