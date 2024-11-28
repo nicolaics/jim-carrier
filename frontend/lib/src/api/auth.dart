@@ -91,6 +91,8 @@ Future<dynamic> registerUser({
   // Encode the profile picture as a base64 string
   String profilePictureBase64 = base64Encode(profilePicture);
 
+  final fcmToken = StorageService.getFcmToken();
+
   // Create the request body as per your backend payload structure
   Map<String, dynamic> body = {
     'name': name,
@@ -99,6 +101,7 @@ Future<dynamic> registerUser({
     'phoneNumber': phoneNumber,
     'profilePicture': profilePictureBase64,
     'verificationCode': verification,
+    'fcmToken': fcmToken,
   };
 
   try {
