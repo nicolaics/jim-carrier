@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:673842473312:android:e99ef762b6d1c323f15605",
         "android_client_info": {
-          "package_name": "com.example.google_auth"
+          "package_name": "com.example.jim"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "673842473312-ppmcncpsqqi6s0qqou08cf8mhlpvit7h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.google_auth",
+            "package_name": "com.example.jim",
             "certificate_hash": "8ecfa3f277c236a0ec00dd6fdef2b47bf74e3f18"
           }
         },

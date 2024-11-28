@@ -14,6 +14,7 @@ dependencies {
     // For example, to use Firebase Authentication:
     implementation 'com.google.firebase:firebase-auth'
     // Add other Firebase dependencies as needed
+    implementation 'com.google.firebase:firebase-analytics'
 }
 
 android {
@@ -31,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.google_auth" // Unique Application ID
+        applicationId = "com.exxample.jim" // Unique Application ID
         minSdk = flutter.minSdkVersion // Minimum SDK version
         targetSdk = flutter.targetSdkVersion // Target SDK version
         versionCode = flutter.versionCode // Version code

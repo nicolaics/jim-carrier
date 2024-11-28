@@ -11,7 +11,9 @@ class FirebaseNotification {
   final _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> initNotifications() async {
+    await _firebaseMessaging.setAutoInitEnabled(false);
     await _firebaseMessaging.requestPermission();
+
     final fcmToken = await _firebaseMessaging.getToken();
     print('FCM Token: $fcmToken');
 
