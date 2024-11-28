@@ -347,9 +347,9 @@ class _NewOrderState extends State<NewOrder> {
                                       ],
                                     ),
                                     const SizedBox(height: 12),
-                                    _buildDetailRow(Icons.account_balance, "Bank Name:", bankName!),
-                                    _buildDetailRow(Icons.credit_card, "Account No:", accountNumber!),
-                                    _buildDetailRow(Icons.person, "Account Holder:", accountHolderName!),
+                                    _buildDetailRow(Icons.account_balance, "Bank Name:", bankName),
+                                    _buildDetailRow(Icons.credit_card, "Account No:", accountNumber),
+                                    _buildDetailRow(Icons.person, "Account Holder:", accountHolderName),
                                     const SizedBox(height: 12),
                                     Row(
                                       children: [

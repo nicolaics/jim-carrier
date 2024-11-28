@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:jim/src/flutter_storage.dart';
 
 class UserController extends GetxController {
   final String token;
@@ -19,11 +20,6 @@ class Controller extends GetxController {
 
     final googleAuth = await googleAccount?.authentication;
     print("googleAuth: ${googleAuth?.idToken}");
-    
-    // final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
-
-    // String? token = await FirebaseMessaging.instance.getToken();
-    // print("fcmId Token: $token");
 
     // signing in with firebase auth
     final credential = GoogleAuthProvider.credential(
@@ -38,12 +34,12 @@ class Controller extends GetxController {
     // print("usercredential:  $userCredential");
     print("usercredential user:  ${userCredential.user}");
     
-    // return userCredential.user;
+    final fcmToken = await StorageService.getFcmToken();
 
     Map<String, dynamic> response = {
       "idToken": googleAuth?.idToken,
       "serverAuthCode": googleAccount?.serverAuthCode,
-      "fcmToken": "1234",
+      "fcmToken": fcmToken,
       "name": userCredential.user?.displayName,
       "profilePictureUrl": userCredential.user?.photoURL,
       "phoneNumber": userCredential.user?.phoneNumber,

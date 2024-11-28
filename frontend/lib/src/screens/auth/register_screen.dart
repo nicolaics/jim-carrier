@@ -327,7 +327,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                         }
 
                                                         user['phoneNumber'] = phoneNumber; // Update user data
-                                                        user['fcmToken'] = StorageService.getFcmToken();
 
                                                         // Proceed with registration
                                                         response = await registerWithGoogle(
