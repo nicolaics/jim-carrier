@@ -20,7 +20,7 @@ class _BottomBar extends State<BottomBar> {
 
     return Scaffold(
       bottomNavigationBar: Obx(
-            () => NavigationBar(
+        () => NavigationBar(
           elevation: 0,
           selectedIndex: controller.selectedindex.value,
           onDestinationSelected: (index) {
@@ -28,7 +28,8 @@ class _BottomBar extends State<BottomBar> {
               // Navigate to the Add Listing screen separately
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddListingScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const AddListingScreen()),
               );
             } else {
               // Change the selected index for other screens
@@ -37,7 +38,8 @@ class _BottomBar extends State<BottomBar> {
           },
           destinations: [
             NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-            NavigationDestination(icon: Icon(Icons.document_scanner), label: "Previous"),
+            NavigationDestination(
+                icon: Icon(Icons.document_scanner), label: "Previous"),
             NavigationDestination(icon: Icon(Icons.add), label: "Add Listing"),
             NavigationDestination(icon: Icon(Icons.chat), label: "Chat Bot"),
             NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
@@ -55,7 +57,6 @@ class _BottomBar extends State<BottomBar> {
   }
 }
 
-
 class NavigationController extends GetxController {
   // Set the initial index to 0 to show the HomeScreen first
   final Rx<int> selectedindex = 0.obs;
@@ -65,7 +66,7 @@ class NavigationController extends GetxController {
     const HomeScreen(),
     const PreviousOrderScreen(),
     const AddListingScreen(),
-    const ChatScreen(),
+    const ReceivedOrder(),
     const TryScreen(),
   ];
 }
