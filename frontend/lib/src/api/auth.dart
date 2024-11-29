@@ -45,6 +45,7 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
 Future<dynamic> login(
     {required String email,
     required String password,
+    required String fcmToken,
     required String api}) async {
   final url = Uri.parse((baseUrl + api));
   print(email);
@@ -84,14 +85,13 @@ Future<dynamic> registerUser({
   required String phoneNumber,
   required Uint8List profilePicture,
   required String verification,
-  required String api,
+  required String fcmToken,
+  required String api
 }) async {
   final url = Uri.parse(baseUrl + api);
 
   // Encode the profile picture as a base64 string
   String profilePictureBase64 = base64Encode(profilePicture);
-
-  String? fcmToken = await StorageService.getFcmToken();
 
   // Create the request body as per your backend payload structure
   Map<String, dynamic> body = {

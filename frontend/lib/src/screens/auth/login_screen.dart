@@ -130,9 +130,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                     //TOKEN
                                     try {
+                                      final fcmToken = await StorageService.getFcmToken();
+
                                       String token = await login(
                                         email: _emailController.text.trim(),
                                         password: _passwordController.text,
+                                        fcmToken: fcmToken,
                                         api:
                                             '/user/login', // Provide your API base URL
                                       );

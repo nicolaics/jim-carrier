@@ -6,6 +6,7 @@ import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
 import '../../api/api_service.dart';
 
@@ -95,6 +96,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       Uint8List imageBytes = byteData.buffer.asUint8List();
                       // Encode bytes to Base64
 
+                      final fcmToken = await StorageService.getFcmToken();
 
                       // Call the API with the OTP and other user data
                       String result = await registerUser(
@@ -104,6 +106,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         phoneNumber: phoneNumber,
                         profilePicture: imageBytes,
                         verification: otp, // Pass the OTP value to the API
+                        fcmToken: fcmToken,
                         api: '/user/register', // Provide your API base URL
                       );
 
