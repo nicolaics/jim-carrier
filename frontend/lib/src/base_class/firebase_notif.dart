@@ -9,12 +9,21 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
 
 // TODO: handle message when in app
 Future<void> _showMessage(RemoteMessage message) async {
-    // Display a local notification or a dialog with the message
-    print('Title: ${message.notification?.title}, Body: ${message.notification?.body}');
+  // Display a local notification or a dialog with the message
+  print(
+      'Title: ${message.notification?.title}, Body: ${message.notification?.body}');
 
-    // You can integrate a dialog or notification package here for UI
-    print('Payload: ${message.data}');
+  // You can integrate a dialog or notification package here for UI
+  print('Payload: ${message.data}');
+}
+
+Future<void> _handleNotificationClick(RemoteMessage message) async {
+  if (message.data['order_id'] != null) {
+    Map<String, String> order = {
+      "id": message.data['order_id']
+    };
   }
+}
 
 class FirebaseNotification {
   final _firebaseMessaging = FirebaseMessaging.instance;
