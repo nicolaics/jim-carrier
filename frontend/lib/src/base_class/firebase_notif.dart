@@ -7,6 +7,15 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
   print('Payload: ${message.data}');
 }
 
+// TODO: handle message when in app
+Future<void> _showMessage(RemoteMessage message) async {
+    // Display a local notification or a dialog with the message
+    print('Title: ${message.notification?.title}, Body: ${message.notification?.body}');
+
+    // You can integrate a dialog or notification package here for UI
+    print('Payload: ${message.data}');
+  }
+
 class FirebaseNotification {
   final _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -18,6 +27,18 @@ class FirebaseNotification {
     print('FCM Token: $fcmToken');
 
     await StorageService.storeFcmToken(fcmToken);
+
+    // TODO: Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Foreground message received: ${message.notification?.title}');
+      _showMessage(message);
+    });
+
+    // TODO: Handle background messages
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Message clicked when app opened: ${message.notification?.title}');
+      _showMessage(message);
+    });
 
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   }

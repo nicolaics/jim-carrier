@@ -32,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.exxample.jim" // Unique Application ID
+        applicationId = "com.example.jim" // Unique Application ID
         minSdk = flutter.minSdkVersion // Minimum SDK version
         targetSdk = flutter.targetSdkVersion // Target SDK version
         versionCode = flutter.versionCode // Version code
