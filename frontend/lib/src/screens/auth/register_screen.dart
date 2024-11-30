@@ -369,7 +369,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                               Get.to(() => const BottomBar());
                                                               // }
                                                             },
-                                                          ).show();
+                                                          ).show();git p
                                                         }
                                                       }
                                                       //    } else {
