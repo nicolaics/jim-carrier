@@ -131,7 +131,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                         desc: 'Order Confirmed',
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {
-                          Get.to(() => const BottomBar());
+                          Get.to(() => const BottomBar(0));
                         },
                       ).show();
                     },
@@ -162,7 +162,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                         desc: 'Order Confirmed',
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {
-                          Get.to(() => const BottomBar());
+                          Get.to(() => const BottomBar(0));
                         },
                       ).show();
 
