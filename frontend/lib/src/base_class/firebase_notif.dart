@@ -1,5 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/screens/order/confirm_order.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
   print('Title: ${message.notification?.title}');
@@ -21,7 +24,10 @@ Future<void> _handleNotificationClick(RemoteMessage message) async {
   if (message.data['order_id'] != null) {
     Map<String, String> order = {
       "id": message.data['order_id']
+
     };
+  // TODO: get the api and send it to confirmOrder
+  //  Get.to(() => const ConfirmOrder(orderData: orderData));
   }
 }
 
