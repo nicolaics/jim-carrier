@@ -47,7 +47,7 @@ class _BottomBar extends State<BottomBar> {
           btnOkOnPress: () async {
             // If confirmed, navigate to the login page or close the app
             logout(api: '/user/logout');
-            StorageService.deleteToken();
+            StorageService.deleteTokens();
             final controller = Controller();
             await controller.signOut();
             if (mounted) {

@@ -9,7 +9,7 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
   print("inside");
   print(carrierID);
   final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getToken();
+  String? token = await StorageService.getAccessToken();
 
   Map<String, int> body = {
     'carrierId': carrierID,
@@ -24,15 +24,18 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
       body: jsonEncode(body),
     );
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      //print('response ${response.body}');
       if (jsonDecode(response.body)['status'] == 'exist') {
-        return jsonDecode(response.body);
+        return {"status": "success", "response": jsonDecode(response.body)};
       } else {
-        return "not_success";
+        return {"status": "error", "response": jsonDecode(response.body)};
       }
     } else {
-      //print('Error: ${response.body}');
-      return {"status": "failed"}; // Returning a consistent response format
+      if (jsonDecode(response.body)['error'].contains("access token expired")) {
+        return {
+          "status": "error",
+          "response": "access token expired"
+        }; // Returning a consistent response format
+      }
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -45,9 +48,7 @@ Future<dynamic> login(
     required String fcmToken,
     required String api}) async {
   final url = Uri.parse((baseUrl + api));
-  print(email);
-  print(password);
-
+  
   Map<String, String> body = {
     'email': email,
     'password': password,
@@ -64,12 +65,15 @@ Future<dynamic> login(
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print('User login successfully');
-      return jsonDecode(response.body)['access_token'];
+      return {
+        "status": "success",
+        "response": jsonDecode(response.body)
+        };
     } else {
-      print('Failed to register user: ${response.body}');
-      print(response.body);
-      return "failed";
+      return {
+        "status": "error",
+        "response": jsonDecode(response.body)['error']
+        };
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -127,7 +131,7 @@ Future<dynamic> registerUser(
 
 Future<dynamic> logout({required api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getToken();
+  String? token = await StorageService.getAccessToken();
 
   try {
     final response = await http.post(
@@ -192,13 +196,13 @@ Future<dynamic> loginWithGoogle(
     dynamic responseDecode = jsonDecode(response.body);
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return responseDecode['access_token'];
+      return {"status": "success", "response": responseDecode};
     } else {
       if (responseDecode['error'].contains("to registration")) {
-        return "toRegist";
+        return {"status": "error", "response": "toRegist"};
       }
 
-      return responseDecode['error'];
+      return {"status": "error", "response": responseDecode['error']};
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -221,14 +225,9 @@ Future<dynamic> registerWithGoogle(
     dynamic responseDecode = jsonDecode(response.body);
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print("register success");
-      return responseDecode['access_token'];
+      return {"status": "success", "response": responseDecode};
     } else {
-      if (responseDecode['error'].contains("to registration")) {
-        return "toRegist";
-      }
-
-      return responseDecode['error'];
+      return {"status": "error", "response": responseDecode['error']};
     }
   } catch (e) {
     print('Error occurred: $e');

@@ -4,19 +4,25 @@ class StorageService {
   static const _storage = FlutterSecureStorage();
 
   // Save token
-  static Future<void> storeToken(String token) async {
-    await _storage.write(key: 'token', value: token);
-    print("stored token");
+  static Future<void> storeAccessToken(String token) async {
+    await _storage.write(key: 'access_token', value: token);
+  }
+
+  static Future<void> storeRefreshToken(String token) async {
+    await _storage.write(key: 'refresh_token', value: token);
   }
 
   static Future<void> storeFcmToken(String? fcmToken) async {
     await _storage.write(key: 'fcmToken', value: fcmToken);
-    print("stored token");
   }
 
   // Retrieve token
-  static Future<String> getToken() async {
-    return await _storage.read(key: 'token') ?? '';
+  static Future<String> getAccessToken() async {
+    return await _storage.read(key: 'access_token') ?? '';
+  }
+
+  static Future<String> getRefreshToken() async {
+    return await _storage.read(key: 'refresh_token') ?? '';
   }
 
   // Retrieve token
@@ -25,7 +31,7 @@ class StorageService {
   }
 
   // Delete token
-  static Future<void> deleteToken() async {
+  static Future<void> deleteTokens() async {
     await _storage.delete(key: 'token');
     print("deleted token");
   }

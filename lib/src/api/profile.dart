@@ -8,7 +8,7 @@ import 'package:jim/src/flutter_storage.dart';
 
 Future<dynamic> updateProfile(
     {required Uint8List img, required String api}) async {
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
   final url = Uri.parse((baseUrl + api));
 
   Map<String, dynamic> body = {

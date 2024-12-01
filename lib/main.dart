@@ -18,7 +18,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseNotification().initNotifications();
 
-  // String accessToken = await StorageService.getToken();
+  // String accessToken = await StorageService.getAccessToken();
   // print("initial token $accessToken");
 
   runApp(const MyApp());
@@ -31,10 +31,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // String accessToken = "";
 
-    // StorageService.getToken().then((result) => {
+    // StorageService.getAccessToken().then((result) => {
     //   accessToken = result
     // });
-  
+
     // print("initial token $accessToken");
 
     return const MaterialApp(

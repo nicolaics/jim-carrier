@@ -7,7 +7,7 @@ import 'package:jim/src/api/api_service.dart';
 import 'package:jim/src/flutter_storage.dart';
 
 Future<dynamic> getAllOrders({required String api}) async {
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
   print("Token in api get: $token2");
   final url = Uri.parse((baseUrl + api));
 
@@ -44,7 +44,7 @@ Future<dynamic> createOrder(
     required String packageContent,
     required Uint8List? packageImage,
     required String api}) async {
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
   final url = Uri.parse((baseUrl + api));
 
   Map<String, dynamic> body = {
@@ -80,7 +80,7 @@ Future<dynamic> createOrder(
 
 Future<dynamic> getMyOrder({required api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
 
   try {
     final response = await http.post(
@@ -108,7 +108,7 @@ Future<dynamic> updateOrderStatus(
     required String orderStatus,
     required String api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getToken();
+  String? token = await StorageService.getAccessToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'orderStatus': orderStatus,
@@ -139,7 +139,7 @@ Future<dynamic> updateOrderStatus(
 
 Future<dynamic> getOrderDetail({required String api, required int id}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
 
   Map<String, dynamic> body = {
     'id': id,
@@ -172,7 +172,7 @@ Future<dynamic> updatePaymentStatus(
     required Uint8List? paymentProof,
     required String api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getToken();
+  String? token = await StorageService.getAccessToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'paymentStatus': paymentStatus,
@@ -207,7 +207,7 @@ Future<dynamic> updatePackageLocation(
     required String? orderStatus,
     required String api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getToken();
+  String? token = await StorageService.getAccessToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'packageLocation': location,

@@ -176,7 +176,7 @@ class _HomeScreenState extends State<TryScreen> {
                 endIcon: false,
                 onPress: () async {
                   logout(api: '/user/logout');
-                  StorageService.deleteToken();
+                  StorageService.deleteTokens();
                   final controller = Controller();
                   await controller.signOut();
                   if (mounted) {

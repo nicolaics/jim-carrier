@@ -280,93 +280,135 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     api:
                                         '/user/login/google', // Provide your API base URL
                                   );
-                                  if (response == "toRegist") {
+
+                                  if (response['response'] == "toRegist") {
                                     if (user['phoneNumber'] == null) {
                                       // Display the bottom sheet to collect phone number
                                       showModalBottomSheet(
                                         context: context,
-                                        isScrollControlled: true, // Ensure the sheet takes minimal space
+                                        isScrollControlled:
+                                            true, // Ensure the sheet takes minimal space
                                         builder: (BuildContext context) {
                                           return Padding(
                                             padding: EdgeInsets.only(
                                               left: 16.0,
                                               right: 16.0,
                                               top: 16.0,
-                                              bottom: MediaQuery.of(context).viewInsets.bottom + 16.0, // Adjust for keyboard
+                                              bottom: MediaQuery.of(context)
+                                                      .viewInsets
+                                                      .bottom +
+                                                  16.0, // Adjust for keyboard
                                             ),
                                             child: SingleChildScrollView(
                                               child: Column(
-                                                mainAxisSize: MainAxisSize.min, // Ensures the column takes the minimal space
-                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize
+                                                    .min, // Ensures the column takes the minimal space
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   const Text(
                                                     "Please enter your phone number",
-                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.bold),
                                                   ),
                                                   const SizedBox(height: 20),
                                                   TextField(
-                                                    controller: _phoneController,
-                                                    decoration: const InputDecoration(
+                                                    controller:
+                                                        _phoneController,
+                                                    decoration:
+                                                        const InputDecoration(
                                                       labelText: 'Phone Number',
-                                                      border: OutlineInputBorder(),
+                                                      border:
+                                                          OutlineInputBorder(),
                                                     ),
-                                                    keyboardType: TextInputType.phone,
-                                                    autofocus: true, // Focus on this field as soon as the bottom sheet appears
+                                                    keyboardType:
+                                                        TextInputType.phone,
+                                                    autofocus:
+                                                        true, // Focus on this field as soon as the bottom sheet appears
                                                   ),
                                                   const SizedBox(height: 20),
                                                   ElevatedButton(
                                                     onPressed: () async {
-                                                      final phoneNumber = _phoneController.text;
+                                                      final phoneNumber =
+                                                          _phoneController.text;
 
-                                                      if (phoneNumber.isNotEmpty) {
-                                                        print("Phone number entered: $phoneNumber");
+                                                      if (phoneNumber
+                                                          .isNotEmpty) {
+                                                        print(
+                                                            "Phone number entered: $phoneNumber");
 
                                                         // Safe navigation to pop the bottom sheet
                                                         if (mounted) {
-                                                          Navigator.pop(context); // Close the bottom sheet if widget is still mounted
+                                                          Navigator.pop(
+                                                              context); // Close the bottom sheet if widget is still mounted
                                                         }
 
-                                                        user['phoneNumber'] = phoneNumber; // Update user data
+                                                        user['phoneNumber'] =
+                                                            phoneNumber; // Update user data
 
                                                         // Proceed with registration
-                                                        response = await registerWithGoogle(
+                                                        response =
+                                                            await registerWithGoogle(
                                                           userInfo: user,
-                                                          api: '/user/register/google', // Provide your API base URL
+                                                          api:
+                                                              '/user/register/google', // Provide your API base URL
                                                         );
-
-                                                        print("Registration Response: $response");
-
-                                                        // Store token after registration
-                                                        await StorageService.storeToken(response);
 
                                                         // Only show dialogs if widget is still mounted
                                                         // if (mounted) {
-                                                        if (response == 'failed') {
+                                                        if (response[
+                                                                'status'] ==
+                                                            'error') {
                                                           // Handle registration failure
                                                           AwesomeDialog(
                                                             context: context,
-                                                            dialogType: DialogType.error,
-                                                            animType: AnimType.topSlide,
+                                                            dialogType:
+                                                                DialogType
+                                                                    .error,
+                                                            animType: AnimType
+                                                                .topSlide,
                                                             title: 'ERROR',
-                                                            desc: 'Login not Successful',
-                                                            btnOkIcon: Icons.check,
+                                                            desc:
+                                                                'Login not Successful',
+                                                            btnOkIcon:
+                                                                Icons.check,
                                                             btnOkOnPress: () {},
                                                           ).show();
                                                         } else {
+                                                          // Store token after registration
+                                                          await StorageService
+                                                              .storeAccessToken(
+                                                                  response['response'][
+                                                                      'access_token']);
+                                                          await StorageService
+                                                              .storeRefreshToken(
+                                                                  response['response'][
+                                                                      'refresh_token']);
+
                                                           // Handle registration success
-                                                          print("jere");
-                                                          //  Get.to(() => const BottomBar());
+                                                          Get.to(() =>
+                                                              const BottomBar(
+                                                                  0));
                                                           AwesomeDialog(
                                                             context: context,
-                                                            dialogType: DialogType.success,
-                                                            animType: AnimType.topSlide,
+                                                            dialogType:
+                                                                DialogType
+                                                                    .success,
+                                                            animType: AnimType
+                                                                .topSlide,
                                                             title: 'Success',
-                                                            desc: 'Login Successful',
-                                                            btnOkIcon: Icons.check,
+                                                            desc:
+                                                                'Login Successful',
+                                                            btnOkIcon:
+                                                                Icons.check,
                                                             btnOkOnPress: () {
                                                               // Navigate to the BottomBar screen after the dialog is dismissed
                                                               //   if (mounted) {
-                                                              Get.to(() => const BottomBar(0));
+                                                              Get.to(() =>
+                                                                  const BottomBar(
+                                                                      0));
                                                               // }
                                                             },
                                                           ).show();
@@ -376,8 +418,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                       //    print("Phone number is empty.");
                                                       //}
                                                     },
-                                                    style: ElevatedButton.styleFrom(
-                                                      minimumSize: const Size(200, 50), // Set button size
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      minimumSize: const Size(
+                                                          200,
+                                                          50), // Set button size
                                                     ),
                                                     child: const Text("Submit"),
                                                   ),
@@ -388,8 +433,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         },
                                       );
                                     }
-                                  }
+                                  } else if (response['status'] == "error") {
+                                    AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.error,
+                                      animType: AnimType.topSlide,
+                                      title: 'ERROR',
+                                      desc: 'Login not Successful',
+                                      btnOkIcon: Icons.check,
+                                      btnOkOnPress: () {},
+                                    ).show();
+                                  } else if (response['status'] == "success") {
+                                    await StorageService.storeAccessToken(
+                                        response['response']['access_token']);
+                                    await StorageService.storeRefreshToken(
+                                        response['response']['refresh_token']);
 
+                                    Get.to(() => const BottomBar(0));
+                                    AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.success,
+                                      animType: AnimType.topSlide,
+                                      title: 'Success',
+                                      desc: 'Login Successful',
+                                      btnOkIcon: Icons.check,
+                                      btnOkOnPress: () {
+                                        // Navigate to the BottomBar screen after the dialog is dismissed
+                                        //   if (mounted) {
+                                        Get.to(() => const BottomBar(0));
+                                        // }
+                                      },
+                                    ).show();
+                                  }
                                 } on FirebaseAuthException catch (error) {
                                   print(error.message);
                                   ScaffoldMessenger.of(context)

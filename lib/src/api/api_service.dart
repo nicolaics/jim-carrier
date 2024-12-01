@@ -11,7 +11,7 @@ class ApiService {
   var client = http.Client();
 
   Future<dynamic> get({required String api}) async {
-    String? token2 = await StorageService.getToken();
+    String? token2 = await StorageService.getAccessToken();
     print("Token in api get: $token2");
     final url = Uri.parse((baseUrl + api));
 
@@ -39,6 +39,4 @@ class ApiService {
       }; // Return an error object
     }
   }
-
-
 }

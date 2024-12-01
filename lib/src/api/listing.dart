@@ -12,12 +12,12 @@ Future<dynamic> addListing(
     required String date,
     required String lastDate,
     required String additionalInfo,
-      required String accountHolder,
-      required String bankName,
-      required String accountNumber,
+    required String accountHolder,
+    required String bankName,
+    required String accountNumber,
     required api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
 
   // Create the request body as per your payload struct
   Map<String, dynamic> body = {
@@ -32,7 +32,7 @@ Future<dynamic> addListing(
     'accountHolder': accountHolder,
     'bankName': bankName,
   };
-  
+
   try {
     final response = await http.post(
       url,
@@ -57,7 +57,7 @@ Future<dynamic> addListing(
 }
 
 Future<dynamic> getMyListing({required String api}) async {
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
   print("Token in api get: $token2");
   final url = Uri.parse((baseUrl + api));
 
@@ -88,7 +88,7 @@ Future<dynamic> getMyListing({required String api}) async {
 
 Future<dynamic> getAllListings({required String api}) async {
   print("inside");
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
   print("Token in api get: $token2");
   final url = Uri.parse((baseUrl + api));
 
@@ -118,19 +118,19 @@ Future<dynamic> getAllListings({required String api}) async {
 
 Future<dynamic> editListing(
     {required int? id,
-      required String destination,
-      required double weight,
-      required double price,
-      required String currency,
-      required String date,
-      required String lastDate,
-      required String additionalInfo,
-      required String accountHolder,
-      required String bankName,
-      required String accountNumber,
-      required api}) async {
+    required String destination,
+    required double weight,
+    required double price,
+    required String currency,
+    required String date,
+    required String lastDate,
+    required String additionalInfo,
+    required String accountHolder,
+    required String bankName,
+    required String accountNumber,
+    required api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getToken();
+  String? token = await StorageService.getAccessToken();
   Map<String, dynamic> body = {
     'id': id,
     'destination': destination,
@@ -153,11 +153,11 @@ Future<dynamic> editListing(
       },
       body: jsonEncode(body),
     );
-    
+
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       return "success";
     } else {
-        return "failed";
+      return "failed";
     }
   } catch (e) {
     print('Error occurred: $e');

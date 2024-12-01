@@ -11,7 +11,7 @@ Future<dynamic> createReview(
     required String? reviewContent,
     required int rating,
     required String api}) async {
-  String? token2 = await StorageService.getToken();
+  String? token2 = await StorageService.getAccessToken();
   final url = Uri.parse((baseUrl + api));
 
   Map<String, dynamic> body = {
