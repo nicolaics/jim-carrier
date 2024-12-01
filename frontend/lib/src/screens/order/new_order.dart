@@ -257,14 +257,11 @@ class _NewOrderState extends State<NewOrder> {
                 ElevatedButton(
                   onPressed: () async{
                     print("ID $carrier['id']");
-
                     String api = "/order/get-payment-details";
-
 // Initialize variables
                     String bankName = "";
                     String accountNumber = "";
                     String accountHolderName = "";
-
                     try {
                       // Await the response to resolve the Future
                       dynamic response = await getBankDetails(carrierID: 3, api: api);
@@ -273,18 +270,12 @@ class _NewOrderState extends State<NewOrder> {
                         // Create Encrypted objects from the response data (convert them to Encrypted type)
                         final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
                         final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
-
                         try {
                           // Decrypt the sensitive data using Encrypted objects
                           final decrypted = decryptData(
                             accountHolder: encryptedHolder,
                             accountNumber: encryptedNumber,
                           );
-
-                          print("Decrypted Data:");
-                          print("Holder: ${decrypted['holder']}");
-                          print("Number: ${decrypted['number']}");
-
                           // Assign decrypted values
                           bankName = response["bank_name"] ?? "";
                           accountNumber = decrypted['number'] ?? "";
@@ -302,9 +293,6 @@ class _NewOrderState extends State<NewOrder> {
                     } catch (e) {
                       print("An error occurred: $e");
                     }
-
-
-
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true, // Allows full-height and scrollable sheet
