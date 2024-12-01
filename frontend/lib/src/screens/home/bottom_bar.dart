@@ -81,7 +81,7 @@ class _BottomBar extends State<BottomBar> {
               NavigationDestination(
                   icon: Icon(Icons.document_scanner), label: "Previous"),
               NavigationDestination(icon: Icon(Icons.add), label: "Add Listing"),
-              NavigationDestination(icon: Icon(Icons.card_travel), label: "Received Order"),
+              NavigationDestination(icon: Icon(Icons.card_travel), label: "Received Orders"),
               NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
             ],
           ),
