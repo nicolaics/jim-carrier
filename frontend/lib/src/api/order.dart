@@ -167,3 +167,39 @@ Future<dynamic> getOrderDetail({required String api, required int id}) async {
     print('Error occurred: $e');
   }
 }
+
+Future<dynamic> updatePaymentStatus(
+    {required int? orderNo,
+      required String paymentStatus,
+      required Uint8List? paymentProof,
+      required String api}) async {
+  final url = Uri.parse((baseUrl + api));
+  String? token = await StorageService.getToken();
+  Map<String, dynamic> body = {
+    'id': orderNo,
+    'paymentStatus': paymentStatus,
+    'paymentProof':paymentProof
+  };
+  try {
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    dynamic responseDecode = jsonDecode(response.body);
+    if (response.statusCode.isSuccessfulHttpStatusCode) {
+      print("Confirmation success");
+      return responseDecode['token'];
+    } else {
+      if (responseDecode['error'].contains("to registration")) {
+        return "toRegist";
+      }
+      return responseDecode['error'];
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
+}
