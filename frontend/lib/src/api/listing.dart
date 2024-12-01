@@ -153,10 +153,9 @@ Future<dynamic> editListing(
       },
       body: jsonEncode(body),
     );
-    dynamic responseDecode = jsonDecode(response.body);
+    
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print("EDIT success");
-      return responseDecode['token'];
+      return "success";
     } else {
         return "failed";
     }
