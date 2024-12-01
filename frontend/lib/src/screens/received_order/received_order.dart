@@ -123,6 +123,8 @@ class _ReceivedOrder extends State<ReceivedOrder> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
+                final isCancelled = item['orderStatus'] == 'cancelled';
+
                 return Card(
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -152,35 +154,46 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                       ],
                     ),
                     trailing: ElevatedButton(
-                      onPressed: () {
-
+                      onPressed: isCancelled
+                          ? null // Disable button if order is cancelled
+                          : () {
+                        print("Viewing order ${item['id']}");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ConfirmOrder(orderData: item),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: isCancelled ? Colors.grey : Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text("View"),
+                      child: Text(
+                        "View",
+                        style: TextStyle(
+                          color: isCancelled ? Colors.white : Colors.black,
+                        ),
+                      ),
                     ),
-                      onTap: () {
-                        print("Tapped on ${items[index]["name"]}");
-                        print("Tapped on ${items[index]["id"]}");
-                        print("Tapped on ${items[index]["currency"]}");
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ConfirmOrder(
-                                    orderData: items[index]), // Pass the entire data for this order
-                          ),
-                        );
-                      }
+                    onTap: isCancelled
+                        ? null // Disable tap if order is cancelled
+                        : () {
+                      print("Tapped on ${item['id']}");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfirmOrder(orderData: item),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
             ),
+
           ),
         ],
       ),
