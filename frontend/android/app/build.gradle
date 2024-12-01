@@ -52,8 +52,8 @@ android {
     buildTypes {
         release {
             // Add your own signing config for the release build.
-            // signingConfig = signingConfigs.debug // Use debug signing for testing release builds
-            signingConfig = signingConfigs.release
+            signingConfig = signingConfigs.debug // Use debug signing for testing release builds
+            // signingConfig = signingConfigs.release
         }
     }
 
