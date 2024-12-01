@@ -10,7 +10,6 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/sizes.dart';
 import 'dart:typed_data';
 
-
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({super.key});
 
@@ -29,12 +28,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   String? userEmail;
   Uint8List? photo;
 
-
   // Fetch data in initState
   @override
   void initState() {
     super.initState();
-    fetchUserEmail();  // Call the function when the widget is initialized
+    fetchUserEmail(); // Call the function when the widget is initialized
   }
 
   // Async function to fetch user data
@@ -42,8 +40,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     try {
       String api = "/user/current";
 
-      dynamic response =
-          await getCurrentUser(api: api); // Await the response
+      dynamic response = await getCurrentUser(api: api); // Await the response
 
       if (response["status"] == "success") {
         response["message"] = response["message"] as Map;
@@ -51,8 +48,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         setState(() {
           userName = response["message"]['name'];
           userEmail = response["message"]['email'];
-          photo = base64Decode(
-              response["message"]['profilePicture']); // Decode the photo from base64
+          photo = base64Decode(response["message"]
+              ['profilePicture']); // Decode the photo from base64
         });
       } else {
         // TODO: do here
@@ -64,7 +61,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     // void onProfileTapped(){
 
     // }
@@ -104,11 +100,13 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
                       child: photo == null
-                          ? const Icon(Icons.account_circle, size: 120) // Placeholder if photo is null
+                          ? const Icon(Icons.account_circle,
+                              size: 120) // Placeholder if photo is null
                           : Image.memory(
-                        photo!,
-                        fit: BoxFit.cover, // Ensures the image fits well within the circle
-                      ),
+                              photo!,
+                              fit: BoxFit
+                                  .cover, // Ensures the image fits well within the circle
+                            ),
                     ),
                   ),
                   Positioned(
@@ -117,7 +115,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     child: GestureDetector(
                       onTap: () async {
                         final ImagePicker picker = ImagePicker();
-                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.gallery);
                         if (image == null) return;
 
                         // Convert image to bytes
@@ -125,28 +124,33 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
                         // Update the UI with the new photo
                         setState(() {
-                          photo = bytes;  // Update the photo variable with the new image bytes
+                          photo =
+                              bytes; // Update the photo variable with the new image bytes
                         });
 
                         // Upload the new profile picture (optional)
-                        String response = await updateProfile(
+                        dynamic response = await updateProfile(
                           img: bytes,
-                          api: '/user/update-profile-picture',  // Provide your API base URL
+                          api:
+                              '/user/update-profile-picture', // Provide your API base URL
                         );
-                        print("update profile response: $response");
 
-
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.success,
-                          animType: AnimType.topSlide,
-                          title: 'Success',
-                          desc: 'Image Updated',
-                          btnOkIcon: Icons.check,
-                          btnOkOnPress: () {
-                            Navigator.pop(context, bytes);
-                          },
-                        ).show();
+                        if (response["status"] == "success") {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.success,
+                            animType: AnimType.topSlide,
+                            title: 'Success',
+                            desc: 'Image Updated',
+                            btnOkIcon: Icons.check,
+                            btnOkOnPress: () {
+                              Navigator.pop(context, bytes);
+                            },
+                          ).show();
+                        }
+                        else {
+                          // TODO: do here
+                        }
 
                         // You can handle the response here, if needed
                       },
@@ -167,7 +171,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 50),
               Form(
                 child: Column(
@@ -209,7 +212,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           String phoneNumber = _phoneController.text.trim();
 
                           // Check if any of the fields are empty
-                          if (name.isEmpty || email.isEmpty|| phoneNumber.isEmpty) {
+                          if (name.isEmpty ||
+                              email.isEmpty ||
+                              phoneNumber.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Please fill in all fields.'),
@@ -224,7 +229,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           if (name.length < 2 || !nameRegex.hasMatch(name)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please enter a valid name (only alphabets and at least 2 characters).'),
+                                content: Text(
+                                    'Please enter a valid name (only alphabets and at least 2 characters).'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -232,10 +238,12 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           }
 
                           // Phone number validation (must be exactly 10 digits)
-                          if (phoneNumber.length != 11 || !RegExp(r'^\d+$').hasMatch(phoneNumber)) {
+                          if (phoneNumber.length != 11 ||
+                              !RegExp(r'^\d+$').hasMatch(phoneNumber)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please enter a valid 11-digit phone number.'),
+                                content: Text(
+                                    'Please enter a valid 11-digit phone number.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -250,7 +258,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           if (!emailRegex.hasMatch(email)) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Please enter a valid email address.'),
+                                content:
+                                    Text('Please enter a valid email address.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -292,7 +301,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         ),
                       ],
                     ),
-
                   ],
                 ),
               ),
