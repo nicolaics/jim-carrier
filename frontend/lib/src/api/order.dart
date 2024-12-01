@@ -206,12 +206,14 @@ Future<dynamic> updatePaymentStatus(
 Future<dynamic> updatePackageLocation(
     {required int orderNo,
       required String? location,
+      required String? orderStatus,
       required String api}) async {
   final url = Uri.parse((baseUrl + api));
   String? token = await StorageService.getToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'packageLocation': location,
+    'orderStatus': orderStatus,
   };
   try {
     final response = await http.patch(

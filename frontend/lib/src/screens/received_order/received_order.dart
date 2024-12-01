@@ -53,10 +53,11 @@ class _ReceivedOrder extends State<ReceivedOrder> {
           "price": data['price']?.toString() ?? 'N/A',
           "currency": data['currency'] ?? 'MYR',
           "packageImage": imageBytes,
-          "packageLocation": data['packageLocation']?? 'Unknown',
+          "packageLocation": data['packageLocation'] ?? 'Unknown', // Ensure this is set properly
           "orderStatus": data['orderStatus'] ?? 'Unknown',
           "notes": data['notes'] ?? 'Unknown',
         });
+
       }
 
       setState(() {
@@ -128,20 +129,41 @@ class _ReceivedOrder extends State<ReceivedOrder> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (dropdownValue != null) {
-                    print("Updated Location: $dropdownValue");
-                    // Make sure you pass the correct order id and location
-                    updatePackageLocation(
-                      orderNo: int.tryParse(item['id']) ?? 0, // Convert the string ID to an int, default to 0 if invalid
+                onPressed: () async {
+                  if (dropdownValue != null && dropdownValue!.isNotEmpty) {
+                    String orderStatus = "confirmed";
+                    if (dropdownValue == "In-flight" || dropdownValue == "Arrived at the Destination Country" || dropdownValue == "With Local Courier") {
+                      orderStatus = "en-route";
+                    } else if (dropdownValue == "Delivered") {
+                      orderStatus = "completed";
+                    }
+
+                    // Update location on the server
+                    dynamic result = await updatePackageLocation(
+                      orderNo: int.tryParse(item['id']) ?? 0,
                       location: dropdownValue,
+                      orderStatus: orderStatus,
                       api: "/order/package-location",
                     );
 
+                    if (result != null) {
+                      // Find the index of the updated item
+                      int index = items.indexWhere((element) => element['id'] == item['id']);
+                      if (index != -1) {
+                        // Update the item in the list
+                        setState(() {
+                          items[index]['packageLocation'] = dropdownValue; // Update the location
+                          items[index]['orderStatus'] = orderStatus; // Update the order status
+                        });
+                      }
+                    } else {
+                      print("Error updating the location");
+                    }
+
+                    Navigator.pop(context); // Close the modal
                   } else {
                     print("No status selected");
                   }
-                  Navigator.pop(context); // Close the modal
                 },
                 child: const Text("Update"),
               ),
@@ -151,6 +173,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -195,7 +218,6 @@ class _ReceivedOrder extends State<ReceivedOrder> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
-
                 return Card(
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),

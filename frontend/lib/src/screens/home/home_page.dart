@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           "flight_date":
               formatDate(data['departureDate']), // Format the departure date
           "profile_pic": imageBytes, // Store the decoded image bytes
+          "carrierRating": data['carrierRating']??0,
         });
       }
 
@@ -76,59 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Error: $e');
     }
   }
-
-  /***
-  // Async function to fetch data and update items list
-  Future<void> fetchListing() async {
-    // Dummy data to simulate API response
-    List<Map<String, dynamic>> dummyData = [
-      {
-        "carrierName": "Alice Johnson",
-        "destination": "Seoul, South Korea",
-        "pricePerKg": 15.0,
-        "currency": "USD",
-        "weightAvailable": 20,
-        "departureDate": "2024-12-01",
-        "carrierProfilePicture": null,  // No image for testing
-      },
-      {
-        "carrierName": "Bob Lee",
-        "destination": "Tokyo, Japan",
-        "pricePerKg": 10.0,
-        "currency": "KRW",
-        "weightAvailable": 15,
-        "departureDate": "2024-11-20",
-        "carrierProfilePicture": null,  // No image for testing
-      },
-      {
-        "carrierName": "Catherine Kim",
-        "destination": "Paris, France",
-        "pricePerKg": 18.5,
-        "currency": "EUR",
-        "weightAvailable": 10,
-        "departureDate": "2024-12-15",
-        "carrierProfilePicture": null,  // No image for testing
-      },
-    ];
-
-    List<Map<String, dynamic>> updatedItems = [];
-
-    for (var data in dummyData) {
-      updatedItems.add({
-        "name": data['carrierName'] ?? 'Unknown',
-        "destination": data['destination'] ?? 'No destination',
-        "price": formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW'),
-        "available_weight": formatWeight(data['weightAvailable']),
-        "flight_date": formatDate(data['departureDate']),
-        "profile_pic": AssetImage("frontend/assets/images/welcomePage/welcome_screen.png"), // Dummy image path
-      });
-    }
-
-    setState(() {
-      items = updatedItems;
-    });
-  }
-***/
 
   // Format the price based on the currency
   String formatPrice(dynamic price, String currency) {
@@ -290,29 +238,52 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-                        print("Button pressed for ${items[index]["name"]}");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                NewOrder(carrier: items[index]),
+                    trailing: Column(
+                      mainAxisSize: MainAxisSize.min, // Ensures the column uses only the space it needs
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewOrder(carrier: items[index]),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          child: const Text("View"),
                         ),
-                      ),
-                      child: const Text("View"),
+                        const SizedBox(height: 8),
+                        Flexible(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min, // Prevents the row from expanding unnecessarily
+                            children: List.generate(5, (starIndex) {
+                              return Icon(
+                                starIndex < (items[index]["carrierRating"] ?? 0)
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.amber,
+                                size: 16, // Adjust size as necessary
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
+
+
+
                     onTap: () {
                       print("Tapped on ${items[index]["name"]}");
                       print("Tapped on ${items[index]["id"]}");
                       print("Tapped on ${items[index]["currency"]}");
+                      print("Carrier Rating: ${items[index]["carrierRating"]}");
 
                       Navigator.push(
                         context,
