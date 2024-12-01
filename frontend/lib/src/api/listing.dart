@@ -115,3 +115,52 @@ Future<dynamic> getAllListings({required String api}) async {
     }; // Return an error object
   }
 }
+
+Future<dynamic> editListing(
+    {required int? id,
+      required String destination,
+      required double weight,
+      required double price,
+      required String currency,
+      required String date,
+      required String lastDate,
+      required String additionalInfo,
+      required String accountHolder,
+      required String bankName,
+      required String accountNumber,
+      required api}) async {
+  final url = Uri.parse((baseUrl + api));
+  String? token = await StorageService.getToken();
+  Map<String, dynamic> body = {
+    'id': id,
+    'destination': destination,
+    'weightAvailable': weight,
+    'pricePerKg': price,
+    'currency': currency,
+    'departureDate': date,
+    'lastReceivedDate': lastDate,
+    'description': additionalInfo,
+    'accountNumber': accountNumber,
+    'accountHolder': accountHolder,
+    'bankName': bankName,
+  };
+  try {
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    dynamic responseDecode = jsonDecode(response.body);
+    if (response.statusCode.isSuccessfulHttpStatusCode) {
+      print("EDIT success");
+      return responseDecode['token'];
+    } else {
+        return "failed";
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
+}
