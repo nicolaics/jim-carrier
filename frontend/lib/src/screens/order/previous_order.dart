@@ -3,8 +3,6 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:jim/src/screens/home/bottom_bar.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -18,6 +16,7 @@ import 'package:encrypt/encrypt.dart' as enc;
 import '../../api/api_service.dart';
 import '../../api/auth.dart';
 import '../../auth/encryption.dart';
+import '../listing/edit_listing.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
   const PreviousOrderScreen({super.key});
@@ -141,7 +140,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     try {
       String api = "/listing/carrier"; // Correct endpoint
       var response = await getAllOrders(api: api); // Fetch API data
-
+      print("HSHSHSHSHSH $response");
       if (response is List) {
         List<Map<String, dynamic>> updatedItems = [];
 
@@ -153,9 +152,13 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             "price": formatPrice(data['pricePerKg'], 'KRW'),
             "available_weight": formatWeight(data['weightAvailable']),
             "flight_date": formatDate(data['departureDate']),
+            "lastReceiveDate": formatDate(data['lastReceivedDate']),
             "description": data['description'] ?? 'No description',
             "carrier_rating": data['carrierRating'] ?? 0,
             "profile_pic": data['carrierProfileImage'],
+            "accountHolderName": data['bankDetail']['accountHolder'],
+            "accountNumber":data['bankDetail']['accountNumber'],
+            "bankName":data['bankDetail']['bankName'],
           });
         }
 
@@ -375,11 +378,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Add logic for editing the listing
-                        print("Edit button pressed for ${item['carrier_name']}");
+                        Get.to(
+                              () => Edit_Screen(),
+                          arguments: item,
+                        );
                       },
                       child: const Text("Edit"),
                     ),
+
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
