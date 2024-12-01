@@ -3,8 +3,8 @@ import 'package:http_status/http_status.dart';
 import 'package:jim/src/flutter_storage.dart';
 import 'dart:convert';
 
-const baseUrl = "http://43.202.104.248:9988/api/v1";
-// const baseUrl = "http://ion-suhalim:9988/api/v1";
+// const baseUrl = "http://43.202.104.248:9988/api/v1";
+const baseUrl = "http://ion-suhalim:9988/api/v1";
 //const baseUrl = "http://pravass-macbook-air:9988/api/v1";
 
 class ApiService {
