@@ -1,4 +1,5 @@
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -114,6 +115,22 @@ class _OtpScreenState extends State<OtpScreen> {
                       print(result);
                       if(result=="success"){
                         Get.to(()=> const LoginScreen());
+                      }
+                      else{
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          animType: AnimType.topSlide,
+                          title: 'Error',
+                          desc: 'User Already Exists',
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                            // Navigate to the BottomBar screen after the dialog is dismissed
+                            //   if (mounted) {
+                            Get.to(() => const LoginScreen());
+                            // }
+                          },
+                        ).show();
                       }
                     },
                     style: ElevatedButton.styleFrom(
