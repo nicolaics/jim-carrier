@@ -1,7 +1,6 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:jim/src/api/listing.dart';
+import 'package:jim/src/api/order.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
 import 'dart:typed_data'; // For Uint8List
 import '../../api/api_service.dart';
@@ -25,7 +24,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
     fetchListing();
   }
 
-  // Fetch data for the listingf
+  // Fetch data for the listing
   Future<void> fetchListing() async {
     try {
       String api = "/order/carrier";
@@ -34,39 +33,32 @@ class _ReceivedOrder extends State<ReceivedOrder> {
 
       List<Map<String, dynamic>> updatedItems = [];
       for (var data in response) {
-        // Validate that 'listing' exists
         var listing = data['listing'];
-        if (listing == null) {
-          continue; // Skip if 'listing' is null
-        }
-        String? base64Image = data['packageImage']; // Nullable String
-        Uint8List? imageBytes;
+        if (listing == null) continue;
 
-        if (base64Image != null && base64Image.isNotEmpty) {
-          imageBytes = base64Decode(base64Image);
-        } else {
-          imageBytes = null; // Explicitly set it to null if there's no valid image
-        }
-        // Ensure all fields are correctly parsed
-        Map<String, dynamic> mappedItem = {
+        String? base64Image = data['packageImage'];
+        Uint8List? imageBytes = base64Image != null && base64Image.isNotEmpty
+            ? base64Decode(base64Image)
+            : null;
+
+        updatedItems.add({
           "destination": listing['destination'] ?? 'No destination',
           "departureDate": listing['departureDate'] != null
               ? formatDate(DateTime.parse(listing['departureDate']))
               : 'N/A',
-          // Ensure ID is always a String
-          "id": data['id'] != null ? data['id'].toString() : 'Unknown',
+          "id": data['id']?.toString() ?? 'Unknown',
           "giverName": data['giverName'] ?? 'Unknown',
           "giverPhoneNumber": data['giverPhoneNumber'] ?? 'Unknown',
-          "weight": data['weight']?.toString() ?? 'N/A', // Convert weight to String
-          "price": data['price']?.toString() ?? 'N/A', // Convert price to String
+          "weight": data['weight']?.toString() ?? 'N/A',
+          "price": data['price']?.toString() ?? 'N/A',
           "currency": data['currency'] ?? 'MYR',
           "packageImage": imageBytes,
+          "packageLocation": data['packageLocation']?? 'Unknown',
           "orderStatus": data['orderStatus'] ?? 'Unknown',
           "notes": data['notes'] ?? 'Unknown',
-        };
-
-        updatedItems.add(mappedItem);
+        });
       }
+
       setState(() {
         items = updatedItems;
       });
@@ -75,9 +67,89 @@ class _ReceivedOrder extends State<ReceivedOrder> {
     }
   }
 
-  // Formatting helpers
   String formatDate(DateTime date) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  }
+
+  void _showUpdateLocationModal(BuildContext context, Map<String, dynamic> item) {
+    String? dropdownValue;
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Update Location",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                value: dropdownValue,
+                hint: const Text("Select Status"),
+                items: const [
+                  DropdownMenuItem(
+                    value: "Received by Carrier",
+                    child: Text("Received by Carrier"),
+                  ),
+                  DropdownMenuItem(
+                    value: "In-flight",
+                    child: Text("In-flight"),
+                  ),
+                  DropdownMenuItem(
+                    value: "Arrived at the Destination Country",
+                    child: Text("Arrived at the Destination Country"),
+                  ),
+                  DropdownMenuItem(
+                    value: "With Local Courier",
+                    child: Text("With Local Courier"),
+                  ),
+                  DropdownMenuItem(
+                    value: "Delivered",
+                    child: Text("Delivered"),
+                  ),
+                ],
+                onChanged: (String? value) {
+                  setState(() {
+                    dropdownValue = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (dropdownValue != null) {
+                    print("Updated Location: $dropdownValue");
+                    // Make sure you pass the correct order id and location
+                    updatePackageLocation(
+                      orderNo: int.tryParse(item['id']) ?? 0, // Convert the string ID to an int, default to 0 if invalid
+                      location: dropdownValue,
+                      api: "/order/package-location",
+                    );
+
+                  } else {
+                    print("No status selected");
+                  }
+                  Navigator.pop(context); // Close the modal
+                },
+                child: const Text("Update"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -123,7 +195,6 @@ class _ReceivedOrder extends State<ReceivedOrder> {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 final item = items[index];
-                final isCancelled = item['orderStatus'] == 'cancelled';
 
                 return Card(
                   elevation: 4,
@@ -141,7 +212,10 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                     ),
                     title: Text(
                       "Order ID: ${item['id']}",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,50 +224,26 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                         Text("Price: ${item['currency']} ${item['price']}"),
                         Text("Weight: ${item['weight']} kg"),
                         Text("Order Status: ${item['orderStatus']}"),
+                        Text("Current Location: ${item['packageLocation']}"),
                         Text("Departure Date: ${item['departureDate']}"),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () => _showUpdateLocationModal(context, item),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                            backgroundColor: Colors.blue,
+                          ),
+                          child: const Text(
+                            "Update Location",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ],
                     ),
-                    trailing: ElevatedButton(
-                      onPressed: isCancelled
-                          ? null // Disable button if order is cancelled
-                          : () {
-                        print("Viewing order ${item['id']}");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ConfirmOrder(orderData: item),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isCancelled ? Colors.grey : Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        "View",
-                        style: TextStyle(
-                          color: isCancelled ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                    onTap: isCancelled
-                        ? null // Disable tap if order is cancelled
-                        : () {
-                      print("Tapped on ${item['id']}");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmOrder(orderData: item),
-                        ),
-                      );
-                    },
                   ),
                 );
               },
             ),
-
           ),
         ],
       ),
