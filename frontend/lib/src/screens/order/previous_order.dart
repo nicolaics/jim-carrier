@@ -3,10 +3,13 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:jim/src/screens/home/bottom_bar.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
@@ -406,7 +409,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       itemCount: orderData.length,
       itemBuilder: (context, index) {
         final item = orderData[index];
-        final isOrderConfirmed = item["order_status"]?.toLowerCase() == "confirmed";
+        final orderStatus = item["order_status"]?.toLowerCase();
+        final paymentStatus = item["payment_status"]?.toLowerCase();
+
+        // Determine if the "Pay Now" button should be disabled
+        final isPayNowDisabled =
+            paymentStatus == "completed" ||
+                orderStatus == "waiting" ||
+                orderStatus == "cancelled";
 
         return Card(
           elevation: 4,
@@ -438,13 +448,11 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: isOrderConfirmed
-                          ? () async {
-                        print("ID ${item['id']}");
+                      onPressed: isPayNowDisabled
+                          ? null
+                          : () async {
+                        print("Processing payment for Order ID: ${item['id']}");
                         String api = "/order/get-payment-details";
-                        String bankName = "";
-                        String accountNumber = "";
-                        String accountHolderName = "";
 
                         try {
                           dynamic response = await getBankDetails(carrierID: 3, api: api);
@@ -459,13 +467,139 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                 accountNumber: encryptedNumber,
                               );
 
-                              bankName = response["bank_name"] ?? "";
-                              accountNumber = decrypted['number'] ?? "";
-                              accountHolderName = decrypted['holder'] ?? "";
+                              String bankName = response["bank_name"] ?? "";
+                              String accountNumber = decrypted['number'] ?? "";
+                              String accountHolderName = decrypted['holder'] ?? "";
 
                               print("Bank Name: $bankName");
                               print("Account Number: $accountNumber");
                               print("Account Holder Name: $accountHolderName");
+
+                              // Display payment details modal
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                builder: (BuildContext context) {
+                                  return StatefulBuilder(
+                                    builder: (BuildContext context, StateSetter setModalState) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 16.0,
+                                          left: 16.0,
+                                          right: 16.0,
+                                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                                        ),
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(Icons.arrow_back, size: 28),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  const Text(
+                                                    "Payment Details",
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 12),
+                                              _buildDetailRow(Icons.account_balance, "Bank Name:", bankName),
+                                              _buildDetailRow(Icons.credit_card, "Account No:", accountNumber),
+                                              _buildDetailRow(Icons.person, "Account Holder:", accountHolderName),
+                                              const SizedBox(height: 12),
+                                              Row(
+                                                children: [
+                                                  ElevatedButton.icon(
+                                                    onPressed: () async {
+                                                      await _pickImagePayment();
+                                                      setModalState(() {});
+                                                    },
+                                                    icon: const Icon(Icons.photo_library, size: 24),
+                                                    label: const Text("Upload Proof of Payment"),
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: Colors.grey[300],
+                                                      padding: const EdgeInsets.symmetric(
+                                                          horizontal: 20, vertical: 12),
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(12),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 12),
+                                              if (photoPayment != null)
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Text(
+                                                      "Uploaded Image:",
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Container(
+                                                      alignment: Alignment.center,
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(color: Colors.grey, width: 1),
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                      padding: const EdgeInsets.all(8),
+                                                      child: Image.memory(
+                                                        photoPayment!,
+                                                        height: 500,
+                                                        width: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              const SizedBox(height: 20),
+                                              Center(
+                                                child: ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Colors.blue,
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 40, vertical: 16),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(12),
+                                                    ),
+                                                  ),
+                                                  child: const Text(
+                                                    "Proceed",
+                                                    style: TextStyle(
+                                                        fontSize: 20, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
                             } catch (e) {
                               print("Error during decryption: $e");
                             }
@@ -475,133 +609,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         } catch (e) {
                           print("An error occurred: $e");
                         }
-
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                          ),
-                          builder: (BuildContext context) {
-                            return StatefulBuilder(
-                              builder: (BuildContext context, StateSetter setModalState) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    top: 16.0,
-                                    left: 16.0,
-                                    right: 16.0,
-                                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                                  ),
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.arrow_back, size: 28),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                            const Text(
-                                              "Payment Details",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
-                                        _buildDetailRow(Icons.account_balance, "Bank Name:", bankName),
-                                        _buildDetailRow(Icons.credit_card, "Account No:", accountNumber),
-                                        _buildDetailRow(Icons.person, "Account Holder:", accountHolderName),
-                                        const SizedBox(height: 12),
-                                        Row(
-                                          children: [
-                                            ElevatedButton.icon(
-                                              onPressed: () async {
-                                                await _pickImagePayment();
-                                                setModalState(() {});
-                                              },
-                                              icon: const Icon(Icons.photo_library, size: 24),
-                                              label: const Text("Upload Proof of Payment"),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.grey[300],
-                                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(12),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 12),
-                                        if (photoPayment != null)
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                "Uploaded Image:",
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black87,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Container(
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.grey, width: 1),
-                                                  borderRadius: BorderRadius.circular(8),
-                                                ),
-                                                padding: const EdgeInsets.all(8),
-                                                child: Image.memory(
-                                                  photoPayment!,
-                                                  height: 500,
-                                                  width: double.infinity,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        const SizedBox(height: 20),
-                                        Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blue,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 40, vertical: 16),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              "Proceed",
-                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      }
-                          : null,
+                      },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isOrderConfirmed ? Colors.blue : Colors.grey[300],
+                        backgroundColor: isPayNowDisabled ? Colors.grey[300] : Colors.blue,
                       ),
                       child: const Text(
                         "Pay Now",
@@ -629,6 +639,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       },
     );
   }
+
 
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Padding(
