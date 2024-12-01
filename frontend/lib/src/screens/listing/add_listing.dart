@@ -460,7 +460,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       desc: 'Listing Successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
-                        Get.to(() => const BottomBar());
+                        Get.to(() => const BottomBar(0));
                       },
                     ).show();
                   }
@@ -476,7 +476,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       },
                     ).show();
                   }
-                  Get.to(() => const BottomBar());
+                  Get.to(() => const BottomBar(0));
                 },
                 child:
                     const Text('SUBMIT', style: TextStyle(color: Colors.white)),
