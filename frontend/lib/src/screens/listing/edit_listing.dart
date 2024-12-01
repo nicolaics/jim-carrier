@@ -1,9 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:csc_picker/csc_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/listing.dart';
@@ -11,14 +11,14 @@ import '../../auth/encryption.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 
 
-class Edit_Screen extends StatefulWidget {
-  const Edit_Screen({super.key});
+class EditScreen extends StatefulWidget {
+  const EditScreen({super.key});
 
   @override
-  State<Edit_Screen> createState() => _Edit_ScreenState();
+  State<EditScreen> createState() => _EditScreenState();
 }
 
-class _Edit_ScreenState extends State<Edit_Screen> {
+class _EditScreenState extends State<EditScreen> {
   String? _selectedCountry = "";
   String? _selectedState;
   String? _selectedCity;
@@ -35,6 +35,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
   final TextEditingController _bankAccountNo = TextEditingController();
   final TextEditingController _additionalInfoController = TextEditingController();
 
+  @override
   void initState() {
     super.initState();
 
@@ -594,8 +595,8 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                       context: context,
                       dialogType: DialogType.success,
                       animType: AnimType.topSlide,
-                      title: 'Sucess',
-                      desc: 'Listing Successful',
+                      title: 'Success',
+                      desc: 'Modify Successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
                         Get.to(() => const BottomBar(0));

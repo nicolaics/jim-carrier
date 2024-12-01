@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,7 +8,7 @@ import 'package:jim/src/screens/auth/otp_screen_fp.dart';
 import '../../api/api_service.dart';
 
 class ForgetPassword extends StatefulWidget {
-  const ForgetPassword({Key? key}) : super(key: key);
+  const ForgetPassword({super.key});
   @override
   _ForgetPassword createState() => _ForgetPassword();
 }
@@ -14,6 +16,7 @@ class _ForgetPassword extends State<ForgetPassword> {
   final ApiService apiService = ApiService();
   final TextEditingController _emailController = TextEditingController();
 
+  @override
   Widget build(BuildContext context){
     return Scaffold(
       body: SingleChildScrollView(
@@ -22,7 +25,7 @@ class _ForgetPassword extends State<ForgetPassword> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: tDefaultSize * 4),
+            const SizedBox(height: tDefaultSize * 4),
             Text(
               'Forgot Password?',
               style: GoogleFonts.anton(fontSize: 40),
@@ -33,19 +36,19 @@ class _ForgetPassword extends State<ForgetPassword> {
                 textAlign: TextAlign.center),
             Form(
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextFormField(
                         controller: _emailController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             prefixIcon: Icon(Icons.person_outline_outlined),
                             labelText: "Email",
                             hintText: "your@gmail.com",
                             border: OutlineInputBorder()),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       SizedBox(
@@ -103,10 +106,10 @@ class _ForgetPassword extends State<ForgetPassword> {
                             Get.to(() => const OtpScreen2()); ***/
                           },
                           style: OutlinedButton.styleFrom(
-                            shape: RoundedRectangleBorder(),
+                            shape: const RoundedRectangleBorder(),
                             backgroundColor: Colors.black,
                           ),
-                          child: Text(
+                          child: const Text(
                             'SEND CODE',
                             style: TextStyle(color: Colors.white, fontSize: 20),
                           ),

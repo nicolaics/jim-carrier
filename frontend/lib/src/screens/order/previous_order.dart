@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
@@ -379,7 +378,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     ElevatedButton(
                       onPressed: () {
                         Get.to(
-                              () => Edit_Screen(),
+                              () => const EditScreen(),
                           arguments: item,
                         );
                       },

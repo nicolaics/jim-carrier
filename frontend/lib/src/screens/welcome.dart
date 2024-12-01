@@ -19,7 +19,7 @@ class WelcomeScreen extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Container(
-            padding: EdgeInsets.all(tDefaultSize),
+            padding: const EdgeInsets.all(tDefaultSize),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -27,14 +27,14 @@ class WelcomeScreen extends StatelessWidget {
                     style: GoogleFonts.lilitaOne(fontSize: 40),
                     textAlign: TextAlign.center),
                 Image(
-                    image: AssetImage(WelcomeScreenImage),
+                    image: const AssetImage(WelcomeScreenImage),
                     height: height * 0.4),
                 Column(
                   children: [
                     Text(Welcome,
                         style: GoogleFonts.anton(fontSize: 35),
                         textAlign: TextAlign.center),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(WelcomeMessage,
                         style: GoogleFonts.pacifico(
                             fontSize: 20, color: Colors.grey),
@@ -45,12 +45,23 @@ class WelcomeScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                          onPressed: () => Get.to(()=> const LoginScreen()), style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder()),child: Text(tLogin.toUpperCase(), style: TextStyle(color: Colors.black, fontSize: 20))),
+                          onPressed: () => Get.to(() => const LoginScreen()),
+                          style: OutlinedButton.styleFrom(
+                              shape: const RoundedRectangleBorder()),
+                          child: Text(tLogin.toUpperCase(),
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20))),
                     ),
-                    SizedBox(width: 10.0),
+                    const SizedBox(width: 10.0),
                     Expanded(
                       child: ElevatedButton(
-                          onPressed: () => Get.to(()=> const RegisterScreen()), style: OutlinedButton.styleFrom(shape: RoundedRectangleBorder(), backgroundColor: Colors.black),child: Text(tsignup.toUpperCase(), style:TextStyle(color: Colors.white, fontSize: 20))),
+                          onPressed: () => Get.to(() => const RegisterScreen()),
+                          style: OutlinedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(),
+                              backgroundColor: Colors.black),
+                          child: Text(tsignup.toUpperCase(),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 20))),
                     ),
                   ],
                 )

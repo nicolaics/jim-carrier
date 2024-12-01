@@ -1,9 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
-import 'package:encrypt/encrypt.dart' as enc;
 import 'package:image_picker/image_picker.dart';
-import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -11,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
 import '../../api/api_service.dart';
-import '../../auth/encryption.dart';
 
 class NewOrder extends StatefulWidget {
   final Map<String, dynamic> carrier; // Accepts carrier details as a parameter
@@ -59,16 +56,16 @@ class _NewOrderState extends State<NewOrder> {
     }
   }
 
-  Future<void> _pickImagePayment() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery); // Use gallery
-    if (image != null) {
-      final bytes = await File(image.path).readAsBytes();
-      setState(() {
-        photoPayment = bytes; // Update the payment proof image
-      });
-    }
-  }
+  // Future<void> _pickImagePayment() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery); // Use gallery
+  //   if (image != null) {
+  //     final bytes = await File(image.path).readAsBytes();
+  //     setState(() {
+  //       photoPayment = bytes; // Update the payment proof image
+  //     });
+  //   }
+  // }
 
 
   @override
