@@ -287,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           } else {
                                                             // Handle registration success
                                                             print("jere");
-                                                          //  Get.to(() => const BottomBar());
+                                                            Get.to(() => const BottomBar());
                                                             AwesomeDialog(
                                                               context: context,
                                                               dialogType: DialogType.success,
