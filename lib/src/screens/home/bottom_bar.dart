@@ -60,7 +60,7 @@ class _BottomBar extends State<BottomBar> {
       },
       child: Scaffold(
         bottomNavigationBar: Obx(
-              () => NavigationBar(
+          () => NavigationBar(
             elevation: 0,
             selectedIndex: controller.selectedindex.value,
             onDestinationSelected: (index) {
@@ -79,9 +79,10 @@ class _BottomBar extends State<BottomBar> {
             destinations: const [
               NavigationDestination(icon: Icon(Icons.home), label: "Home"),
               NavigationDestination(
-                  icon: Icon(Icons.document_scanner), label: "Previous"),
-              NavigationDestination(icon: Icon(Icons.add), label: "Add Listing"),
-              NavigationDestination(icon: Icon(Icons.card_travel), label: "Received Orders"),
+                  icon: Icon(Icons.history), label: "History"),
+              NavigationDestination(
+                  icon: Icon(Icons.add), label: "Add Listing"),
+              NavigationDestination(icon: Icon(Icons.card_travel), label: "Orders"),
               NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
             ],
           ),

@@ -184,7 +184,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'YOUR ORDERS',
+          'Received Orders',
           style: TextStyle(
             color: Colors.black,
             fontSize: 24,

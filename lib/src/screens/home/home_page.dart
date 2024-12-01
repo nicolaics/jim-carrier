@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'AVAILABLE CARRIERS',
+          'Available Carriers',
           style: TextStyle(
             color: Colors.black,
             fontSize: 24,

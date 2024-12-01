@@ -68,7 +68,7 @@ Future<dynamic> createOrder(
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       print('User ordered successfully');
-      return jsonDecode(response.body)['token'];
+      return jsonDecode(response.body)['access_token'];
     } else {
       print('Failed to order: ${response.body}');
       return "failed";
@@ -125,7 +125,7 @@ Future<dynamic> updateOrderStatus(
     dynamic responseDecode = jsonDecode(response.body);
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       print("Confirmation success");
-      return responseDecode['token'];
+      return responseDecode['access_token'];
     } else {
       if (responseDecode['error'].contains("to registration")) {
         return "toRegist";
@@ -146,15 +146,13 @@ Future<dynamic> getOrderDetail({required String api, required int id}) async {
   };
 
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token2',
-      },
-      body: jsonEncode(body)
-    );
-    
+    final response = await http.post(url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token2',
+        },
+        body: jsonEncode(body));
+
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       print('Data received');
       print(jsonDecode(response.body));
@@ -170,15 +168,15 @@ Future<dynamic> getOrderDetail({required String api, required int id}) async {
 
 Future<dynamic> updatePaymentStatus(
     {required int? orderNo,
-      required String paymentStatus,
-      required Uint8List? paymentProof,
-      required String api}) async {
+    required String paymentStatus,
+    required Uint8List? paymentProof,
+    required String api}) async {
   final url = Uri.parse((baseUrl + api));
   String? token = await StorageService.getToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'paymentStatus': paymentStatus,
-    'paymentProof':paymentProof
+    'paymentProof': paymentProof
   };
   try {
     final response = await http.patch(
@@ -205,9 +203,9 @@ Future<dynamic> updatePaymentStatus(
 
 Future<dynamic> updatePackageLocation(
     {required int orderNo,
-      required String? location,
-      required String? orderStatus,
-      required String api}) async {
+    required String? location,
+    required String? orderStatus,
+    required String api}) async {
   final url = Uri.parse((baseUrl + api));
   String? token = await StorageService.getToken();
   Map<String, dynamic> body = {

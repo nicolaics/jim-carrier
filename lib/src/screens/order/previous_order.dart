@@ -263,7 +263,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'My Listings',
+          'Active and History',
           style: TextStyle(
             color: Colors.black,
             fontSize: 24,

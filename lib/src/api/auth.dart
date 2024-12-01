@@ -5,7 +5,6 @@ import 'package:http_status/http_status.dart';
 import 'package:jim/src/api/api_service.dart';
 import 'package:jim/src/flutter_storage.dart';
 
-
 Future<dynamic> getBankDetails({required int carrierID, required api}) async {
   print("inside");
   print(carrierID);
@@ -26,13 +25,11 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
     );
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       //print('response ${response.body}');
-      if(jsonDecode(response.body)['status']=='exist'){
+      if (jsonDecode(response.body)['status'] == 'exist') {
         return jsonDecode(response.body);
-      }
-      else{
+      } else {
         return "not_success";
       }
-
     } else {
       //print('Error: ${response.body}');
       return {"status": "failed"}; // Returning a consistent response format
@@ -68,7 +65,7 @@ Future<dynamic> login(
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       print('User login successfully');
-      return jsonDecode(response.body)['token'];
+      return jsonDecode(response.body)['access_token'];
     } else {
       print('Failed to register user: ${response.body}');
       print(response.body);
@@ -79,16 +76,15 @@ Future<dynamic> login(
   }
 }
 
-Future<dynamic> registerUser({
-  required String name,
-  required String email,
-  required String password,
-  required String phoneNumber,
-  required Uint8List profilePicture,
-  required String verification,
-  required String fcmToken,
-  required String api
-}) async {
+Future<dynamic> registerUser(
+    {required String name,
+    required String email,
+    required String password,
+    required String phoneNumber,
+    required Uint8List profilePicture,
+    required String verification,
+    required String fcmToken,
+    required String api}) async {
   final url = Uri.parse(baseUrl + api);
 
   // Encode the profile picture as a base64 string
@@ -196,7 +192,7 @@ Future<dynamic> loginWithGoogle(
     dynamic responseDecode = jsonDecode(response.body);
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return responseDecode['token'];
+      return responseDecode['access_token'];
     } else {
       if (responseDecode['error'].contains("to registration")) {
         return "toRegist";
@@ -226,7 +222,7 @@ Future<dynamic> registerWithGoogle(
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       print("register success");
-      return responseDecode['token'];
+      return responseDecode['access_token'];
     } else {
       if (responseDecode['error'].contains("to registration")) {
         return "toRegist";

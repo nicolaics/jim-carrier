@@ -33,7 +33,7 @@ Future<dynamic> createReview(
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       print('Review successful.');
-      return jsonDecode(response.body)['token'];
+      return jsonDecode(response.body)['access_token'];
     } else {
       print('Failed to review: ${response.body}');
       return "failed";
