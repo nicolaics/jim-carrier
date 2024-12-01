@@ -1,14 +1,20 @@
 
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
+
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
-
+import 'package:encrypt/encrypt.dart' as enc;
 import '../../api/api_service.dart';
+import '../../api/auth.dart';
+import '../../auth/encryption.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
   const PreviousOrderScreen({super.key});
@@ -28,12 +34,24 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
   String? selectedValue; // For the dropdown button
   int _selectedRating = 0;
+  Uint8List? photoPayment;
 
   @override
   void initState() {
     super.initState();
     fetchListing();
     fetchOrder(); // Fetch both listing and order data
+  }
+
+  Future<void> _pickImagePayment() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery); // Use gallery
+    if (image != null) {
+      final bytes = await File(image.path).readAsBytes();
+      setState(() {
+        photoPayment = bytes; // Update the payment proof image
+      });
+    }
   }
 
   void _showReviewModal(String carrierName, int orderId) {
@@ -421,17 +439,185 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: isPaymentPending
-                          ? () {
-                        print("Pay Now pressed for Order #${item["id"]}");
-                        // Add your payment logic here
-                      }
-                          : null, // Disabled if payment is not pending
+                      onPressed: () async{
+                        print("ID $item['id']");
+                        String api = "/order/get-payment-details";
+// Initialize variables
+                        String bankName = "";
+                        String accountNumber = "";
+                        String accountHolderName = "";
+                        try {
+                          // Await the response to resolve the Future
+                          dynamic response = await getBankDetails(carrierID: 3, api: api);
+
+                          if (response != null && response is Map && response["status"] == "exist") {
+                            // Create Encrypted objects from the response data (convert them to Encrypted type)
+                            final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
+                            final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
+                            try {
+                              // Decrypt the sensitive data using Encrypted objects
+                              final decrypted = decryptData(
+                                accountHolder: encryptedHolder,
+                                accountNumber: encryptedNumber,
+                              );
+                              // Assign decrypted values
+                              bankName = response["bank_name"] ?? "";
+                              accountNumber = decrypted['number'] ?? "";
+                              accountHolderName = decrypted['holder'] ?? "";
+
+                              print("Bank Name: $bankName");
+                              print("Account Number: $accountNumber");
+                              print("Account Holder Name: $accountHolderName");
+                            } catch (e) {
+                              print("Error during decryption: $e");
+                            }
+                          } else {
+                            print("Failed to fetch payment details. Response: $response");
+                          }
+                        } catch (e) {
+                          print("An error occurred: $e");
+                        }
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true, // Allows full-height and scrollable sheet
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          builder: (BuildContext context) {
+                            return StatefulBuilder(
+                              builder: (BuildContext context, StateSetter setModalState) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    top: 16.0,
+                                    left: 16.0,
+                                    right: 16.0,
+                                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // Back arrow at the top
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.arrow_back, size: 28),
+                                              onPressed: () {
+                                                Navigator.pop(context); // Close the bottom sheet
+                                              },
+                                            ),
+                                            const Text(
+                                              "Payment Details",
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+                                        _buildDetailRow(Icons.account_balance, "Bank Name:", bankName),
+                                        _buildDetailRow(Icons.credit_card, "Account No:", accountNumber),
+                                        _buildDetailRow(Icons.person, "Account Holder:", accountHolderName),
+                                        const SizedBox(height: 12),
+                                        Row(
+                                          children: [
+                                            ElevatedButton.icon(
+                                              onPressed: () async {
+                                                await _pickImagePayment(); // Pick image from the gallery
+                                                setModalState(() {}); // Trigger rebuild for resizing
+                                              },
+                                              icon: const Icon(Icons.photo_library, size: 24),
+                                              label: const Text("Upload Proof of Payment"),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.grey[300],
+                                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+                                        if (photoPayment != null)
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                "Uploaded Image:",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Container(
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(color: Colors.grey, width: 1),
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                padding: const EdgeInsets.all(8),
+                                                child: Image.memory(
+                                                  photoPayment!,
+                                                  height: 500,
+                                                  width: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        const SizedBox(height: 20),
+                                        Center(
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              // Additional logic for proceeding can be added here
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blue,
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 40, vertical: 16),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "Proceed",
+                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+
+
+
+
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        isPaymentPending ? Colors.blue : Colors.grey,
+                        backgroundColor: Colors.grey[300], // Pay Now button color
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text("Pay Now"),
+                      child: const Text(
+                        "Pay Now",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -454,7 +640,41 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       },
     );
   }
-
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: Colors.grey[700], size: 28),
+          const SizedBox(width: 12),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: "$label ",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  TextSpan(
+                    text: value,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
 
 }
