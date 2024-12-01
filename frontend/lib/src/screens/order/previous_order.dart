@@ -24,7 +24,6 @@ class PreviousOrderScreen extends StatefulWidget {
 }
 
 
-
 class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   final TextEditingController _reviewController = TextEditingController();
 
@@ -407,7 +406,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       itemCount: orderData.length,
       itemBuilder: (context, index) {
         final item = orderData[index];
-        final isPaymentPending = (item["payment_status"]?.toLowerCase() == "pending");
+        final isOrderConfirmed = item["order_status"]?.toLowerCase() == "confirmed";
 
         return Card(
           elevation: 4,
@@ -439,29 +438,27 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: () async{
-                        print("ID $item['id']");
+                      onPressed: isOrderConfirmed
+                          ? () async {
+                        print("ID ${item['id']}");
                         String api = "/order/get-payment-details";
-                        
-                        // Initialize variables
                         String bankName = "";
                         String accountNumber = "";
                         String accountHolderName = "";
+
                         try {
-                          // Await the response to resolve the Future
                           dynamic response = await getBankDetails(carrierID: 3, api: api);
 
                           if (response != null && response is Map && response["status"] == "exist") {
-                            // Create Encrypted objects from the response data (convert them to Encrypted type)
                             final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
                             final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
+
                             try {
-                              // Decrypt the sensitive data using Encrypted objects
                               final decrypted = decryptData(
                                 accountHolder: encryptedHolder,
                                 accountNumber: encryptedNumber,
                               );
-                              // Assign decrypted values
+
                               bankName = response["bank_name"] ?? "";
                               accountNumber = decrypted['number'] ?? "";
                               accountHolderName = decrypted['holder'] ?? "";
@@ -478,9 +475,10 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         } catch (e) {
                           print("An error occurred: $e");
                         }
+
                         showModalBottomSheet(
                           context: context,
-                          isScrollControlled: true, // Allows full-height and scrollable sheet
+                          isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
                               top: Radius.circular(20),
@@ -501,13 +499,12 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Back arrow at the top
                                         Row(
                                           children: [
                                             IconButton(
                                               icon: const Icon(Icons.arrow_back, size: 28),
                                               onPressed: () {
-                                                Navigator.pop(context); // Close the bottom sheet
+                                                Navigator.pop(context);
                                               },
                                             ),
                                             const Text(
@@ -528,8 +525,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                           children: [
                                             ElevatedButton.icon(
                                               onPressed: () async {
-                                                await _pickImagePayment(); // Pick image from the gallery
-                                                setModalState(() {}); // Trigger rebuild for resizing
+                                                await _pickImagePayment();
+                                                setModalState(() {});
                                               },
                                               icon: const Icon(Icons.photo_library, size: 24),
                                               label: const Text("Upload Proof of Payment"),
@@ -578,7 +575,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                           child: ElevatedButton(
                                             onPressed: () {
                                               Navigator.pop(context);
-                                              // Additional logic for proceeding can be added here
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.blue,
@@ -602,16 +598,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             );
                           },
                         );
-                      },
-
-
-
-
+                      }
+                          : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300], // Pay Now button color
+                        backgroundColor: isOrderConfirmed ? Colors.blue : Colors.grey[300],
                       ),
                       child: const Text(
                         "Pay Now",
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                     ElevatedButton(
@@ -635,6 +629,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       },
     );
   }
+
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
