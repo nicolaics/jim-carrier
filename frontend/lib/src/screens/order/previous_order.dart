@@ -609,15 +609,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300], // Pay Now button color
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
                       ),
                       child: const Text(
                         "Pay Now",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
                     ElevatedButton(
