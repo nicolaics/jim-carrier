@@ -132,6 +132,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     try {
                                       final fcmToken = await StorageService.getFcmToken();
 
+                                      print("Tokennn: $fcmToken");
+
                                       String token = await login(
                                         email: _emailController.text.trim(),
                                         password: _passwordController.text,
@@ -139,6 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         api:
                                             '/user/login', // Provide your API base URL
                                       );
+
+                                      print("Token $token");
                                       if(token=="failed"){
                                         AwesomeDialog(
                                           context: context,
