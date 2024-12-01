@@ -114,7 +114,17 @@ class _OtpScreenState extends State<OtpScreen> {
                       // Print the result of the API call for debugging
                       print(result);
                       if(result=="success"){
-                        Get.to(()=> const LoginScreen());
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          animType: AnimType.topSlide,
+                          title: 'Success',
+                          desc: 'Account Registered Successfully',
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                            Get.to(() => const LoginScreen());
+                          },
+                        ).show();
                       }
                       else{
                         AwesomeDialog(
