@@ -24,14 +24,14 @@ Map<String, dynamic> writeErrorResponse({required String responseBody}) {
 
 Map<String, String> writeAccessTokenExpResponse() {
   return {
-    "status": "error",
+    "status": "expired",
     "message": "access token expired"
   };
 }
 
 Map<String, String> writeToRegistResponse() {
   return {
-    "status": "error",
+    "status": "registration",
     "message": "toRegist"
   };
 }

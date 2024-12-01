@@ -5,11 +5,12 @@ import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/listing.dart';
 import '../../auth/encryption.dart';
 import 'package:encrypt/encrypt.dart' as enc;
-
 
 class EditScreen extends StatefulWidget {
   const EditScreen({super.key});
@@ -27,13 +28,13 @@ class _EditScreenState extends State<EditScreen> {
   String? _selectedCurrency;
   int? id;
 
-
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _accountHolderName = TextEditingController();
   final TextEditingController _bankName = TextEditingController();
   final TextEditingController _bankAccountNo = TextEditingController();
-  final TextEditingController _additionalInfoController = TextEditingController();
+  final TextEditingController _additionalInfoController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -41,10 +42,9 @@ class _EditScreenState extends State<EditScreen> {
 
     final item = Get.arguments;
 
-
     if (item != null) {
       print('Received Data: $item'); // Print all data for debugging
-      id=item['id'];
+      id = item['id'];
 
       // Parse destination details
       final destination = item['destination'] ?? '';
@@ -80,7 +80,7 @@ class _EditScreenState extends State<EditScreen> {
           ? DateFormat('MMM d, yyyy').parse(item['flight_date'])
           : null;
 
-      _lastDateToReceive=item['lastReceiveDate'] != null
+      _lastDateToReceive = item['lastReceiveDate'] != null
           ? DateFormat('MMM d, yyyy').parse(item['lastReceiveDate'])
           : null;
 
@@ -88,22 +88,27 @@ class _EditScreenState extends State<EditScreen> {
       final priceWithSymbol = item['price'] ?? '';
       if (priceWithSymbol.startsWith('\$')) {
         _selectedCurrency = 'USD';
-        _priceController.text = priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
+        _priceController.text =
+            priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
       } else if (priceWithSymbol.startsWith('£')) {
         _selectedCurrency = 'GBP';
-        _priceController.text = priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
+        _priceController.text =
+            priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
       } else if (priceWithSymbol.startsWith('₩')) {
         _selectedCurrency = 'KRW';
-        _priceController.text = priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
+        _priceController.text =
+            priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
       }
 
       // Parse weight (remove 'kg' and trim whitespace)
-      _weightController.text = item['available_weight']?.replaceAll('kg', '').trim() ?? '';
+      _weightController.text =
+          item['available_weight']?.replaceAll('kg', '').trim() ?? '';
 
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
-      final encryptedHolder = enc.Encrypted.fromBase64(item['accountHolderName']);
+      final encryptedHolder =
+          enc.Encrypted.fromBase64(item['accountHolderName']);
       final encryptedNumber = enc.Encrypted.fromBase64(item['accountNumber']);
       final decrypted = decryptData(
         accountHolder: encryptedHolder,
@@ -117,10 +122,9 @@ class _EditScreenState extends State<EditScreen> {
       print(accountNumber);
       print(item['bankName']);
       print("****");
-      _bankName.text= item['bankName'];
-      _bankAccountNo.text=accountNumber;
-      _accountHolderName.text=accountHolderName;
-
+      _bankName.text = item['bankName'];
+      _bankAccountNo.text = accountNumber;
+      _accountHolderName.text = accountHolderName;
     }
   }
 
@@ -129,7 +133,8 @@ class _EditScreenState extends State<EditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String destination= '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
+    String destination =
+        '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -163,7 +168,8 @@ class _EditScreenState extends State<EditScreen> {
               readOnly: true, // Make the field read-only
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.grey[200], // Light grey background to indicate immutability
+                fillColor: Colors.grey[
+                    200], // Light grey background to indicate immutability
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide: const BorderSide(color: Colors.black),
@@ -272,9 +278,9 @@ class _EditScreenState extends State<EditScreen> {
                     value: _selectedCurrency,
                     items: _currencies
                         .map((currency) => DropdownMenuItem(
-                      value: currency,
-                      child: Text(currency),
-                    ))
+                              value: currency,
+                              child: Text(currency),
+                            ))
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -335,7 +341,7 @@ class _EditScreenState extends State<EditScreen> {
                           child: Text(
                             _selectedDate != null
                                 ? DateFormat('yyyy-MM-dd')
-                                .format(_selectedDate!)
+                                    .format(_selectedDate!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -382,7 +388,7 @@ class _EditScreenState extends State<EditScreen> {
                           child: Text(
                             _lastDateToReceive != null
                                 ? DateFormat('yyyy-MM-dd')
-                                .format(_lastDateToReceive!)
+                                    .format(_lastDateToReceive!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -454,13 +460,12 @@ class _EditScreenState extends State<EditScreen> {
             ),
             const SizedBox(height: 20),
 
-
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
                 onPressed: () async {
                   String removeFlags(String input) {
@@ -471,13 +476,15 @@ class _EditScreenState extends State<EditScreen> {
                     );
                     return input.replaceAll(regex, '');
                   }
+
                   String location;
 // Check if a new destination is selected
                   if ((_selectedCity?.isEmpty ?? true) &&
                       (_selectedState?.isEmpty ?? true) &&
                       (_selectedCountry?.isEmpty ?? true)) {
                     // Use old destination if no new selection
-                    location = '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
+                    location =
+                        '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
                   } else {
                     // Construct new destination
                     location = [
@@ -506,21 +513,21 @@ class _EditScreenState extends State<EditScreen> {
 
                   String formatDateWithTimeZone(DateTime dateTime) {
                     String formattedDate =
-                    DateFormat('yyyy-MM-dd').format(dateTime);
+                        DateFormat('yyyy-MM-dd').format(dateTime);
                     String timeZoneOffset = dateTime.timeZoneOffset.inHours >= 0
                         ? '+${dateTime.timeZoneOffset.inHours.toString().padLeft(2, '0')}'
                         : dateTime.timeZoneOffset.inHours
-                        .toString()
-                        .padLeft(3, '0');
+                            .toString()
+                            .padLeft(3, '0');
 
                     // Adjust for minutes if needed
                     if (dateTime.timeZoneOffset.inMinutes % 60 != 0) {
                       int minutes =
-                      (dateTime.timeZoneOffset.inMinutes.abs() % 60);
+                          (dateTime.timeZoneOffset.inMinutes.abs() % 60);
                       timeZoneOffset += minutes < 10 ? '0$minutes' : '$minutes';
                     } else {
                       timeZoneOffset +=
-                      '00'; // Append zero minutes if no additional offset
+                          '00'; // Append zero minutes if no additional offset
                     }
 
                     // Assuming KST as a constant, you can replace this with a dynamic value if needed
@@ -559,9 +566,7 @@ class _EditScreenState extends State<EditScreen> {
                   print("Holder: ${decrypted['holder']}");
                   print("Number: ${decrypted['number']}");
 
-                  print("tumbler");
-                  // Call the API to add the listing
-                  String result = await editListing(
+                  dynamic response = await modifyListing(
                     id: id,
                     destination: location,
                     weight: weight,
@@ -576,8 +581,34 @@ class _EditScreenState extends State<EditScreen> {
                     api: "/listing",
                   );
 
-                  print(result);
-                  if(result=="failed"){
+                  if (response["message"] == "access token expired") {
+                    dynamic refreshTokenResponse =
+                        await refreshToken(api: "/user/refresh");
+                    if (refreshTokenResponse['status'] == 'error') {
+                      print(
+                          "REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
+                    }
+
+                    await StorageService.storeAccessToken(
+                        refreshTokenResponse['message']['access_token']);
+
+                    response = await modifyListing(
+                      id: id,
+                      destination: location,
+                      weight: weight,
+                      price: price,
+                      currency: _selectedCurrency ?? '',
+                      date: date,
+                      lastDate: lastDate,
+                      additionalInfo: _additionalInfoController.text,
+                      accountHolder: encrypted["holder"]!.base64,
+                      accountNumber: encrypted["number"]!.base64,
+                      bankName: _bankName.text,
+                      api: "/listing",
+                    );
+                  }
+
+                  if (response["status"] == "error") {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,
@@ -585,12 +616,9 @@ class _EditScreenState extends State<EditScreen> {
                       title: 'ERROR',
                       desc: 'Listing not Successful',
                       btnOkIcon: Icons.check,
-                      btnOkOnPress: () {
-                      },
+                      btnOkOnPress: () {},
                     ).show();
-
-                  }
-                  else{
+                  } else if (response["status"] == "success") {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.success,
@@ -602,11 +630,10 @@ class _EditScreenState extends State<EditScreen> {
                         Get.to(() => const BottomBar(0));
                       },
                     ).show();
-
                   }
                 },
                 child:
-                const Text('EDIT', style: TextStyle(color: Colors.white)),
+                    const Text('EDIT', style: TextStyle(color: Colors.white)),
               ),
             ),
           ],
@@ -615,5 +642,3 @@ class _EditScreenState extends State<EditScreen> {
     );
   }
 }
-
-

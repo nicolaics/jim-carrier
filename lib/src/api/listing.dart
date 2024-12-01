@@ -17,7 +17,7 @@ Future<dynamic> addListing(
     required String accountNumber,
     required api}) async {
   final url = Uri.parse((baseUrl + api));
-  String? token2 = await StorageService.getAccessToken();
+  String? token = await StorageService.getAccessToken();
 
   // Create the request body as per your payload struct
   Map<String, dynamic> body = {
@@ -38,18 +38,19 @@ Future<dynamic> addListing(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token2',
+        'Authorization': 'Bearer $token',
       },
       body: jsonEncode(body),
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      // Handle successful response
-      print('Listing added successfully');
-      return "success";
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      // Handle errors, e.g. 400, 500, etc.
-      print('Failed to addlisting: ${response.body}');
+      if (jsonDecode(response.body)['error'].contains("access token expired")) {
+        return writeAccessTokenExpResponse();
+      }
+
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -57,8 +58,7 @@ Future<dynamic> addListing(
 }
 
 Future<dynamic> getMyListing({required String api}) async {
-  String? token2 = await StorageService.getAccessToken();
-  print("Token in api get: $token2");
+  String? token = await StorageService.getAccessToken();
   final url = Uri.parse((baseUrl + api));
 
   try {
@@ -66,30 +66,27 @@ Future<dynamic> getMyListing({required String api}) async {
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token2',
+        'Authorization': 'Bearer $token',
       },
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print('response ${response.body}');
-      return jsonDecode(response.body);
-    } else {
-      //print('Error: ${response.body}');
-      return {"status": "failed"}; // Returning a consistent response format
+      return writeSuccessResponse(responseBody: response.body);
+    }
+    else {
+      if (jsonDecode(response.body)['error'].contains("access token expired")) {
+        return writeAccessTokenExpResponse();
+      }
+
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
-    return {
-      "status": "error",
-      "message": e.toString()
-    }; // Return an error object
   }
 }
 
 Future<dynamic> getAllListings({required String api}) async {
-  print("inside");
-  String? token2 = await StorageService.getAccessToken();
-  print("Token in api get: $token2");
+  String? token = await StorageService.getAccessToken();
   final url = Uri.parse((baseUrl + api));
 
   try {
@@ -97,26 +94,26 @@ Future<dynamic> getAllListings({required String api}) async {
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token2',
+        'Authorization': 'Bearer $token',
       },
     );
+
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print('response ${response.body}');
-      return jsonDecode(response.body);
-    } else {
-      //print('Error: ${response.body}');
-      return {"status": "failed"}; // Returning a consistent response format
+      return writeSuccessResponse(responseBody: response.body);
+    }
+    else {
+      if (jsonDecode(response.body)['error'].contains("access token expired")) {
+        return writeAccessTokenExpResponse();
+      }
+
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
-    return {
-      "status": "error",
-      "message": e.toString()
-    }; // Return an error object
   }
 }
 
-Future<dynamic> editListing(
+Future<dynamic> modifyListing(
     {required int? id,
     required String destination,
     required double weight,
@@ -130,7 +127,9 @@ Future<dynamic> editListing(
     required String accountNumber,
     required api}) async {
   final url = Uri.parse((baseUrl + api));
+
   String? token = await StorageService.getAccessToken();
+
   Map<String, dynamic> body = {
     'id': id,
     'destination': destination,
@@ -144,6 +143,7 @@ Future<dynamic> editListing(
     'accountHolder': accountHolder,
     'bankName': bankName,
   };
+
   try {
     final response = await http.patch(
       url,
@@ -155,9 +155,14 @@ Future<dynamic> editListing(
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return "success";
-    } else {
-      return "failed";
+      return writeSuccessResponse(responseBody: response.body);
+    }
+    else {
+      if (jsonDecode(response.body)['error'].contains("access token expired")) {
+        return writeAccessTokenExpResponse();
+      }
+
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');

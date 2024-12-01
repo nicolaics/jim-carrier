@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/listing.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'dart:typed_data';
 import '../../api/api_service.dart';
 import 'package:jim/src/screens/order/new_order.dart';
@@ -31,48 +33,65 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchListing() async {
     try {
       String api = "/listing/all";
-      List<dynamic> response =
-          await getAllListings(api: api) as List; // Await the response
-      print("Response: $response");
+      dynamic response = await getAllListings(api: api); // Await the response
 
-      List<Map<String, dynamic>> updatedItems =
-          []; // To store the updated items
-
-      // Map the API response to the desired format
-      for (var data in response) {
-        String? base64Image = data['carrierProfilePicture'];
-        Uint8List? imageBytes;
-
-        if (base64Image != null && base64Image.isNotEmpty) {
-          imageBytes = base64Decode(
-              base64Image); // Decode the base64 string to Uint8List
+      if (response["message"] == "access token expired") {
+        dynamic refreshTokenResponse = await refreshToken(api: "/user/refresh");
+        if (refreshTokenResponse['status'] == 'error') {
+          print("REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
         }
-        print("carrier rating ${data["carrierRating"]}");
 
-        updatedItems.add({
-          "id": data['id'] ?? 'Unknown',
-          "currency": data['currency'] ?? 'Unknown',
-          "name": data['carrierName'] ??
-              'Unknown', // Default to 'Unknown' if not available
-          "destination": data['destination'] ??
-              'No destination', // Default to 'No destination'
-          "price": formatPrice(
-              data['pricePerKg'],
-              data['currency'] ??
-                  'KRW'), // Format the price based on the currency
-          "available_weight": formatWeight(data[
-              'weightAvailable']), // Format the available weight with space
-          "flight_date":
-              formatDate(data['departureDate']), // Format the departure date
-          "profile_pic": imageBytes, // Store the decoded image bytes
-          "carrierRating": data['carrierRating']??0,
-        });
+        await StorageService.storeAccessToken(
+            refreshTokenResponse['message']['access_token']);
+
+        response = await getAllListings(api: api); // Await the response
       }
 
-      // Update the state with the new items
-      setState(() {
-        items = updatedItems;
-      });
+      if (response["status"] == "success") {
+        response = response as List;
+
+        List<Map<String, dynamic>> updatedItems =
+            []; // To store the updated items
+
+        // Map the API response to the desired format
+        for (var data in response) {
+          String? base64Image = data['carrierProfilePicture'];
+          Uint8List? imageBytes;
+
+          if (base64Image != null && base64Image.isNotEmpty) {
+            imageBytes = base64Decode(
+                base64Image); // Decode the base64 string to Uint8List
+          }
+          print("carrier rating ${data["carrierRating"]}");
+
+          updatedItems.add({
+            "id": data['id'] ?? 'Unknown',
+            "currency": data['currency'] ?? 'Unknown',
+            "name": data['carrierName'] ??
+                'Unknown', // Default to 'Unknown' if not available
+            "destination": data['destination'] ??
+                'No destination', // Default to 'No destination'
+            "price": formatPrice(
+                data['pricePerKg'],
+                data['currency'] ??
+                    'KRW'), // Format the price based on the currency
+            "available_weight": formatWeight(data[
+                'weightAvailable']), // Format the available weight with space
+            "flight_date":
+                formatDate(data['departureDate']), // Format the departure date
+            "profile_pic": imageBytes, // Store the decoded image bytes
+            "carrierRating": data['carrierRating'] ?? 0,
+          });
+        }
+
+        // Update the state with the new items
+        setState(() {
+          items = updatedItems;
+        });
+      }
+      else if (response["status"] == "error") {
+        print("FETCH LISTING ERROR ${response["message"]}");
+      }
     } catch (e) {
       print('Error: $e');
     }
@@ -239,7 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     trailing: Column(
-                      mainAxisSize: MainAxisSize.min, // Ensures the column uses only the space it needs
+                      mainAxisSize: MainAxisSize
+                          .min, // Ensures the column uses only the space it needs
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         ElevatedButton(
@@ -247,7 +267,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => NewOrder(carrier: items[index]),
+                                builder: (context) =>
+                                    NewOrder(carrier: items[index]),
                               ),
                             );
                           },
@@ -264,7 +285,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: List.generate(5, (starIndex) {
-                              final rating = items[index]["carrierRating"] ?? 0.0;
+                              final rating =
+                                  items[index]["carrierRating"] ?? 0.0;
                               if (starIndex < rating.floor()) {
                                 // Full star
                                 return const Icon(
@@ -272,7 +294,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Colors.amber,
                                   size: 16,
                                 );
-                              } else if (starIndex < rating && rating - starIndex >= 0.5) {
+                              } else if (starIndex < rating &&
+                                  rating - starIndex >= 0.5) {
                                 // Half star
                                 return const Icon(
                                   Icons.star_half,
@@ -289,13 +312,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             }),
                           ),
-
                         ),
                       ],
                     ),
-
-
-
                     onTap: () {
                       print("Tapped on ${items[index]["name"]}");
                       print("Tapped on ${items[index]["id"]}");

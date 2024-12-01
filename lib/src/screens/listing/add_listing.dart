@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/listing.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/auth/encryption.dart';
 
@@ -338,7 +340,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
             ),
             const SizedBox(height: 20),
 
-
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -416,27 +417,27 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
-                      final encrypted = encryptData(
-                        accountHolder: _accountHolderName.text,
-                        accountNumber: _bankAccountNo.text,
-                      );
+                  final encrypted = encryptData(
+                    accountHolder: _accountHolderName.text,
+                    accountNumber: _bankAccountNo.text,
+                  );
 
-                      print("Encrypted Data:");
-                      print("Holder: ${encrypted['holder']?.base64}");
-                      print("Number: ${encrypted['number']?.base64}");
+                  print("Encrypted Data:");
+                  print("Holder: ${encrypted['holder']?.base64}");
+                  print("Number: ${encrypted['number']?.base64}");
 
-                      final decrypted = decryptData(
-                        accountHolder: encrypted['holder']!,
-                        accountNumber: encrypted['number']!,
-                      );
+                  final decrypted = decryptData(
+                    accountHolder: encrypted['holder']!,
+                    accountNumber: encrypted['number']!,
+                  );
 
-                      print("Decrypted Data:");
-                      print("Holder: ${decrypted['holder']}");
-                      print("Number: ${decrypted['number']}");
+                  print("Decrypted Data:");
+                  print("Holder: ${decrypted['holder']}");
+                  print("Number: ${decrypted['number']}");
 
                   print("tumbler");
                   // Call the API to add the listing
-                  String result = await addListing(
+                  dynamic response = await addListing(
                     destination: location,
                     weight: weight,
                     price: price,
@@ -450,8 +451,33 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     api: "/listing",
                   );
 
-                  print(result);
-                  if(result=="success"){
+                  if (response["message"] == "access token expired") {
+                    dynamic refreshTokenResponse =
+                        await refreshToken(api: "/user/refresh");
+                    if (refreshTokenResponse['status'] == 'error') {
+                      print(
+                          "REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
+                    }
+
+                    await StorageService.storeAccessToken(
+                        refreshTokenResponse['message']['access_token']);
+
+                    response = await addListing(
+                      destination: location,
+                      weight: weight,
+                      price: price,
+                      currency: _selectedCurrency ?? '',
+                      date: date,
+                      lastDate: lastDate,
+                      additionalInfo: _additionalInfoController.text,
+                      accountHolder: encrypted["holder"]!.base64,
+                      accountNumber: encrypted["number"]!.base64,
+                      bankName: _bankName.text,
+                      api: "/listing",
+                    );
+                  }
+
+                  if (response['status'] == "success") {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.success,
@@ -463,8 +489,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                         Get.to(() => const BottomBar(0));
                       },
                     ).show();
-                  }
-                  else{
+                  } else if (response['status'] == 'error') {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,
@@ -472,8 +497,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       title: 'ERROR',
                       desc: 'Listing not Successful',
                       btnOkIcon: Icons.check,
-                      btnOkOnPress: () {
-                      },
+                      btnOkOnPress: () {},
                     ).show();
                   }
                   Get.to(() => const BottomBar(0));

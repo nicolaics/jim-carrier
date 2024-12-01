@@ -33,6 +33,8 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
       if (jsonDecode(response.body)['error'].contains("access token expired")) {
         return writeAccessTokenExpResponse();
       }
+
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -226,6 +228,29 @@ Future<dynamic> requestVerificationCode(
         'Content-Type': 'application/json',
       },
       body: jsonEncode(body),
+    );
+
+    if (response.statusCode.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(responseBody: response.body);
+    } else {
+      return writeErrorResponse(responseBody: response.body);
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
+}
+
+Future<dynamic> refreshToken({required api}) async {
+  final url = Uri.parse((baseUrl + api));
+  String? token = await StorageService.getRefreshToken();
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {

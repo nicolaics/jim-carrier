@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:encrypt/encrypt.dart' as enc;
+import 'package:jim/src/flutter_storage.dart';
 import '../../api/api_service.dart';
 import '../../api/auth.dart';
 import '../../auth/encryption.dart';
@@ -462,6 +463,17 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         try {
                           dynamic response = await getBankDetails(carrierID: 3, api: api);
 
+                          if (response["message"] == "access token expired") {
+                            dynamic refreshTokenResponse = await refreshToken(api: "/user/refresh");
+                            if (refreshTokenResponse['status'] == 'error') {
+                              print("REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
+                            }
+
+                            await StorageService.storeAccessToken(refreshTokenResponse['message']['access_token']);
+
+                            response = await getBankDetails(carrierID: 3, api: api);
+                          }
+
                           if (response["status"] == "success" && response["message"]["status"] == "exist") {
                             final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
                             final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
@@ -608,7 +620,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             } catch (e) {
                               print("Error during decryption: $e");
                             }
-                          } else {
+                          }
+                          else if (response['status'] == 'error') {
                             print("Failed to fetch payment details. Response: $response");
                           }
                         } catch (e) {
