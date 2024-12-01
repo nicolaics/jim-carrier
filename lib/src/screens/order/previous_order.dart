@@ -12,7 +12,6 @@ import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:encrypt/encrypt.dart' as enc;
-import 'package:jim/src/flutter_storage.dart';
 import '../../api/api_service.dart';
 import '../../api/auth.dart';
 import '../../auth/encryption.dart';

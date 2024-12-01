@@ -2,9 +2,7 @@
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/order.dart';
-import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';

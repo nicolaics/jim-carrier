@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
-import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/listing.dart';
-import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/auth/encryption.dart';
 

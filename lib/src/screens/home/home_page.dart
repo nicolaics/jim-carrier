@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
-import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/listing.dart';
-import 'package:jim/src/flutter_storage.dart';
 import 'dart:typed_data';
 import '../../api/api_service.dart';
 import 'package:jim/src/screens/order/new_order.dart';
