@@ -1,6 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:jim/src/api/order.dart';
 import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/order/confirm_order.dart';
 
@@ -8,9 +8,9 @@ Future<void> handleBackgroundMessage(RemoteMessage message) async {
   print('Title: ${message.notification?.title}');
   print('Body: ${message.notification?.body}');
   print('Payload: ${message.data}');
+
 }
 
-// TODO: handle message when in app
 Future<void> _showMessage(RemoteMessage message) async {
   // Display a local notification or a dialog with the message
   print(
@@ -18,16 +18,29 @@ Future<void> _showMessage(RemoteMessage message) async {
 
   // You can integrate a dialog or notification package here for UI
   print('Payload: ${message.data}');
+  
+  if (message.data['type'] == 'confirm_order') {
+    if (message.data['order_id'] != null) {
+      Map<String, String> order = {
+        "id": message.data['order_id']
+      };
+
+      dynamic orderData = getOrderDetail(api: '/order/carrier/detail', id: int.parse(order['id'] ?? '0'));
+      Get.to(() => ConfirmOrder(orderData: orderData));
+    }
+  }
 }
 
 Future<void> _handleNotificationClick(RemoteMessage message) async {
-  if (message.data['order_id'] != null) {
-    Map<String, String> order = {
-      "id": message.data['order_id']
+  if (message.data['type'] == 'confirm_order') {
+    if (message.data['order_id'] != null) {
+      Map<String, String> order = {
+        "id": message.data['order_id']
+      };
 
-    };
-  // TODO: get the api and send it to confirmOrder
-  //  Get.to(() => const ConfirmOrder(orderData: orderData));
+      dynamic orderData = getOrderDetail(api: '/order/carrier/detail', id: int.parse(order['id'] ?? '0'));
+      Get.to(() => ConfirmOrder(orderData: orderData));
+    }
   }
 }
 
@@ -43,16 +56,20 @@ class FirebaseNotification {
 
     await StorageService.storeFcmToken(fcmToken);
 
-    // TODO: Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Foreground message received: ${message.notification?.title}');
       _showMessage(message);
     });
 
-    // TODO: Handle background messages
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('Message clicked when app opened: ${message.notification?.title}');
       _showMessage(message);
+    });
+
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null) {
+        _handleNotificationClick(message);
+      }
     });
 
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);

@@ -136,3 +136,34 @@ Future<dynamic> updateOrderStatus(
     print('Error occurred: $e');
   }
 }
+
+Future<dynamic> getOrderDetail({required String api, required int id}) async {
+  final url = Uri.parse((baseUrl + api));
+  String? token2 = await StorageService.getToken();
+
+  Map<String, dynamic> body = {
+    'id': id,
+  };
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token2',
+      },
+      body: jsonEncode(body)
+    );
+    
+    if (response.statusCode.isSuccessfulHttpStatusCode) {
+      print('Data received');
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body);
+    } else {
+      // Handle errors, e.g. 400, 500, etc.
+      print('Failed to addlisting: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred: $e');
+  }
+}
