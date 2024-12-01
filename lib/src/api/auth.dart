@@ -1,43 +1,34 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:http_status/http_status.dart';
 import 'package:jim/src/api/api_service.dart';
-import 'package:jim/src/flutter_storage.dart';
+// import 'package:jim/src/flutter_storage.dart';
 
 Future<dynamic> getBankDetails({required int carrierID, required api}) async {
-  print("inside");
-  print(carrierID);
-  final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getAccessToken();
-
   Map<String, int> body = {
     'carrierId': carrierID,
   };
+
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
+    final response = await dio.post(
+      baseUrl + api, 
+      data: body
     );
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      if (jsonDecode(response.body)['status'] == 'exist') {
-        return writeSuccessResponse(responseBody: response.body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      if (response.data['status'] == 'exist') {
+        return writeSuccessResponse(response: response);
       } else {
-        return writeErrorResponse(responseBody: response.body);
+        return writeErrorResponse(response: response);
       }
     } else {
-      if (jsonDecode(response.body)['error'].contains("access token expired")) {
-        return writeAccessTokenExpResponse();
-      }
-
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
@@ -46,7 +37,7 @@ Future<dynamic> login(
     required String password,
     required String fcmToken,
     required String api}) async {
-  final url = Uri.parse((baseUrl + api));
+  // final url = Uri.parse((baseUrl + api));
 
   Map<String, String> body = {
     'email': email,
@@ -55,21 +46,19 @@ Future<dynamic> login(
   };
 
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
+    final response = await dio.post(
+      (baseUrl + api),
+      data: body
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
@@ -82,7 +71,6 @@ Future<dynamic> registerUser(
     required String verification,
     required String fcmToken,
     required String api}) async {
-  final url = Uri.parse(baseUrl + api);
 
   // Encode the profile picture as a base64 string
   String profilePictureBase64 = base64Encode(profilePicture);
@@ -99,166 +87,122 @@ Future<dynamic> registerUser(
   };
 
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
+    final response = await dio.post(
+      baseUrl + api,
+      data: body
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> logout({required api}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getAccessToken();
-
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+    final response = await dio.post(
+      baseUrl + api
     );
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> forgotPassword({required String email, required api}) async {
-  final url = Uri.parse((baseUrl + api));
   Map<String, String> body = {
     'email': email,
   };
 
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
+    final response = await dio.post(
+      baseUrl + api,
+      data: body
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> loginWithGoogle(
     {required Map userInfo, required String api}) async {
-  final url = Uri.parse((baseUrl + api));
-
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(userInfo),
+    final response = await dio.post(
+      baseUrl + api,
+      data: userInfo
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      if (jsonDecode(response.body)['error'].contains("to registration")) {
+      if (response.data['error'].contains("to registration")) {
         return writeToRegistResponse();
       }
 
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> registerWithGoogle(
     {required Map userInfo, required String api}) async {
-  final url = Uri.parse((baseUrl + api));
-
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(userInfo),
+    final response = await dio.post(
+      baseUrl + api,
+      data: userInfo
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> requestVerificationCode(
     {required String email, required api}) async {
-  final url = Uri.parse((baseUrl + api));
   Map<String, String> body = {
     'email': email,
   };
 
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
+    final response = await dio.post(
+      baseUrl + api,
+      data: body
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
-  }
-}
-
-Future<dynamic> refreshToken({required api}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getRefreshToken();
-
-  try {
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
-    } else {
-      return writeErrorResponse(responseBody: response.body);
-    }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }

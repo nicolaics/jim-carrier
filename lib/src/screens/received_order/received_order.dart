@@ -29,41 +29,46 @@ class _ReceivedOrder extends State<ReceivedOrder> {
   Future<void> fetchListing() async {
     try {
       String api = "/order/carrier";
-      List<dynamic> response = await getAllListings(api: api) as List;
-      print("Response: $response");
+      dynamic response = await getAllListings(api: api);
 
-      List<Map<String, dynamic>> updatedItems = [];
-      for (var data in response) {
-        var listing = data['listing'];
-        if (listing == null) continue;
+      if (response["status" == "success"]) {
+        response["message"] = response["message"] as List;
 
-        String? base64Image = data['packageImage'];
-        Uint8List? imageBytes = base64Image != null && base64Image.isNotEmpty
-            ? base64Decode(base64Image)
-            : null;
+        List<Map<String, dynamic>> updatedItems = [];
+        for (var data in response) {
+          var listing = data['listing'];
+          if (listing == null) continue;
 
-        updatedItems.add({
-          "destination": listing['destination'] ?? 'No destination',
-          "departureDate": listing['departureDate'] != null
-              ? formatDate(DateTime.parse(listing['departureDate']))
-              : 'N/A',
-          "id": data['id']?.toString() ?? 'Unknown',
-          "giverName": data['giverName'] ?? 'Unknown',
-          "giverPhoneNumber": data['giverPhoneNumber'] ?? 'Unknown',
-          "weight": data['weight']?.toString() ?? 'N/A',
-          "price": data['price']?.toString() ?? 'N/A',
-          "currency": data['currency'] ?? 'MYR',
-          "packageImage": imageBytes,
-          "packageLocation": data['packageLocation'] ?? 'Unknown', // Ensure this is set properly
-          "orderStatus": data['orderStatus'] ?? 'Unknown',
-          "notes": data['notes'] ?? 'Unknown',
+          String? base64Image = data['packageImage'];
+          Uint8List? imageBytes = base64Image != null && base64Image.isNotEmpty
+              ? base64Decode(base64Image)
+              : null;
+
+          updatedItems.add({
+            "destination": listing['destination'] ?? 'No destination',
+            "departureDate": listing['departureDate'] != null
+                ? formatDate(DateTime.parse(listing['departureDate']))
+                : 'N/A',
+            "id": data['id']?.toString() ?? 'Unknown',
+            "giverName": data['giverName'] ?? 'Unknown',
+            "giverPhoneNumber": data['giverPhoneNumber'] ?? 'Unknown',
+            "weight": data['weight']?.toString() ?? 'N/A',
+            "price": data['price']?.toString() ?? 'N/A',
+            "currency": data['currency'] ?? 'MYR',
+            "packageImage": imageBytes,
+            "packageLocation": data['packageLocation'] ??
+                'Unknown', // Ensure this is set properly
+            "orderStatus": data['orderStatus'] ?? 'Unknown',
+            "notes": data['notes'] ?? 'Unknown',
+          });
+        }
+
+        setState(() {
+          items = updatedItems;
         });
-
+      } else {
+        print("Error: ${response["message"]}");
       }
-
-      setState(() {
-        items = updatedItems;
-      });
     } catch (e) {
       print('Error fetching listing: $e');
     }
@@ -73,7 +78,8 @@ class _ReceivedOrder extends State<ReceivedOrder> {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 
-  void _showUpdateLocationModal(BuildContext context, Map<String, dynamic> item) {
+  void _showUpdateLocationModal(
+      BuildContext context, Map<String, dynamic> item) {
     String? dropdownValue;
 
     showModalBottomSheet(
@@ -133,28 +139,33 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                 onPressed: () async {
                   if (dropdownValue != null && dropdownValue!.isNotEmpty) {
                     String orderStatus = "confirmed";
-                    if (dropdownValue == "In-flight" || dropdownValue == "Arrived at the Destination Country" || dropdownValue == "With Local Courier") {
+                    if (dropdownValue == "In-flight" ||
+                        dropdownValue == "Arrived at the Destination Country" ||
+                        dropdownValue == "With Local Courier") {
                       orderStatus = "en-route";
                     } else if (dropdownValue == "Delivered") {
                       orderStatus = "completed";
                     }
 
                     // Update location on the server
-                    dynamic result = await updatePackageLocation(
+                    dynamic response = await updatePackageLocation(
                       orderNo: int.tryParse(item['id']) ?? 0,
                       location: dropdownValue,
                       orderStatus: orderStatus,
                       api: "/order/package-location",
                     );
 
-                    if (result != null) {
+                    if (response["status"] == "success") {
                       // Find the index of the updated item
-                      int index = items.indexWhere((element) => element['id'] == item['id']);
+                      int index = items
+                          .indexWhere((element) => element['id'] == item['id']);
                       if (index != -1) {
                         // Update the item in the list
                         setState(() {
-                          items[index]['packageLocation'] = dropdownValue; // Update the location
-                          items[index]['orderStatus'] = orderStatus; // Update the order status
+                          items[index]['packageLocation'] =
+                              dropdownValue; // Update the location
+                          items[index]['orderStatus'] =
+                              orderStatus; // Update the order status
                         });
                       }
                     } else {
@@ -174,7 +185,6 @@ class _ReceivedOrder extends State<ReceivedOrder> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -203,9 +213,9 @@ class _ReceivedOrder extends State<ReceivedOrder> {
               hint: const Text("SORT BY"),
               items: <String>['Alphabetical', 'High to Low', 'Nearest Date']
                   .map((String value) => DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              ))
+                        value: value,
+                        child: Text(value),
+                      ))
                   .toList(),
               onChanged: (String? newValue) {
                 setState(() {
@@ -221,7 +231,8 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                 final item = items[index];
                 return Card(
                   elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -251,14 +262,16 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                         Text("Departure Date: ${item['departureDate']}"),
                         const SizedBox(height: 8),
                         ElevatedButton(
-                          onPressed: () => _showUpdateLocationModal(context, item),
+                          onPressed: () =>
+                              _showUpdateLocationModal(context, item),
                           style: ElevatedButton.styleFrom(
                             minimumSize: const Size.fromHeight(50),
                             backgroundColor: Colors.blue,
                           ),
                           child: const Text(
                             "Update Location",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],

@@ -2,7 +2,9 @@
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/api/order.dart';
+import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +68,6 @@ class _NewOrderState extends State<NewOrder> {
   //     });
   //   }
   // }
-
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +278,7 @@ class _NewOrderState extends State<NewOrder> {
                     // Calculate the total price
                     double price = _calculateTotalPrice();
                     // Handle Pay Later logic here
-                    String result=await createOrder(
+                    dynamic response = await createOrder(
                       listid: carrier["id"],
                       weight: weight,
                       price: price,
@@ -286,7 +287,8 @@ class _NewOrderState extends State<NewOrder> {
                       packageImage: photo,
                       api: '/order', // Provide your API base URL
                     );
-                    if(result == "failed"){
+
+                    if (response["status"] == "error") {
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.error,
@@ -294,10 +296,9 @@ class _NewOrderState extends State<NewOrder> {
                         title: 'Failed',
                         desc: 'Order Failed',
                         btnOkIcon: Icons.check,
-                        btnOkOnPress: () {
-                        },
+                        btnOkOnPress: () {},
                       ).show();
-                    }else{
+                    } else {
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,

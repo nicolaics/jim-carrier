@@ -1,38 +1,20 @@
-import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:http_status/http_status.dart';
 import 'package:jim/src/api/api_service.dart';
-import 'package:jim/src/flutter_storage.dart';
 
 Future<dynamic> getAllOrders({required String api}) async {
-  String? token2 = await StorageService.getAccessToken();
-  print("Token in api get: $token2");
-  final url = Uri.parse((baseUrl + api));
-
   try {
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token2',
-      },
-    );
+    final response = await dio.get((baseUrl + api));
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print('response getOrder ${response.body}');
-      return jsonDecode(response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      //print('Error: ${response.body}');
-      return {"status": "failed"}; // Returning a consistent response format
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
-    return {
-      "status": "error",
-      "message": e.toString()
-    }; // Return an error object
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
@@ -44,9 +26,6 @@ Future<dynamic> createOrder(
     required String packageContent,
     required Uint8List? packageImage,
     required String api}) async {
-  String? token2 = await StorageService.getAccessToken();
-  final url = Uri.parse((baseUrl + api));
-
   Map<String, dynamic> body = {
     'listingId': listid,
     'weight': weight,
@@ -57,49 +36,31 @@ Future<dynamic> createOrder(
   };
 
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token2',
-      },
-      body: jsonEncode(body),
-    );
+    final response = await dio.post((baseUrl + api), data: body);
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print('User ordered successfully');
-      return jsonDecode(response.body)['access_token'];
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      print('Failed to order: ${response.body}');
-      return "failed";
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> getMyOrder({required api}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token2 = await StorageService.getAccessToken();
-
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token2',
-      },
-    );
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print('Data received');
-      print(jsonDecode(response.body));
-      return jsonDecode(response.body);
+    final response = await dio.get((baseUrl + api));
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      // Handle errors, e.g. 400, 500, etc.
-      print('Failed to addlisting: ${response.body}');
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
@@ -107,62 +68,40 @@ Future<dynamic> updateOrderStatus(
     {required int? orderNo,
     required String orderStatus,
     required String api}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getAccessToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'orderStatus': orderStatus,
   };
   try {
-    final response = await http.patch(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
-    );
-    dynamic responseDecode = jsonDecode(response.body);
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print("Confirmation success");
-      return responseDecode['access_token'];
+    final response = await dio.patch((baseUrl + api), data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      if (responseDecode['error'].contains("to registration")) {
-        return "toRegist";
-      }
-      return responseDecode['error'];
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> getOrderDetail({required String api, required int id}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token2 = await StorageService.getAccessToken();
-
   Map<String, dynamic> body = {
     'id': id,
   };
 
   try {
-    final response = await http.post(url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token2',
-        },
-        body: jsonEncode(body));
+    final response = await dio.post((baseUrl + api), data: body);
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print('Data received');
-      print(jsonDecode(response.body));
-      return jsonDecode(response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      // Handle errors, e.g. 400, 500, etc.
-      print('Failed to addlisting: ${response.body}');
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
@@ -171,33 +110,22 @@ Future<dynamic> updatePaymentStatus(
     required String paymentStatus,
     required Uint8List? paymentProof,
     required String api}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getAccessToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'paymentStatus': paymentStatus,
     'paymentProof': paymentProof
   };
   try {
-    final response = await http.patch(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
-    );
+    final response = await dio.patch((baseUrl + api), data: body);
 
-    dynamic responseDecode = jsonDecode(response.body);
-
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print("Confirmation success");
-      return responseDecode;
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return responseDecode['error'];
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
@@ -206,32 +134,21 @@ Future<dynamic> updatePackageLocation(
     required String? location,
     required String? orderStatus,
     required String api}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getAccessToken();
   Map<String, dynamic> body = {
     'id': orderNo,
     'packageLocation': location,
     'orderStatus': orderStatus,
   };
   try {
-    final response = await http.patch(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
-    );
+    final response = await dio.patch((baseUrl + api), data: body);
 
-    dynamic responseDecode = jsonDecode(response.body);
-
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      print("Confirmation success");
-      return responseDecode;
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      return responseDecode['error'];
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }

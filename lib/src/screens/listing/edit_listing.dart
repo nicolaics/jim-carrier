@@ -581,33 +581,6 @@ class _EditScreenState extends State<EditScreen> {
                     api: "/listing",
                   );
 
-                  if (response["message"] == "access token expired") {
-                    dynamic refreshTokenResponse =
-                        await refreshToken(api: "/user/refresh");
-                    if (refreshTokenResponse['status'] == 'error') {
-                      print(
-                          "REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
-                    }
-
-                    await StorageService.storeAccessToken(
-                        refreshTokenResponse['message']['access_token']);
-
-                    response = await modifyListing(
-                      id: id,
-                      destination: location,
-                      weight: weight,
-                      price: price,
-                      currency: _selectedCurrency ?? '',
-                      date: date,
-                      lastDate: lastDate,
-                      additionalInfo: _additionalInfoController.text,
-                      accountHolder: encrypted["holder"]!.base64,
-                      accountNumber: encrypted["number"]!.base64,
-                      bankName: _bankName.text,
-                      api: "/listing",
-                    );
-                  }
-
                   if (response["status"] == "error") {
                     AwesomeDialog(
                       context: context,
@@ -618,7 +591,7 @@ class _EditScreenState extends State<EditScreen> {
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {},
                     ).show();
-                  } else if (response["status"] == "success") {
+                  } else {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.success,

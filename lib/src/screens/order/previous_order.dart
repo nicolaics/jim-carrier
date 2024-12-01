@@ -139,12 +139,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   Future<void> fetchListing() async {
     try {
       String api = "/listing/carrier"; // Correct endpoint
-      var response = await getAllOrders(api: api); // Fetch API data
-      print("HSHSHSHSHSH $response");
-      if (response is List) {
+      dynamic response = await getAllOrders(api: api); // Fetch API data
+
+      if (response["status"] == "success") {
+        response["message"] = response["message"] as List;
+
         List<Map<String, dynamic>> updatedItems = [];
 
-        for (var data in response) {
+        for (var data in response["message"]) {
           updatedItems.add({
             "id": data['id'] ?? 'Unknown',
             "carrier_name": data['carrierName'] ?? 'Unknown',
@@ -165,10 +167,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         setState(() {
           listingData = updatedItems;
         });
-      } else if (response is Map && response['status'] == 'failed') {
-        print("Error: API returned a failure status. Response: $response");
       } else {
-        print("Error: Unexpected response format. Response: $response");
+        print("Error: API returned a failure status. Response: $response");
       }
     } catch (e) {
       print('Error fetching listing data: $e');
@@ -178,12 +178,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   Future<void> fetchOrder() async {
     try {
       String api = "/order/giver"; // Correct endpoint
-      var response = await getAllOrders(api: api); // Fetch API data
+      dynamic response = await getAllOrders(api: api); // Fetch API data
 
-      if (response is List) {
+      if (response["status"] == "success") {
+        response["message"] = response["message"] as List;
+
         List<Map<String, dynamic>> updatedOrders = [];
 
-        for (var data in response) {
+        for (var data in response["message"]) {
           updatedOrders.add({
             "id": data['id'] ?? 'Unknown',
             "weight": formatWeight(data['weight']),
@@ -204,10 +206,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         setState(() {
           orderData = updatedOrders;
         });
-      } else if (response is Map && response['status'] == 'failed') {
-        print("Error: API returned a failure status. Response: $response");
       } else {
-        print("Error: Unexpected response format. Response: $response");
+        print("Error: API returned a failure status. Response: $response");
       }
     } catch (e) {
       print('Error fetching order data: $e');
@@ -462,17 +462,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
                         try {
                           dynamic response = await getBankDetails(carrierID: 3, api: api);
-
-                          if (response["message"] == "access token expired") {
-                            dynamic refreshTokenResponse = await refreshToken(api: "/user/refresh");
-                            if (refreshTokenResponse['status'] == 'error') {
-                              print("REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
-                            }
-
-                            await StorageService.storeAccessToken(refreshTokenResponse['message']['access_token']);
-
-                            response = await getBankDetails(carrierID: 3, api: api);
-                          }
 
                           if (response["status"] == "success" && response["message"]["status"] == "exist") {
                             final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);

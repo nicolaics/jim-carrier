@@ -1,8 +1,6 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:http_status/http_status.dart';
 import 'package:jim/src/api/api_service.dart';
-import 'package:jim/src/flutter_storage.dart';
-import 'package:http/http.dart' as http;
 
 Future<dynamic> addListing(
     {required String destination,
@@ -16,10 +14,7 @@ Future<dynamic> addListing(
     required String bankName,
     required String accountNumber,
     required api}) async {
-  final url = Uri.parse((baseUrl + api));
-  String? token = await StorageService.getAccessToken();
 
-  // Create the request body as per your payload struct
   Map<String, dynamic> body = {
     'destination': destination,
     'weightAvailable': weight,
@@ -34,82 +29,53 @@ Future<dynamic> addListing(
   };
 
   try {
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
+    final response = await dio.post(
+      (baseUrl + api),
+      data: body
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
     } else {
-      if (jsonDecode(response.body)['error'].contains("access token expired")) {
-        return writeAccessTokenExpResponse();
-      }
-
-      return writeErrorResponse(responseBody: response.body);
+      return writeErrorResponse(response: response);
     }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> getMyListing({required String api}) async {
-  String? token = await StorageService.getAccessToken();
-  final url = Uri.parse((baseUrl + api));
-
   try {
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+    final response = await dio.get(
+      (baseUrl + api)
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
     }
-    else {
-      if (jsonDecode(response.body)['error'].contains("access token expired")) {
-        return writeAccessTokenExpResponse();
-      }
-
-      return writeErrorResponse(responseBody: response.body);
-    }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> getAllListings({required String api}) async {
-  String? token = await StorageService.getAccessToken();
-  final url = Uri.parse((baseUrl + api));
-
   try {
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+    final response = await dio.get(
+      (baseUrl + api)
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
     }
-    else {
-      if (jsonDecode(response.body)['error'].contains("access token expired")) {
-        return writeAccessTokenExpResponse();
-      }
-
-      return writeErrorResponse(responseBody: response.body);
-    }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }
 
@@ -126,10 +92,6 @@ Future<dynamic> modifyListing(
     required String bankName,
     required String accountNumber,
     required api}) async {
-  final url = Uri.parse((baseUrl + api));
-
-  String? token = await StorageService.getAccessToken();
-
   Map<String, dynamic> body = {
     'id': id,
     'destination': destination,
@@ -145,26 +107,18 @@ Future<dynamic> modifyListing(
   };
 
   try {
-    final response = await http.patch(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body),
+    final response = await dio.patch(
+      (baseUrl + api),
+      data: body
     );
 
-    if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return writeSuccessResponse(responseBody: response.body);
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
     }
-    else {
-      if (jsonDecode(response.body)['error'].contains("access token expired")) {
-        return writeAccessTokenExpResponse();
-      }
-
-      return writeErrorResponse(responseBody: response.body);
-    }
-  } catch (e) {
-    print('Error occurred: $e');
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
   }
 }

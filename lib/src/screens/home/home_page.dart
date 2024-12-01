@@ -35,26 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
       String api = "/listing/all";
       dynamic response = await getAllListings(api: api); // Await the response
 
-      if (response["message"] == "access token expired") {
-        dynamic refreshTokenResponse = await refreshToken(api: "/user/refresh");
-        if (refreshTokenResponse['status'] == 'error') {
-          print("REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
-        }
-
-        await StorageService.storeAccessToken(
-            refreshTokenResponse['message']['access_token']);
-
-        response = await getAllListings(api: api); // Await the response
-      }
-
       if (response["status"] == "success") {
-        response = response as List;
+        response["message"] = response["message"] as List;
 
         List<Map<String, dynamic>> updatedItems =
             []; // To store the updated items
 
         // Map the API response to the desired format
-        for (var data in response) {
+        for (var data in response["message"]) {
           String? base64Image = data['carrierProfilePicture'];
           Uint8List? imageBytes;
 
@@ -89,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
           items = updatedItems;
         });
       }
-      else if (response["status"] == "error") {
+      else {
         print("FETCH LISTING ERROR ${response["message"]}");
       }
     } catch (e) {

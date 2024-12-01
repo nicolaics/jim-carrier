@@ -3,37 +3,86 @@ import 'package:http/http.dart' as http;
 import 'package:http_status/http_status.dart';
 import 'package:jim/src/flutter_storage.dart';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 
 //const baseUrl = "http://pravass-macbook-air:9988/api/v1";
 final baseUrl = dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1';
 
-
-Map<String, dynamic> writeSuccessResponse({required String responseBody}) {
-  return {
-    "status": "success",
-    "message": jsonDecode(responseBody)
-  };
+Map<String, dynamic> writeSuccessResponse({required dynamic response}) {
+  return {"status": "success", "message": response.data};
 }
 
-Map<String, dynamic> writeErrorResponse({required String responseBody}) {
-  return {
-    "status": "error",
-    "message": jsonDecode(responseBody)['error']
-  };
-}
-
-Map<String, String> writeAccessTokenExpResponse() {
-  return {
-    "status": "expired",
-    "message": "access token expired"
-  };
+Map<String, dynamic> writeErrorResponse({required dynamic response}) {
+  print("response data: ${response.data}");
+  return {"status": "error", "message": response.data['error']};
 }
 
 Map<String, String> writeToRegistResponse() {
-  return {
-    "status": "registration",
-    "message": "toRegist"
-  };
+  return {"status": "registration", "message": "toRegist"};
+}
+
+final Dio dio = Dio();
+
+void setupInterceptors() {
+  dio.interceptors.add(InterceptorsWrapper(
+    onRequest: (options, handler) async {
+      final accessToken = await StorageService.getAccessToken();
+      
+      if (accessToken != "") {
+        options.headers["Authorization"] = "Bearer $accessToken";
+        options.headers["Content-Type"] = "application/json";
+      }
+      
+      handler.next(options); // Continue with the request
+    },
+    onError: (error, handler) async {
+      if (error.response?.statusCode == 401 && error.response?.data['error'].contains("access token expired")) {
+        final refreshed = await _refreshToken();
+
+        if (refreshed) {
+          // Retry the original request with the new token
+          final options = error.requestOptions;
+          final retryResponse = await dio.request(
+            options.path,
+            options: Options(
+              method: options.method,
+              headers: options.headers,
+            ),
+            data: options.data,
+            queryParameters: options.queryParameters,
+          );
+          handler.resolve(retryResponse); // Return the retried response
+        } else {
+          handler.next(error); // Pass the error forward if refresh fails
+        }
+      } else {
+        handler.next(error); // Forward other errors
+      }
+    },
+  ));
+}
+
+Future<bool> _refreshToken() async {
+  try {
+    final refreshToken = await StorageService.getRefreshToken();
+    if (refreshToken == "") {
+      return false;
+    }
+
+    final response = await dio.post(
+      "$baseUrl/user/refresh",
+      data: {'refreshToken': refreshToken},
+    );
+
+    if (response.statusCode == 200) {
+      final newAccessToken = response.data['access_token'];
+      await StorageService.storeAccessToken(newAccessToken);
+      return true;
+    }
+  } catch (e) {
+    print('Token refresh failed: $e');
+  }
+  return false;
 }
 
 class ApiService {

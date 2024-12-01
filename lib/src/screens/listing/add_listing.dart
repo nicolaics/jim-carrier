@@ -451,32 +451,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     api: "/listing",
                   );
 
-                  if (response["message"] == "access token expired") {
-                    dynamic refreshTokenResponse =
-                        await refreshToken(api: "/user/refresh");
-                    if (refreshTokenResponse['status'] == 'error') {
-                      print(
-                          "REFRESH TOKEN ERROR ${refreshTokenResponse['message']}");
-                    }
-
-                    await StorageService.storeAccessToken(
-                        refreshTokenResponse['message']['access_token']);
-
-                    response = await addListing(
-                      destination: location,
-                      weight: weight,
-                      price: price,
-                      currency: _selectedCurrency ?? '',
-                      date: date,
-                      lastDate: lastDate,
-                      additionalInfo: _additionalInfoController.text,
-                      accountHolder: encrypted["holder"]!.base64,
-                      accountNumber: encrypted["number"]!.base64,
-                      bankName: _bankName.text,
-                      api: "/listing",
-                    );
-                  }
-
                   if (response['status'] == "success") {
                     AwesomeDialog(
                       context: context,
@@ -489,7 +463,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                         Get.to(() => const BottomBar(0));
                       },
                     ).show();
-                  } else if (response['status'] == 'error') {
+                  } else {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,

@@ -30,7 +30,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
 
   @override
   Widget build(BuildContext context) {
-
     final orderData = widget.orderData;
     orderNo = (orderData["id"] is String)
         ? int.tryParse(orderData["id"])
@@ -44,7 +43,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       appBar: AppBar(
         title: const Text(
           "CONFIRM ORDER",
-          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.blue,
       ),
@@ -54,7 +54,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Package Image
-            if (orderData["packageImage"] != null && orderData["packageImage"] is Uint8List)
+            if (orderData["packageImage"] != null &&
+                orderData["packageImage"] is Uint8List)
               Center(
                 child: Container(
                   height: 150,
@@ -91,18 +92,25 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
             Card(
               elevation: 4,
               color: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow(Icons.person, "Order Number:", orderData["id"] ?? "Unknown"),
-                    _buildDetailRow(Icons.location_on, "Destination Country:", orderData["destination"] ?? "No destination"),
-                    _buildDetailRow(Icons.attach_money, "Price:", orderData["price"] ?? "No price"),
-                    _buildDetailRow(Icons.scale, "Weight:", orderData["weight"] ?? "No weight specified"),
-                    _buildDetailRow(Icons.date_range, "Delivery Date:", orderData["departureDate"] ?? "No date"),
-                    _buildDetailRow(Icons.note, "Notes:", orderData["notes"] ?? "No notes"),
+                    _buildDetailRow(Icons.person, "Order Number:",
+                        orderData["id"] ?? "Unknown"),
+                    _buildDetailRow(Icons.location_on, "Destination Country:",
+                        orderData["destination"] ?? "No destination"),
+                    _buildDetailRow(Icons.attach_money, "Price:",
+                        orderData["price"] ?? "No price"),
+                    _buildDetailRow(Icons.scale, "Weight:",
+                        orderData["weight"] ?? "No weight specified"),
+                    _buildDetailRow(Icons.date_range, "Delivery Date:",
+                        orderData["departureDate"] ?? "No date"),
+                    _buildDetailRow(
+                        Icons.note, "Notes:", orderData["notes"] ?? "No notes"),
                   ],
                 ),
               ),
@@ -120,30 +128,41 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       print("Order IDDDDDD:");
                       print(orderNo);
                       print("Order Confirmed!");
-                      String response = await updateOrderStatus(orderNo: orderNo, orderStatus: "confirmed", api: "/order/order-status");
+                      dynamic response = await updateOrderStatus(
+                          orderNo: orderNo,
+                          orderStatus: "confirmed",
+                          api: "/order/order-status");
 
-                      AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.success,
-                        animType: AnimType.topSlide,
-                        title: 'Success',
-                        desc: 'Order Confirmed',
-                        btnOkIcon: Icons.check,
-                        btnOkOnPress: () {
-                          Get.to(() => const BottomBar(0));
-                        },
-                      ).show();
+                      if (response["status"] == "success") {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          animType: AnimType.topSlide,
+                          title: 'Success',
+                          desc: 'Order Confirmed',
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                            Get.to(() => const BottomBar(0));
+                          },
+                        ).show();
+                      } else {
+                        // TODO: here
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
                       "Confirm Order",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                   const SizedBox(width: 16), // Spacing between buttons
@@ -152,36 +171,46 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   ElevatedButton(
                     onPressed: () async {
                       print("Order Rejected!");
-                      await updateOrderStatus(orderNo: orderNo, orderStatus: "cancelled", api: "/order/order-status");
-                      AwesomeDialog(
-                        context: context,
-                        dialogType: DialogType.success,
-                        animType: AnimType.topSlide,
-                        title: 'Success',
-                        desc: 'Order Confirmed',
-                        btnOkIcon: Icons.check,
-                        btnOkOnPress: () {
-                          Get.to(() => const BottomBar(0));
-                        },
-                      ).show();
+                      dynamic response = await updateOrderStatus(
+                          orderNo: orderNo,
+                          orderStatus: "cancelled",
+                          api: "/order/order-status");
 
-                      },
+                      if (response["status"] == "success") {
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          animType: AnimType.topSlide,
+                          title: 'Success',
+                          desc: 'Order Confirmed',
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                            Get.to(() => const BottomBar(0));
+                          },
+                        ).show();
+                      } else {
+                        // TODO: do here
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
                       "Reject Order",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -225,5 +254,3 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     );
   }
 }
-
-

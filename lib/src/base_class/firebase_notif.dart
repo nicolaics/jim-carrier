@@ -22,9 +22,15 @@ Future<void> _showMessage(RemoteMessage message) async {
     if (message.data['order_id'] != null) {
       Map<String, String> order = {"id": message.data['order_id']};
 
-      dynamic orderData = getOrderDetail(
+      dynamic response = getOrderDetail(
           api: '/order/carrier/detail', id: int.parse(order['id'] ?? '0'));
-      Get.to(() => ConfirmOrder(orderData: orderData));
+
+      if (response["status"] == "error") {
+        // TODO: do here
+        return;
+      }
+
+      Get.to(() => ConfirmOrder(orderData: response["message"]));
     }
   }
 }
@@ -34,9 +40,15 @@ Future<void> _handleNotificationClick(RemoteMessage message) async {
     if (message.data['order_id'] != null) {
       Map<String, String> order = {"id": message.data['order_id']};
 
-      dynamic orderData = getOrderDetail(
+      dynamic response = getOrderDetail(
           api: '/order/carrier/detail', id: int.parse(order['id'] ?? '0'));
-      Get.to(() => ConfirmOrder(orderData: orderData));
+
+      if (response["status"] == "error") {
+        // TODO: do here
+        return;
+      }
+
+      Get.to(() => ConfirmOrder(orderData: response["message"]));
     }
   }
 }
