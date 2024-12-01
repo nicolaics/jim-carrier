@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
-import '../../api/api_service.dart';
 
 class ConfirmOrder extends StatefulWidget {
   final Map<String, dynamic> orderData;
@@ -18,7 +17,6 @@ class ConfirmOrder extends StatefulWidget {
 }
 
 class _ConfirmOrderState extends State<ConfirmOrder> {
-  final ApiService apiService = ApiService();
   @override
   void initState() {
     super.initState();

@@ -14,7 +14,6 @@ import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
 import 'package:jim/src/base_class/login_google.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import '../api/api_service.dart';
 
 class TryScreen extends StatefulWidget {
   const TryScreen({super.key});
@@ -25,7 +24,6 @@ class TryScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<TryScreen> {
   // final TextEditingController _searchController = TextEditingController();
-  final ApiService apiService = ApiService();
   final storage = const FlutterSecureStorage();
 
   String? userName;
@@ -36,20 +34,28 @@ class _HomeScreenState extends State<TryScreen> {
   @override
   void initState() {
     super.initState();
-    fetchUserEmail();  // Call the function when the widget is initialized
+    fetchUserEmail(); // Call the function when the widget is initialized
   }
 
   // Async function to fetch user data
   Future<void> fetchUserEmail() async {
     try {
       String api = "/user/current";
-      Map response = await apiService.get(api: api) as Map;  // Await the response
-      print("Response: $response");
-      setState(() {
-        userName = response['name'];
-        userEmail = response['email'];
-        photo = base64Decode(response['profilePicture']); // Decode the photo from base64
-      });
+      dynamic response =
+          await getCurrentUser(api: api); // Await the response
+
+      if (response["status"] == "success") {
+        response["message"] = response["message"] as Map;
+
+        setState(() {
+          userName = response["message"]['name'];
+          userEmail = response["message"]['email'];
+          photo = base64Decode(
+              response["message"]['profilePicture']); // Decode the photo from base64
+        });
+      } else {
+        // TODO: do here
+      }
     } catch (e) {
       print('Error: $e');
     }
@@ -65,7 +71,8 @@ class _HomeScreenState extends State<TryScreen> {
     if (updatedImage != null) {
       // If there was an updated image, update the UI accordingly
       setState(() {
-        photo = updatedImage as Uint8List;  // Assuming the updated image is returned as Uint8List
+        photo = updatedImage
+            as Uint8List; // Assuming the updated image is returned as Uint8List
       });
     }
   }
@@ -88,18 +95,20 @@ class _HomeScreenState extends State<TryScreen> {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: Colors.black,
-                        width: 1, // Adjust the width to make the border thicker or thinner
+                        width:
+                            1, // Adjust the width to make the border thicker or thinner
                       ),
                     ),
-
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
                       child: photo == null
-                          ? const Icon(Icons.account_circle, size: 120) // Placeholder if photo is null
+                          ? const Icon(Icons.account_circle,
+                              size: 120) // Placeholder if photo is null
                           : Image.memory(
-                        photo!,
-                        fit: BoxFit.cover, // Ensures the image fits well within the circle
-                      ),
+                              photo!,
+                              fit: BoxFit
+                                  .cover, // Ensures the image fits well within the circle
+                            ),
                     ),
                   ),
                   Positioned(
@@ -113,7 +122,9 @@ class _HomeScreenState extends State<TryScreen> {
                         color: Colors.yellow,
                       ),
                       child: const Icon(
-                        LineAwesomeIcons.pencil_alt_solid, size: 20.0, color: Colors.black,
+                        LineAwesomeIcons.pencil_alt_solid,
+                        size: 20.0,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -123,25 +134,28 @@ class _HomeScreenState extends State<TryScreen> {
 
               // Display userName and userEmail only after they are fetched
               userName == null || userEmail == null
-                  ? const CircularProgressIndicator()  // Show a loading indicator until data is fetched
+                  ? const CircularProgressIndicator() // Show a loading indicator until data is fetched
                   : Column(
-                children: [
-                  Text(userName!, style: GoogleFonts.anton(fontSize: 20)),
-                  Text(userEmail!, style: GoogleFonts.anton(fontSize: 20)),
-                ],
-              ),
+                      children: [
+                        Text(userName!, style: GoogleFonts.anton(fontSize: 20)),
+                        Text(userEmail!,
+                            style: GoogleFonts.anton(fontSize: 20)),
+                      ],
+                    ),
 
               const SizedBox(height: 20),
               SizedBox(
                 width: 200,
                 child: ElevatedButton(
-                  onPressed: _navigateToUpdateProfile, // Call the new method here
+                  onPressed:
+                      _navigateToUpdateProfile, // Call the new method here
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey,
                     side: BorderSide.none,
                     shape: const StadiumBorder(),
                   ),
-                  child: const Text("Edit Profile", style: TextStyle(color: Colors.black, fontSize: 20)),
+                  child: const Text("Edit Profile",
+                      style: TextStyle(color: Colors.black, fontSize: 20)),
                 ),
               ),
               const SizedBox(height: 30),
@@ -180,7 +194,8 @@ class _HomeScreenState extends State<TryScreen> {
                   final controller = Controller();
                   await controller.signOut();
                   if (mounted) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginScreen()));
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
                   }
                 },
               ),

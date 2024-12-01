@@ -5,7 +5,6 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/screens/auth/otp_screen_fp.dart';
-import '../../api/api_service.dart';
 
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({super.key});
@@ -13,7 +12,6 @@ class ForgetPassword extends StatefulWidget {
   _ForgetPassword createState() => _ForgetPassword();
 }
 class _ForgetPassword extends State<ForgetPassword> {
-  final ApiService apiService = ApiService();
   final TextEditingController _emailController = TextEditingController();
 
   @override

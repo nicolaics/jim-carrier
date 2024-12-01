@@ -15,7 +15,6 @@ import 'package:jim/src/screens/auth/register_screen.dart';
 import 'package:jim/src/base_class/login_google.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../api/api_service.dart';
 import 'package:get/get.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -30,8 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
 
   bool _isPasswordVisible = false;
-
-  final ApiService apiService = ApiService();
 
   bool isTokenExpired(String token) {
     return JwtDecoder.isExpired(token);

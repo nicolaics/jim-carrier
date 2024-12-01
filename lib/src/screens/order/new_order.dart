@@ -8,7 +8,6 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
-import '../../api/api_service.dart';
 
 class NewOrder extends StatefulWidget {
   final Map<String, dynamic> carrier; // Accepts carrier details as a parameter
@@ -23,7 +22,6 @@ class _NewOrderState extends State<NewOrder> {
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _contentsController =
       TextEditingController(); // Controller for the weight input
-  final ApiService apiService = ApiService();
 
   Uint8List? photo;
   Uint8List? photoPayment;

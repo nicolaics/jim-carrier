@@ -5,10 +5,9 @@ import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jim/src/api/profile.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/sizes.dart';
-import '../../api/api_service.dart';
 import 'dart:typed_data';
 
 
@@ -20,8 +19,6 @@ class UpdateProfileScreen extends StatefulWidget {
 }
 
 class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
-  final ApiService apiService = ApiService();
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -44,13 +41,22 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   Future<void> fetchUserEmail() async {
     try {
       String api = "/user/current";
-      Map response = await apiService.get(api: api) as Map;  // Await the response
-      print("Response: $response");
-      setState(() {
-        userName = response['name'];
-        userEmail = response['email'];
-        photo = base64Decode(response['profilePicture']); // Decode the photo from base64
-      });
+
+      dynamic response =
+          await getCurrentUser(api: api); // Await the response
+
+      if (response["status"] == "success") {
+        response["message"] = response["message"] as Map;
+
+        setState(() {
+          userName = response["message"]['name'];
+          userEmail = response["message"]['email'];
+          photo = base64Decode(
+              response["message"]['profilePicture']); // Decode the photo from base64
+        });
+      } else {
+        // TODO: do here
+      }
     } catch (e) {
       print('Error: $e');
     }

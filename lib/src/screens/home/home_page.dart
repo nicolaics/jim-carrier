@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'package:jim/src/api/listing.dart';
 import 'dart:typed_data';
-import '../../api/api_service.dart';
 import 'package:jim/src/screens/order/new_order.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ApiService apiService = ApiService();
   List<Map<String, dynamic>> items =
       []; // Change the list type to dynamic to handle both String and Uint8List
 

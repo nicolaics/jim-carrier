@@ -11,7 +11,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/flutter_storage.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
-import '../../api/api_service.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -22,8 +21,6 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  final ApiService apiService = ApiService();
-
   // Declare the OTP variable at the class level to retain its state
   String otp = '';
 

@@ -11,7 +11,6 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
 import 'package:jim/src/screens/auth/otp_screen.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
-import '../../api/api_service.dart';
 import 'package:get/get.dart';
 
 import '../../flutter_storage.dart';
@@ -23,7 +22,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final ApiService apiService = ApiService();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();

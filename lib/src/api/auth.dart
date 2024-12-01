@@ -12,10 +12,7 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
   };
 
   try {
-    final response = await dio.post(
-      baseUrl + api, 
-      data: body
-    );
+    final response = await dio.post(baseUrl + api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       if (response.data['status'] == 'exist') {
@@ -46,10 +43,7 @@ Future<dynamic> login(
   };
 
   try {
-    final response = await dio.post(
-      (baseUrl + api),
-      data: body
-    );
+    final response = await dio.post((baseUrl + api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -71,7 +65,6 @@ Future<dynamic> registerUser(
     required String verification,
     required String fcmToken,
     required String api}) async {
-
   // Encode the profile picture as a base64 string
   String profilePictureBase64 = base64Encode(profilePicture);
 
@@ -87,10 +80,7 @@ Future<dynamic> registerUser(
   };
 
   try {
-    final response = await dio.post(
-      baseUrl + api,
-      data: body
-    );
+    final response = await dio.post(baseUrl + api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -105,9 +95,7 @@ Future<dynamic> registerUser(
 
 Future<dynamic> logout({required api}) async {
   try {
-    final response = await dio.post(
-      baseUrl + api
-    );
+    final response = await dio.post(baseUrl + api);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -126,10 +114,7 @@ Future<dynamic> forgotPassword({required String email, required api}) async {
   };
 
   try {
-    final response = await dio.post(
-      baseUrl + api,
-      data: body
-    );
+    final response = await dio.post(baseUrl + api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -145,10 +130,7 @@ Future<dynamic> forgotPassword({required String email, required api}) async {
 Future<dynamic> loginWithGoogle(
     {required Map userInfo, required String api}) async {
   try {
-    final response = await dio.post(
-      baseUrl + api,
-      data: userInfo
-    );
+    final response = await dio.post(baseUrl + api, data: userInfo);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -168,10 +150,7 @@ Future<dynamic> loginWithGoogle(
 Future<dynamic> registerWithGoogle(
     {required Map userInfo, required String api}) async {
   try {
-    final response = await dio.post(
-      baseUrl + api,
-      data: userInfo
-    );
+    final response = await dio.post(baseUrl + api, data: userInfo);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -191,8 +170,43 @@ Future<dynamic> requestVerificationCode(
   };
 
   try {
-    final response = await dio.post(
-      baseUrl + api,
+    final response = await dio.post(baseUrl + api, data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}
+
+Future<dynamic> getCurrentUser({required String api}) async {
+  try {
+    final response = await dio.get((baseUrl + api));
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}
+
+Future<dynamic> updateProfile(
+    {required Uint8List img, required String api}) async {
+  Map<String, dynamic> body = {
+    'profilePicture': img,
+  };
+
+  try {
+    final response = await dio.patch(
+      (baseUrl + api),
       data: body
     );
 

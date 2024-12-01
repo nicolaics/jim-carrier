@@ -5,7 +5,6 @@ import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
 import 'dart:typed_data'; // For Uint8List
-import '../../api/api_service.dart';
 
 class ReceivedOrder extends StatefulWidget {
   const ReceivedOrder({super.key});
@@ -15,7 +14,6 @@ class ReceivedOrder extends StatefulWidget {
 }
 
 class _ReceivedOrder extends State<ReceivedOrder> {
-  final ApiService apiService = ApiService();
   List<Map<String, dynamic>> items = []; // List to store the updated items
   String? selectedValue;
 

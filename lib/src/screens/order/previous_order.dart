@@ -12,7 +12,6 @@ import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:encrypt/encrypt.dart' as enc;
-import '../../api/api_service.dart';
 import '../../api/auth.dart';
 import '../../auth/encryption.dart';
 import '../listing/edit_listing.dart';
@@ -27,8 +26,7 @@ class PreviousOrderScreen extends StatefulWidget {
 
 class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   final TextEditingController _reviewController = TextEditingController();
-
-  final ApiService apiService = ApiService();
+  
   List<Map<String, dynamic>> listingData = [];
   List<Map<String, dynamic>> orderData = [];
 

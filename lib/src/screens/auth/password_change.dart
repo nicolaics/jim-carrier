@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
 
 import '../../constants/sizes.dart';
-import '../../api/api_service.dart';
 
 class PasswordChange extends StatefulWidget {
   const PasswordChange({super.key});
@@ -15,8 +14,6 @@ class PasswordChange extends StatefulWidget {
 }
 
 class _PasswordChangeState extends State<PasswordChange> {
-
-  final ApiService apiService = ApiService();
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _pwController2 = TextEditingController();
   bool _isPasswordVisible = false;
