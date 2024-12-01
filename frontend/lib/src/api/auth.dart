@@ -54,6 +54,7 @@ Future<dynamic> login(
   Map<String, String> body = {
     'email': email,
     'password': password,
+    'fcmToken': fcmToken,
   };
 
   try {
