@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -40,51 +41,49 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBix1jVcYYRCpxcR34X1p8dn8lXRjjCvWU',
-    appId: '1:673842473312:web:a78dc42a73ac6ca5f15605',
-    messagingSenderId: '673842473312',
-    projectId: 'jim-carrier',
-    authDomain: 'jim-carrier.firebaseapp.com',
-    storageBucket: 'jim-carrier.firebasestorage.app',
+  static FirebaseOptions web = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_WEB_API_KEY'] ?? 'default_key',
+    appId: dotenv.env['FIREBASE_WEB_APP_ID'] ?? 'default_key',
+    messagingSenderId: dotenv.env['FIREBASE_WEB_MESSAGING_SENDER_ID'] ?? 'default_key',
+    projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? 'default_key',
+    authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN'] ?? 'default_key',
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? 'default_key',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAyV2PnlDt3cBbW_v_8yWqIkGc6zYFebFg',
-    appId: '1:673842473312:android:e99ef762b6d1c323f15605',
-    messagingSenderId: '673842473312',
-    projectId: 'jim-carrier',
-    storageBucket: 'jim-carrier.firebasestorage.app',
+  static FirebaseOptions android = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_ANDROID_API_KEY'] ?? 'default_key',
+    appId: dotenv.env['FIREBASE_ANDROID_APP_ID'] ?? 'default_key',
+    messagingSenderId: dotenv.env['FIREBASE_ANDROID_MESSAGING_SENDER_ID'] ?? 'default_key',
+    projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? 'default_key',
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? 'default_key',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBJnIc2AW9rS76XM01HmuE2wn1aMu4NjVs',
-    appId: '1:673842473312:ios:f458e90ec33ee931f15605',
-    messagingSenderId: '673842473312',
-    projectId: 'jim-carrier',
-    storageBucket: 'jim-carrier.firebasestorage.app',
-    iosClientId:
-        '673842473312-a6aiqmrt9f32urlts7hivun8ckthjsgf.apps.googleusercontent.com',
-    iosBundleId: 'jim',
+  static FirebaseOptions ios = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_IOS_API_KEY'] ?? 'default_key',
+    appId: dotenv.env['FIREBASE_IOS_APP_ID'] ?? 'default_key',
+    messagingSenderId: dotenv.env['FIREBASE_IOS_MESSAGING_SENDER_ID'] ?? 'default_key',
+    projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? 'default_key',
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? 'default_key',
+    iosClientId: dotenv.env['FIREBASE_IOS_CLIENT_ID'] ?? 'default_key',
+    iosBundleId: dotenv.env['FIREBASE_IOS_BUNDLE_ID'] ?? 'default_key',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBJnIc2AW9rS76XM01HmuE2wn1aMu4NjVs',
-    appId: '1:673842473312:ios:5c8847f350b12a09f15605',
-    messagingSenderId: '673842473312',
-    projectId: 'jim-carrier',
-    storageBucket: 'jim-carrier.firebasestorage.app',
-    iosClientId:
-        '673842473312-or46efk6nr98iqeqrugo2u6bkg06lbc3.apps.googleusercontent.com',
-    iosBundleId: 'com.example.jim',
+  static FirebaseOptions macos = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_MAC_OS_API_KEY'] ?? 'default_key',
+    appId: dotenv.env['FIREBASE_MAC_OS_APP_ID'] ?? 'default_key',
+    messagingSenderId: dotenv.env['FIREBASE_MAC_OS_MESSAGING_SENDER_ID'] ?? 'default_key',
+    projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? 'default_key',
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? 'default_key',
+    iosClientId: dotenv.env['FIREBASE_MAC_OS_CLIENT_ID'] ?? 'default_key',
+    iosBundleId: dotenv.env['FIREBASE_IOS_BUNDLE_ID'] ?? 'default_key',
   );
 
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBix1jVcYYRCpxcR34X1p8dn8lXRjjCvWU',
-    appId: '1:673842473312:web:edcbd13f822eec07f15605',
-    messagingSenderId: '673842473312',
-    projectId: 'jim-carrier',
-    authDomain: 'jim-carrier.firebaseapp.com',
-    storageBucket: 'jim-carrier.firebasestorage.app',
+  static FirebaseOptions windows = FirebaseOptions(
+    apiKey: dotenv.env['FIREBASE_WINDOWS_API_KEY'] ?? 'default_key',
+    appId: dotenv.env['FIREBASE_WINDOWS_APP_ID'] ?? 'default_key',
+    messagingSenderId: dotenv.env['FIREBASE_WINDOWS_MESSAGING_SENDER_ID'] ?? 'default_key',
+    projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? 'default_key',
+    authDomain: dotenv.env['FIREBASE_AUTH_DOMAIN'] ?? 'default_key',
+    storageBucket: dotenv.env['FIREBASE_STORAGE_BUCKET'] ?? 'default_key',
   );
 }
