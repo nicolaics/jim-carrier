@@ -49,7 +49,7 @@ class _NewOrderState extends State<NewOrder> {
   // Function to pick an image from the camera
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       final bytes = await File(image.path).readAsBytes();
       // Update the UI with the new photo
@@ -252,189 +252,8 @@ class _NewOrderState extends State<NewOrder> {
             const SizedBox(height: 24),
             const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () async{
-                    print("ID $carrier['id']");
-                    String api = "/order/get-payment-details";
-// Initialize variables
-                    String bankName = "";
-                    String accountNumber = "";
-                    String accountHolderName = "";
-                    try {
-                      // Await the response to resolve the Future
-                      dynamic response = await getBankDetails(carrierID: 3, api: api);
-
-                      if (response != null && response is Map && response["status"] == "exist") {
-                        // Create Encrypted objects from the response data (convert them to Encrypted type)
-                        final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
-                        final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
-                        try {
-                          // Decrypt the sensitive data using Encrypted objects
-                          final decrypted = decryptData(
-                            accountHolder: encryptedHolder,
-                            accountNumber: encryptedNumber,
-                          );
-                          // Assign decrypted values
-                          bankName = response["bank_name"] ?? "";
-                          accountNumber = decrypted['number'] ?? "";
-                          accountHolderName = decrypted['holder'] ?? "";
-
-                          print("Bank Name: $bankName");
-                          print("Account Number: $accountNumber");
-                          print("Account Holder Name: $accountHolderName");
-                        } catch (e) {
-                          print("Error during decryption: $e");
-                        }
-                      } else {
-                        print("Failed to fetch payment details. Response: $response");
-                      }
-                    } catch (e) {
-                      print("An error occurred: $e");
-                    }
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true, // Allows full-height and scrollable sheet
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                      builder: (BuildContext context) {
-                        return StatefulBuilder(
-                          builder: (BuildContext context, StateSetter setModalState) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                top: 16.0,
-                                left: 16.0,
-                                right: 16.0,
-                                bottom: MediaQuery.of(context).viewInsets.bottom,
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Back arrow at the top
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.arrow_back, size: 28),
-                                          onPressed: () {
-                                            Navigator.pop(context); // Close the bottom sheet
-                                          },
-                                        ),
-                                        const Text(
-                                          "Payment Details",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    _buildDetailRow(Icons.account_balance, "Bank Name:", bankName),
-                                    _buildDetailRow(Icons.credit_card, "Account No:", accountNumber),
-                                    _buildDetailRow(Icons.person, "Account Holder:", accountHolderName),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      children: [
-                                        ElevatedButton.icon(
-                                          onPressed: () async {
-                                            await _pickImagePayment(); // Pick image from the gallery
-                                            setModalState(() {}); // Trigger rebuild for resizing
-                                          },
-                                          icon: const Icon(Icons.photo_library, size: 24),
-                                          label: const Text("Upload Proof of Payment"),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.grey[300],
-                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    if (photoPayment != null)
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Uploaded Image:",
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Container(
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.grey, width: 1),
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                            padding: const EdgeInsets.all(8),
-                                            child: Image.memory(
-                                              photoPayment!,
-                                              height: 500,
-                                              width: double.infinity,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    const SizedBox(height: 20),
-                                    Center(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          // Additional logic for proceeding can be added here
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 40, vertical: 16),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          "Proceed",
-                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-
-
-
-
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300], // Pay Now button color
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    "Pay Now",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
                 ElevatedButton(
                   onPressed: () async {
                     final orderWeight = _weightController.text.trim();
@@ -478,7 +297,7 @@ class _NewOrderState extends State<NewOrder> {
                       desc: 'Order Successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
-                        Get.to(() => const BottomBar());
+                        Get.to(() => const BottomBar(1));
                       },
                     ).show();
                   },
@@ -491,7 +310,7 @@ class _NewOrderState extends State<NewOrder> {
                     ),
                   ),
                   child: const Text(
-                    "Pay Later",
+                    "Confirm Order",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
