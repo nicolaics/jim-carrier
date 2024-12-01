@@ -102,7 +102,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       final fcmToken = await StorageService.getFcmToken();
 
                       // Call the API with the OTP and other user data
-                      String result = await registerUser(
+                      dynamic response = await registerUser(
                         name: name,
                         email: email,
                         password: password,
@@ -113,9 +113,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         api: '/user/register', // Provide your API base URL
                       );
 
-                      // Print the result of the API call for debugging
-                      print(result);
-                      if(result=="success"){
+                      if(response["status"] == "success"){
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.success,
@@ -128,7 +126,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           },
                         ).show();
                       }
-                      else{
+                      else {
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.error,
@@ -149,7 +147,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       backgroundColor: Colors.black, // Set the background color to black
                     ),
                     child: const Text(
-                      "VERIFY",
+                      "Verify",
                       style: TextStyle(color: Colors.white), // Set the text color to white
                     ),
                   ),

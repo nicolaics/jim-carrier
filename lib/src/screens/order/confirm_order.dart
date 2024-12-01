@@ -120,9 +120,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       print("Order IDDDDDD:");
                       print(orderNo);
                       print("Order Confirmed!");
-                      String response=await updateOrderStatus(orderNo: orderNo, orderStatus: "confirmed", api: "/order/order-status");
-                      print("response");
-                      print(response);
+                      String response = await updateOrderStatus(orderNo: orderNo, orderStatus: "confirmed", api: "/order/order-status");
+
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,

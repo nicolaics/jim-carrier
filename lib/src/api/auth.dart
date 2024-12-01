@@ -25,16 +25,13 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
     );
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       if (jsonDecode(response.body)['status'] == 'exist') {
-        return {"status": "success", "response": jsonDecode(response.body)};
+        return writeSuccessResponse(responseBody: response.body);
       } else {
-        return {"status": "error", "response": jsonDecode(response.body)};
+        return writeErrorResponse(responseBody: response.body);
       }
     } else {
       if (jsonDecode(response.body)['error'].contains("access token expired")) {
-        return {
-          "status": "error",
-          "response": "access token expired"
-        }; // Returning a consistent response format
+        return writeAccessTokenExpResponse();
       }
     }
   } catch (e) {
@@ -48,7 +45,7 @@ Future<dynamic> login(
     required String fcmToken,
     required String api}) async {
   final url = Uri.parse((baseUrl + api));
-  
+
   Map<String, String> body = {
     'email': email,
     'password': password,
@@ -65,15 +62,9 @@ Future<dynamic> login(
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return {
-        "status": "success",
-        "response": jsonDecode(response.body)
-        };
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      return {
-        "status": "error",
-        "response": jsonDecode(response.body)['error']
-        };
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -115,17 +106,12 @@ Future<dynamic> registerUser(
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      // Handle successful response
-      print('User registered successfully');
-      return "success";
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      // Handle errors (e.g., 400, 500, etc.)
-      print('Failed to register user: ${response.body}');
-      return "error";
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
-    return "exception";
   }
 }
 
@@ -142,11 +128,9 @@ Future<dynamic> logout({required api}) async {
       },
     );
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      // Handle successful response
-      return "logged out";
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      // Handle errors, e.g. 400, 500, etc.
-      print('Failed to get code: ${response.body}');
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -155,10 +139,10 @@ Future<dynamic> logout({required api}) async {
 
 Future<dynamic> forgotPassword({required String email, required api}) async {
   final url = Uri.parse((baseUrl + api));
-  // Create the request body as per your payload struct
   Map<String, String> body = {
     'email': email,
   };
+
   try {
     final response = await http.post(
       url,
@@ -169,11 +153,9 @@ Future<dynamic> forgotPassword({required String email, required api}) async {
     );
 
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      // Handle successful response
-      return "success";
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      // Handle errors, e.g. 400, 500, etc.
-      print('Failed to get code: ${response.body}');
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -193,16 +175,14 @@ Future<dynamic> loginWithGoogle(
       body: jsonEncode(userInfo),
     );
 
-    dynamic responseDecode = jsonDecode(response.body);
-
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return {"status": "success", "response": responseDecode};
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      if (responseDecode['error'].contains("to registration")) {
-        return {"status": "error", "response": "toRegist"};
+      if (jsonDecode(response.body)['error'].contains("to registration")) {
+        return writeToRegistResponse();
       }
 
-      return {"status": "error", "response": responseDecode['error']};
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -222,12 +202,10 @@ Future<dynamic> registerWithGoogle(
       body: jsonEncode(userInfo),
     );
 
-    dynamic responseDecode = jsonDecode(response.body);
-
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      return {"status": "success", "response": responseDecode};
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      return {"status": "error", "response": responseDecode['error']};
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');
@@ -237,10 +215,10 @@ Future<dynamic> registerWithGoogle(
 Future<dynamic> requestVerificationCode(
     {required String email, required api}) async {
   final url = Uri.parse((baseUrl + api));
-  // Create the request body as per your payload struct
   Map<String, String> body = {
     'email': email,
   };
+
   try {
     final response = await http.post(
       url,
@@ -249,12 +227,11 @@ Future<dynamic> requestVerificationCode(
       },
       body: jsonEncode(body),
     );
+
     if (response.statusCode.isSuccessfulHttpStatusCode) {
-      // Handle successful response
-      return "success";
+      return writeSuccessResponse(responseBody: response.body);
     } else {
-      // Handle errors, e.g. 400, 500, etc.
-      print('Failed to get code: ${response.body}');
+      return writeErrorResponse(responseBody: response.body);
     }
   } catch (e) {
     print('Error occurred: $e');

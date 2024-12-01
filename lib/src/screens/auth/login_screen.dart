@@ -153,9 +153,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ).show();
                                       } else {
                                         StorageService.storeAccessToken(
-                                            response['response']['access_token']);
+                                            response['message']
+                                                ['access_token']);
                                         StorageService.storeRefreshToken(
-                                            response['response']['refresh_token']);
+                                            response['message']
+                                                ['refresh_token']);
 
                                         AwesomeDialog(
                                           context: context,
@@ -211,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         '/user/login/google', // Provide your API base URL
                                   );
 
-                                  if (response['response'] == "toRegist") {
+                                  if (response['message'] == "toRegist") {
                                     if (user['phoneNumber'] == null) {
                                       // Display the bottom sheet to collect phone number
                                       showModalBottomSheet(
@@ -310,11 +312,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           // Store token after registration
                                                           await StorageService
                                                               .storeAccessToken(
-                                                                  response['response'][
+                                                                  response[
+                                                                          'message']
+                                                                      [
                                                                       'access_token']);
                                                           await StorageService
                                                               .storeRefreshToken(
-                                                                  response['response'][
+                                                                  response[
+                                                                          'message']
+                                                                      [
                                                                       'refresh_token']);
 
                                                           // Handle registration success
@@ -375,9 +381,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ).show();
                                   } else if (response['status'] == "success") {
                                     await StorageService.storeAccessToken(
-                                        response['response']['access_token']);
+                                        response['message']['access_token']);
                                     await StorageService.storeRefreshToken(
-                                        response['response']['refresh_token']);
+                                        response['message']['refresh_token']);
 
                                     Get.to(() => const BottomBar(0));
                                     AwesomeDialog(

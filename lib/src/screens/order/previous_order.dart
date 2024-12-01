@@ -462,7 +462,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         try {
                           dynamic response = await getBankDetails(carrierID: 3, api: api);
 
-                          if (response["status"] == "success" && response["response"]["status"] == "exist") {
+                          if (response["status"] == "success" && response["message"]["status"] == "exist") {
                             final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
                             final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
 

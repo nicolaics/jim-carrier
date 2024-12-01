@@ -7,6 +7,35 @@ import 'dart:convert';
 //const baseUrl = "http://pravass-macbook-air:9988/api/v1";
 final baseUrl = dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1';
 
+
+Map<String, dynamic> writeSuccessResponse({required String responseBody}) {
+  return {
+    "status": "success",
+    "message": jsonDecode(responseBody)
+  };
+}
+
+Map<String, dynamic> writeErrorResponse({required String responseBody}) {
+  return {
+    "status": "error",
+    "message": jsonDecode(responseBody)['error']
+  };
+}
+
+Map<String, String> writeAccessTokenExpResponse() {
+  return {
+    "status": "error",
+    "message": "access token expired"
+  };
+}
+
+Map<String, String> writeToRegistResponse() {
+  return {
+    "status": "error",
+    "message": "toRegist"
+  };
+}
+
 class ApiService {
   var client = http.Client();
 

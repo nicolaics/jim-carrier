@@ -281,7 +281,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         '/user/login/google', // Provide your API base URL
                                   );
 
-                                  if (response['response'] == "toRegist") {
+                                  if (response['message'] == "toRegist") {
                                     if (user['phoneNumber'] == null) {
                                       // Display the bottom sheet to collect phone number
                                       showModalBottomSheet(
@@ -380,11 +380,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                           // Store token after registration
                                                           await StorageService
                                                               .storeAccessToken(
-                                                                  response['response'][
+                                                                  response[
+                                                                          'message']
+                                                                      [
                                                                       'access_token']);
                                                           await StorageService
                                                               .storeRefreshToken(
-                                                                  response['response'][
+                                                                  response[
+                                                                          'message']
+                                                                      [
                                                                       'refresh_token']);
 
                                                           // Handle registration success
@@ -445,9 +449,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ).show();
                                   } else if (response['status'] == "success") {
                                     await StorageService.storeAccessToken(
-                                        response['response']['access_token']);
+                                        response['message']['access_token']);
                                     await StorageService.storeRefreshToken(
-                                        response['response']['refresh_token']);
+                                        response['message']['refresh_token']);
 
                                     Get.to(() => const BottomBar(0));
                                     AwesomeDialog(
