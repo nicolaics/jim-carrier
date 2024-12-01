@@ -15,7 +15,16 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     // Add other Firebase dependencies as needed
     implementation 'com.google.firebase:firebase-analytics'
+    implementation("com.google.android.material:material:1.12.0")
 }
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+
 
 android {
     namespace = "com.example.jim" // Use your actual package name here
@@ -43,7 +52,8 @@ android {
     buildTypes {
         release {
             // Add your own signing config for the release build.
-            signingConfig = signingConfigs.debug // Use debug signing for testing release builds
+            // signingConfig = signingConfigs.debug // Use debug signing for testing release builds
+            signingConfig = signingConfigs.release
         }
     }
 
@@ -53,6 +63,16 @@ android {
             storePassword "android" // Debug keystore password
             keyAlias "androiddebugkey" // Debug key alias
             keyPassword "android" // Debug key password
+        }
+    }
+
+    
+    signingConfigs {
+        release {
+            keyAlias = keystoreProperties['keyAlias']
+            keyPassword = keystoreProperties['keyPassword']
+            storeFile = keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword = keystoreProperties['storePassword']
         }
     }
 }
