@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           desc: 'Login Successful',
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {
-                                            Get.to(() => const BottomBar());
+                                            Get.to(() => const BottomBar(0));
                                           },
                                         ).show();
                                       }
@@ -291,7 +291,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           } else {
                                                             // Handle registration success
                                                             print("jere");
-                                                            Get.to(() => const BottomBar());
+                                                            Get.to(() => const BottomBar(0));
                                                             AwesomeDialog(
                                                               context: context,
                                                               dialogType: DialogType.success,
@@ -302,7 +302,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                               btnOkOnPress: () {
                                                                 // Navigate to the BottomBar screen after the dialog is dismissed
                                                              //   if (mounted) {
-                                                                  Get.to(() => const BottomBar());
+                                                                  Get.to(() => const BottomBar(0));
                                                                // }
                                                               },
                                                             ).show();

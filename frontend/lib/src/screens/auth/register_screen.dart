@@ -366,7 +366,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                             btnOkOnPress: () {
                                                               // Navigate to the BottomBar screen after the dialog is dismissed
                                                               //   if (mounted) {
-                                                              Get.to(() => const BottomBar());
+                                                              Get.to(() => const BottomBar(0));
                                                               // }
                                                             },
                                                           ).show();
