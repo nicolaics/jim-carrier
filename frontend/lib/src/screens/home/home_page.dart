@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           "flight_date":
               formatDate(data['departureDate']), // Format the departure date
           "profile_pic": imageBytes, // Store the decoded image bytes
+          "carrierRating": data['carrierRating']??0,
         });
       }
 
@@ -237,29 +238,52 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-                        print("Button pressed for ${items[index]["name"]}");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                NewOrder(carrier: items[index]),
+                    trailing: Column(
+                      mainAxisSize: MainAxisSize.min, // Ensures the column uses only the space it needs
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NewOrder(carrier: items[index]),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          child: const Text("View"),
                         ),
-                      ),
-                      child: const Text("View"),
+                        const SizedBox(height: 8),
+                        Flexible(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min, // Prevents the row from expanding unnecessarily
+                            children: List.generate(5, (starIndex) {
+                              return Icon(
+                                starIndex < (items[index]["carrierRating"] ?? 0)
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: Colors.amber,
+                                size: 16, // Adjust size as necessary
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
                     ),
+
+
+
                     onTap: () {
                       print("Tapped on ${items[index]["name"]}");
                       print("Tapped on ${items[index]["id"]}");
                       print("Tapped on ${items[index]["currency"]}");
+                      print("Carrier Rating: ${items[index]["carrierRating"]}");
 
                       Navigator.push(
                         context,
