@@ -280,7 +280,7 @@ class _NewOrderState extends State<NewOrder> {
                     // Calculate the total price
                     double price = _calculateTotalPrice();
                     // Handle Pay Later logic here
-                    await createOrder(
+                    String result=await createOrder(
                       listid: carrier["id"],
                       weight: weight,
                       price: price,
@@ -289,17 +289,30 @@ class _NewOrderState extends State<NewOrder> {
                       packageImage: photo,
                       api: '/order', // Provide your API base URL
                     );
-                    AwesomeDialog(
-                      context: context,
-                      dialogType: DialogType.success,
-                      animType: AnimType.topSlide,
-                      title: 'Success',
-                      desc: 'Order Successful',
-                      btnOkIcon: Icons.check,
-                      btnOkOnPress: () {
-                        Get.to(() => const BottomBar(1));
-                      },
-                    ).show();
+                    if(result == "failed"){
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.topSlide,
+                        title: 'Failed',
+                        desc: 'Order Failed',
+                        btnOkIcon: Icons.check,
+                        btnOkOnPress: () {
+                        },
+                      ).show();
+                    }else{
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.success,
+                        animType: AnimType.topSlide,
+                        title: 'Success',
+                        desc: 'Order Successful',
+                        btnOkIcon: Icons.check,
+                        btnOkOnPress: () {
+                          Get.to(() => const BottomBar(1));
+                        },
+                      ).show();
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[300], // Pay Later button color
