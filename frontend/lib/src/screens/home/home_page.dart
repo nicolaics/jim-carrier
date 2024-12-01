@@ -262,17 +262,34 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 8),
                         Flexible(
                           child: Row(
-                            mainAxisSize: MainAxisSize.min, // Prevents the row from expanding unnecessarily
+                            mainAxisSize: MainAxisSize.min,
                             children: List.generate(5, (starIndex) {
-                              return Icon(
-                                starIndex < (items[index]["carrierRating"] ?? 0)
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                color: Colors.amber,
-                                size: 16, // Adjust size as necessary
-                              );
+                              final rating = items[index]["carrierRating"] ?? 0.0;
+                              if (starIndex < rating.floor()) {
+                                // Full star
+                                return const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 16,
+                                );
+                              } else if (starIndex < rating && rating - starIndex >= 0.5) {
+                                // Half star
+                                return const Icon(
+                                  Icons.star_half,
+                                  color: Colors.amber,
+                                  size: 16,
+                                );
+                              } else {
+                                // Empty star
+                                return const Icon(
+                                  Icons.star_border,
+                                  color: Colors.amber,
+                                  size: 16,
+                                );
+                              }
                             }),
                           ),
+
                         ),
                       ],
                     ),
