@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -14,7 +16,7 @@ import '../listing/add_listing.dart';
 class BottomBar extends StatefulWidget {
   final int initialIndex; // Add a parameter to accept the initial index
 
-  const BottomBar(int i, {Key? key, this.initialIndex = 0}) : super(key: key);
+  const BottomBar(int i, {super.key, this.initialIndex = 0});
 
   @override
   _BottomBar createState() => _BottomBar();
@@ -74,12 +76,12 @@ class _BottomBar extends State<BottomBar> {
                 controller.selectedindex.value = index;
               }
             },
-            destinations: [
+            destinations: const [
               NavigationDestination(icon: Icon(Icons.home), label: "Home"),
               NavigationDestination(
                   icon: Icon(Icons.document_scanner), label: "Previous"),
               NavigationDestination(icon: Icon(Icons.add), label: "Add Listing"),
-              NavigationDestination(icon: Icon(Icons.chat), label: "Chat Bot"),
+              NavigationDestination(icon: Icon(Icons.card_travel), label: "Received Order"),
               NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
             ],
           ),
