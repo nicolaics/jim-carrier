@@ -77,59 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /***
-  // Async function to fetch data and update items list
-  Future<void> fetchListing() async {
-    // Dummy data to simulate API response
-    List<Map<String, dynamic>> dummyData = [
-      {
-        "carrierName": "Alice Johnson",
-        "destination": "Seoul, South Korea",
-        "pricePerKg": 15.0,
-        "currency": "USD",
-        "weightAvailable": 20,
-        "departureDate": "2024-12-01",
-        "carrierProfilePicture": null,  // No image for testing
-      },
-      {
-        "carrierName": "Bob Lee",
-        "destination": "Tokyo, Japan",
-        "pricePerKg": 10.0,
-        "currency": "KRW",
-        "weightAvailable": 15,
-        "departureDate": "2024-11-20",
-        "carrierProfilePicture": null,  // No image for testing
-      },
-      {
-        "carrierName": "Catherine Kim",
-        "destination": "Paris, France",
-        "pricePerKg": 18.5,
-        "currency": "EUR",
-        "weightAvailable": 10,
-        "departureDate": "2024-12-15",
-        "carrierProfilePicture": null,  // No image for testing
-      },
-    ];
-
-    List<Map<String, dynamic>> updatedItems = [];
-
-    for (var data in dummyData) {
-      updatedItems.add({
-        "name": data['carrierName'] ?? 'Unknown',
-        "destination": data['destination'] ?? 'No destination',
-        "price": formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW'),
-        "available_weight": formatWeight(data['weightAvailable']),
-        "flight_date": formatDate(data['departureDate']),
-        "profile_pic": AssetImage("frontend/assets/images/welcomePage/welcome_screen.png"), // Dummy image path
-      });
-    }
-
-    setState(() {
-      items = updatedItems;
-    });
-  }
-***/
-
   // Format the price based on the currency
   String formatPrice(dynamic price, String currency) {
     // Ensure that price is treated as a double
