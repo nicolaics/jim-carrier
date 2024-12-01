@@ -189,14 +189,13 @@ Future<dynamic> updatePaymentStatus(
       },
       body: jsonEncode(body),
     );
+
     dynamic responseDecode = jsonDecode(response.body);
+
     if (response.statusCode.isSuccessfulHttpStatusCode) {
       print("Confirmation success");
-      return responseDecode['token'];
+      return responseDecode;
     } else {
-      if (responseDecode['error'].contains("to registration")) {
-        return "toRegist";
-      }
       return responseDecode['error'];
     }
   } catch (e) {
