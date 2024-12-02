@@ -111,7 +111,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     setState(() {
                       _selectedRating = 0; // Reset rating after submission
                     });
-                    await createReview(
+                    dynamic response = await createReview(
                       orderId: orderId,
                       reviewName: carrierName,
                       reviewContent: _reviewController.text,
@@ -120,7 +120,11 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                       '/review', // Provide your API base URL
                     );
 
-                    Navigator.pop(context); // Close the modal
+                    if (response["status"] == "success") {
+                      Navigator.pop(context); // Close the modal
+                    } else {
+                      // TODO: do here
+                    }
                   },
                   child: const Text("Submit"),
                 ),

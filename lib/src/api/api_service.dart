@@ -2,7 +2,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jim/src/flutter_storage.dart';
 import 'package:dio/dio.dart';
 
-//const baseUrl = "http://pravass-macbook-air:9988/api/v1";
 final baseUrl = dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1';
 
 Map<String, dynamic> writeSuccessResponse({required dynamic response}) {
