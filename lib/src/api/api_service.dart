@@ -23,6 +23,7 @@ void setupInterceptors() {
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
       final accessToken = await StorageService.getAccessToken();
+      print("INTERCEPTED!!! Access Token: $accessToken");
       
       if (accessToken != "") {
         options.headers["Authorization"] = "Bearer $accessToken";
