@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jim/firebase_options.dart';
 import 'package:jim/src/api/api_service.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/base_class/firebase_notif.dart';
-// import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/screens/welcome.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -20,28 +22,44 @@ void main() async {
   await FirebaseNotification().initNotifications();
 
   setupInterceptors();
-  // String accessToken = await StorageService.getAccessToken();
-  // print("initial token $accessToken");
+  
+  String refreshToken = await StorageService.getRefreshToken();
 
-  runApp(const MyApp());
+  String next = "welcome";
+
+  try {
+    final response =
+        await autoLogin(refreshToken: refreshToken, api: "/user/auto-login");
+
+    if (response["status"] == "success") {
+      next = "home";
+      await StorageService.storeAccessToken(response["message"]["access_token"]);
+      await StorageService.storeRefreshToken(response["message"]["refresh_token"]);
+    }
+  } catch (e) {
+    print("ERROR HERE: $e");
+  }
+
+  runApp(MyApp(nextScreen: next));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String nextScreen;
+
+  const MyApp({super.key, required this.nextScreen});
 
   @override
   Widget build(BuildContext context) {
-    // String accessToken = "";
-
-    // StorageService.getAccessToken().then((result) => {
-    //   accessToken = result
-    // });
-
-    // print("initial token $accessToken");
-
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: WelcomeScreen(),
-    );
+    if (nextScreen == "home") {
+      return const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: BottomBar(0),
+      );
+    } else {
+      return const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: WelcomeScreen(),
+      );
+    }
   }
 }
