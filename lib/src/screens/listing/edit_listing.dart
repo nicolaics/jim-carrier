@@ -7,8 +7,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/listing.dart';
-import '../../auth/encryption.dart';
-import 'package:encrypt/encrypt.dart' as enc;
 
 class EditScreen extends StatefulWidget {
   const EditScreen({super.key});
@@ -105,15 +103,8 @@ class _EditScreenState extends State<EditScreen> {
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
-      final encryptedHolder =
-          enc.Encrypted.fromBase64(item['accountHolderName']);
-      final encryptedNumber = enc.Encrypted.fromBase64(item['accountNumber']);
-      final decrypted = decryptData(
-        accountHolder: encryptedHolder,
-        accountNumber: encryptedNumber,
-      );
-      String accountNumber = decrypted['number'] ?? "";
-      String accountHolderName = decrypted['holder'] ?? "";
+      String accountNumber = item['accountNumber'];
+      String accountHolderName = item['accountHolderName'];
 
       print("****");
       print(accountHolderName);
@@ -546,24 +537,7 @@ class _EditScreenState extends State<EditScreen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
-                  final encrypted = encryptData(
-                    accountHolder: _accountHolderName.text,
-                    accountNumber: _bankAccountNo.text,
-                  );
-
-                  print("Encrypted Data:");
-                  print("Holder: ${encrypted['holder']?.base64}");
-                  print("Number: ${encrypted['number']?.base64}");
-
-                  final decrypted = decryptData(
-                    accountHolder: encrypted['holder']!,
-                    accountNumber: encrypted['number']!,
-                  );
-
-                  print("Decrypted Data:");
-                  print("Holder: ${decrypted['holder']}");
-                  print("Number: ${decrypted['number']}");
-
+                  
                   dynamic response = await modifyListing(
                     id: id,
                     destination: location,
@@ -573,8 +547,8 @@ class _EditScreenState extends State<EditScreen> {
                     date: date,
                     lastDate: lastDate,
                     additionalInfo: _additionalInfoController.text,
-                    accountHolder: encrypted["holder"]!.base64,
-                    accountNumber: encrypted["number"]!.base64,
+                    accountHolder: _accountHolderName.text,
+                    accountNumber: _bankAccountNo.text,
                     bankName: _bankName.text,
                     api: "/listing",
                   );

@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 
 class UserController extends GetxController {
   final String token;

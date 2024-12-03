@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/api/order.dart';
-import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/order/confirm_order.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {

@@ -9,7 +9,7 @@ import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
 
 class OtpScreen extends StatefulWidget {

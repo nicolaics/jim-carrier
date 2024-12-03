@@ -1,5 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:dio/dio.dart';
 
 final baseUrl = dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1';

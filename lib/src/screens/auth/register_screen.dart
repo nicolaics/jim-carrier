@@ -13,7 +13,7 @@ import 'package:jim/src/screens/auth/otp_screen.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:get/get.dart';
 
-import '../../flutter_storage.dart';
+import '../../auth/secure_storage.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import '../../api/auth.dart';
 import '../../base_class/login_google.dart';
-import '../../flutter_storage.dart';
+import '../../auth/secure_storage.dart';
 import '../auth/login_screen.dart';
 import '../try.dart';
 import 'home_page.dart';

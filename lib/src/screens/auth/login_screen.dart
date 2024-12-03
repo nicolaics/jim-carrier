@@ -8,7 +8,7 @@ import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
-import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/screens/auth/forgot_pw.dart';
 import 'package:jim/src/screens/auth/register_screen.dart';
@@ -203,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       .loginWithGoogle(); // Call the method on the instance
 
                                   dynamic response;
-
+                                  
                                   response = await loginWithGoogle(
                                     userInfo: user,
                                     api:
