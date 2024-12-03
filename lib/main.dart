@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:jim/firebase_options.dart';
 import 'package:jim/src/api/api_service.dart';
 import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/auth/rsa_encryption.dart';
 import 'package:jim/src/base_class/firebase_notif.dart';
-import 'package:jim/src/flutter_storage.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/screens/welcome.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -22,19 +23,21 @@ void main() async {
   await FirebaseNotification().initNotifications();
 
   setupInterceptors();
-  
-  String refreshToken = await StorageService.getRefreshToken();
+
+  await RsaEncryption.generateRSAkeyPair();
 
   String next = "welcome";
 
   try {
-    final response =
-        await autoLogin(refreshToken: refreshToken, api: "/user/auto-login");
+    final response = await autoLogin(
+        api: "/user/auto-login");
 
     if (response["status"] == "success") {
       next = "home";
-      await StorageService.storeAccessToken(response["message"]["access_token"]);
-      await StorageService.storeRefreshToken(response["message"]["refresh_token"]);
+      await StorageService.storeAccessToken(
+          response["message"]["access_token"]);
+      await StorageService.storeRefreshToken(
+          response["message"]["refresh_token"]);
     }
   } catch (e) {
     print("ERROR HERE: $e");
