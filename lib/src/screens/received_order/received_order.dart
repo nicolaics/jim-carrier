@@ -1,7 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
 import 'dart:typed_data'; // For Uint8List
@@ -20,24 +19,22 @@ class _ReceivedOrder extends State<ReceivedOrder> {
   @override
   void initState() {
     super.initState();
-    fetchListing();
+    fetchReceivedOrder();
   }
 
-  // Fetch data for the listing
-  Future<void> fetchListing() async {
+  // Fetch data for the orders
+  Future<void> fetchReceivedOrder() async {
     try {
       String api = "/order/carrier";
-      dynamic response = await getAllListings(api: api);
+      dynamic response = await getReceivedOrders(api: api);
 
-      if (response["status" == "success"]) {
-        response["message"] = response["message"] as List;
-
+      if (response["status"] == "success") {
         List<Map<String, dynamic>> updatedItems = [];
-        for (var data in response) {
-          var listing = data['listing'];
+        for (var order in response["message"]) {
+          var listing = order['listing'];
           if (listing == null) continue;
 
-          String? base64Image = data['packageImage'];
+          String? base64Image = order['packageImage'];
           Uint8List? imageBytes = base64Image != null && base64Image.isNotEmpty
               ? base64Decode(base64Image)
               : null;
@@ -47,17 +44,17 @@ class _ReceivedOrder extends State<ReceivedOrder> {
             "departureDate": listing['departureDate'] != null
                 ? formatDate(DateTime.parse(listing['departureDate']))
                 : 'N/A',
-            "id": data['id']?.toString() ?? 'Unknown',
-            "giverName": data['giverName'] ?? 'Unknown',
-            "giverPhoneNumber": data['giverPhoneNumber'] ?? 'Unknown',
-            "weight": data['weight']?.toString() ?? 'N/A',
-            "price": data['price']?.toString() ?? 'N/A',
-            "currency": data['currency'] ?? 'MYR',
+            "id": order['id']?.toString() ?? 'Unknown',
+            "giverName": order['giverName'] ?? 'Unknown',
+            "giverPhoneNumber": order['giverPhoneNumber'] ?? 'Unknown',
+            "weight": order['weight']?.toString() ?? 'N/A',
+            "price": order['price']?.toString() ?? 'N/A',
+            "currency": order['currency'] ?? 'MYR',
             "packageImage": imageBytes,
-            "packageLocation": data['packageLocation'] ??
+            "packageLocation": order['packageLocation'] ??
                 'Unknown', // Ensure this is set properly
-            "orderStatus": data['orderStatus'] ?? 'Unknown',
-            "notes": data['notes'] ?? 'Unknown',
+            "orderStatus": order['orderStatus'] ?? 'Unknown',
+            "notes": order['notes'] ?? 'Unknown',
           });
         }
 
