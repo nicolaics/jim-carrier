@@ -66,12 +66,17 @@ Future<dynamic> registerUser(
     required String email,
     required String password,
     required String phoneNumber,
-    required Uint8List profilePicture,
+    Uint8List? profilePicture,
     required String verification,
     required String fcmToken,
     required String api}) async {
+      // TODO: check this one
   // Encode the profile picture as a base64 string
-  String profilePictureBase64 = base64Encode(profilePicture);
+  // String profilePictureBase64 = '';
+
+  // if (profilePicture != null) {
+  //   profilePictureBase64 = base64Encode(profilePicture);
+  // }
 
   Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
@@ -81,7 +86,7 @@ Future<dynamic> registerUser(
     'email': email,
     'password': password,
     'phoneNumber': phoneNumber,
-    'profilePicture': profilePictureBase64,
+    'profilePicture': profilePicture,
     'verificationCode': verification,
     'fcmToken': fcmToken,
     'publicKeyM': utf8.encode(publicKey['m'] ?? ""),
@@ -239,9 +244,9 @@ Future<dynamic> getCurrentUser({required String api}) async {
 }
 
 Future<dynamic> updateProfile(
-    {required Uint8List img, required String api}) async {
+    {Uint8List? img, required String api}) async {
   Map<String, dynamic> body = {
-    'profilePicture': img,
+    'profilePicture': img
   };
 
   try {
