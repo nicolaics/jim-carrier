@@ -6,6 +6,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/screens/auth/change_password_inside.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/sizes.dart';
 import 'dart:typed_data';
@@ -21,49 +22,59 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  // final TextEditingController _passwordController = TextEditingController();
-  // bool _isPasswordVisible = false;
 
-  String? userName;
-  String? userEmail;
   Uint8List? photo;
+  bool isLoading = true; // Track loading state
 
-  // Fetch data in initState
   @override
   void initState() {
     super.initState();
-    fetchUserEmail(); // Call the function when the widget is initialized
+    fetchUserEmail(); // Fetch user data during initialization
   }
 
-  // Async function to fetch user data
+  // Fetch user data from API
   Future<void> fetchUserEmail() async {
+    setState(() {
+      isLoading = true; // Start loading
+    });
+
     try {
       String api = "/user/current";
-
       dynamic response = await getCurrentUser(api: api); // Await the response
 
       if (response["status"] == "success") {
         response["message"] = response["message"] as Map;
 
         setState(() {
-          userName = response["message"]['name'];
-          userEmail = response["message"]['email'];
-          photo = base64Decode(response["message"]
-              ['profilePicture']); // Decode the photo from base64
+          // Set controllers with fetched data
+          _nameController.text = response["message"]['name'] ?? '';
+          _emailController.text = response["message"]['email'] ?? '';
+          _phoneController.text = response["message"]['phoneNumber'] ?? '';
+          photo = base64Decode(response["message"]['profilePicture'] ?? '');
+          isLoading = false; // Stop loading after fetching data
         });
       } else {
-        // TODO: do here
+        setState(() {
+          isLoading = false; // Stop loading even if there's an error
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch user data: ${response["message"]}')),
+        );
       }
     } catch (e) {
       print('Error: $e');
+      setState(() {
+        isLoading = false; // Stop loading in case of an error
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred while fetching user data.')),
+      );
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
-    // void onProfileTapped(){
-
-    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -115,43 +126,31 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     child: GestureDetector(
                       onTap: () async {
                         final ImagePicker picker = ImagePicker();
-                        final XFile? image =
-                            await picker.pickImage(source: ImageSource.gallery);
+                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
                         if (image == null) return;
 
                         // Convert image to bytes
                         final bytes = await File(image.path).readAsBytes();
 
-                        // Update the UI with the new photo
                         setState(() {
-                          photo =
-                              bytes; // Update the photo variable with the new image bytes
+                          photo = bytes; // Update the photo variable with the new image bytes
                         });
 
-                        // Upload the new profile picture (optional)
+                        // Upload the new profile picture to the backend
                         dynamic response = await updateProfile(
                           img: bytes,
-                          api:
-                              '/user/update-profile-picture', // Provide your API base URL
+                          api: '/user/update-profile-picture',
                         );
 
                         if (response["status"] == "success") {
-                          AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.success,
-                            animType: AnimType.topSlide,
-                            title: 'Success',
-                            desc: 'Image Updated',
-                            btnOkIcon: Icons.check,
-                            btnOkOnPress: () {
-                              Navigator.pop(context, bytes);
-                            },
-                          ).show();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Profile picture updated successfully.')),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to update profile picture: ${response["message"]}')),
+                          );
                         }
-                        else {
-                          // TODO: do here
-                        }
-
                         // You can handle the response here, if needed
                       },
                       child: Container(
@@ -202,6 +201,29 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Navigate to Change Password Screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ChangePasswordInside()),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        shape: const RoundedRectangleBorder(),
+                        backgroundColor: Colors.black, // Choose your desired color
+                      ),
+                      child: const Text(
+                        "Change Password",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -234,7 +256,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                 backgroundColor: Colors.red,
                               ),
                             );
-                            return;
                           }
 
                           // Phone number validation (must be exactly 10 digits)
@@ -273,7 +294,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           backgroundColor: Colors.black,
                         ),
                         child: const Text(
-                          "Edit Profile",
+                          "Save Changes",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
