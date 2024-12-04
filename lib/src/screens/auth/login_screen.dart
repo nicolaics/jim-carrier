@@ -105,9 +105,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                  onPressed: () =>
-                                      Get.to(() => const ForgetPassword()),
-                                  child: const Text(tForgotPw))),
+                                  onPressed: () {
+                                    Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ForgetPassword()),
+                                  );
+                                  },
+                                  child: const Text(tForgotPw)
+                                  )
+                                  
+                                  
+                                  ),
                           SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
