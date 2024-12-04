@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
@@ -20,7 +22,6 @@ class _OtpScreenState extends State<OtpScreen2> {
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -32,7 +33,8 @@ class _OtpScreenState extends State<OtpScreen2> {
                 const SizedBox(height: tDefaultSize),
                 Text(
                   'CO\nDE',
-                  style: GoogleFonts.montserrat(fontSize: 80, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.montserrat(
+                      fontSize: 80, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'VERIFICATION',
@@ -54,9 +56,11 @@ class _OtpScreenState extends State<OtpScreen2> {
                   filled: true,
                   onSubmit: (code) {
                     setState(() {
-                      otp = code; // Update the otp variable with the submitted code
+                      otp =
+                          code; // Update the otp variable with the submitted code
                     });
-                    print("OTP is: => $otp"); // Debugging print to verify OTP value
+                    print(
+                        "OTP is: => $otp"); // Debugging print to verify OTP value
                   },
                 ),
                 const SizedBox(height: 20),
@@ -66,28 +70,40 @@ class _OtpScreenState extends State<OtpScreen2> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      //For UI Testing
-                      Get.to(()=> const PasswordChange());
-                      /***
                       // Check if the OTP is empty
                       if (otp.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
                           content: Text('Please enter the OTP.'),
                           backgroundColor: Colors.red,
                         ));
                         return; // Exit if OTP is empty
                       }
+
                       // Debugging print to check OTP value before API call
                       print("Before API call - OTP: $otp");
-                        Get.to(()=> const LoginScreen());
-                        ***/
+
+                      String email = await StorageService.getTempEmail();
+
+                      dynamic response = await verifyVerificationCode(
+                          email: email,
+                          verificationCode: otp,
+                          api: "/user/verify-verification");
+
+                      if (response["status"] == "success") {
+                        Get.to(() => const PasswordChange());
+                      } else {
+                        // TODO: do here
+                      }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black, // Set the background color to black
+                      backgroundColor:
+                          Colors.black, // Set the background color to black
                     ),
                     child: const Text(
                       "VERIFY",
-                      style: TextStyle(color: Colors.white), // Set the text color to white
+                      style: TextStyle(
+                          color: Colors.white), // Set the text color to white
                     ),
                   ),
                 ),
