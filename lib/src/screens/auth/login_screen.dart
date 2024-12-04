@@ -107,17 +107,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: TextButton(
                                   onPressed: () {
                                     Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ForgetPassword()),
-                                  );
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ForgetPassword()),
+                                    );
                                   },
-                                  child: const Text(tForgotPw)
-                                  )
-                                  
-                                  
-                                  ),
+                                  child: const Text(tForgotPw))),
                           SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -154,7 +150,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           dialogType: DialogType.error,
                                           animType: AnimType.topSlide,
                                           title: 'Login not Successful',
-                                          desc: response["message"].capitalize(),
+                                          desc:
+                                              response["message"].capitalize(),
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {},
                                         ).show();
@@ -213,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       .loginWithGoogle(); // Call the method on the instance
 
                                   dynamic response;
-                                  
+
                                   response = await loginWithGoogle(
                                     userInfo: user,
                                     api:
@@ -308,9 +305,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                     .error,
                                                             animType: AnimType
                                                                 .topSlide,
-                                                            title: 'ERROR',
-                                                            desc:
+                                                            title:
                                                                 'Login not Successful',
+                                                            desc: response[
+                                                                    "message"]
+                                                                .capitalize(),
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {},
@@ -381,8 +380,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       context: context,
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
-                                      title: 'ERROR',
-                                      desc: 'Login not Successful',
+                                      title: 'Login not Successful',
+                                      desc: response["message"].capitalize(),
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();
