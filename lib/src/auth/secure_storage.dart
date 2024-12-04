@@ -36,51 +36,37 @@ class StorageService {
     print("deleted token");
   }
 
-  static Future<void> storeRSAPrivateKeyM(String? privateKeyM) async {
+  static Future<void> storeRSAPrivateKey(String? privateKeyM,
+      String? privateKeyE, String? privateKeyP, String? privateKeyQ) async {
     await _storage.write(key: 'private_key_m', value: privateKeyM);
-  }
-
-  static Future<void> storeRSAPrivateKeyE(String? privateKeyE) async {
     await _storage.write(key: 'private_key_e', value: privateKeyE);
-  }
-
-  static Future<void> storeRSAPrivateKeyP(String? privateKeyP) async {
     await _storage.write(key: 'private_key_p', value: privateKeyP);
-  }
-
-  static Future<void> storeRSAPrivateKeyQ(String? privateKeyQ) async {
     await _storage.write(key: 'private_key_q', value: privateKeyQ);
   }
 
-  static Future<void> storeRSAPublicKeyM(String? publicKeyM) async {
+  static Future<void> storeRSAPublicKey(String? publicKeyM, String? publicKeyE) async {
     await _storage.write(key: 'public_key_m', value: publicKeyM);
-  }
-
-  static Future<void> storeRSAPublicKeyE(String? publicKeyE) async {
     await _storage.write(key: 'public_key_e', value: publicKeyE);
   }
 
-  static Future<String> getRSAPrivateKeyM() async {
-    return await _storage.read(key: 'private_key_m') ?? '';
+  static Future<Map<String, String>> getRSAPrivateKey() async {
+    final m = await _storage.read(key: 'private_key_m') ?? '';
+    final e = await _storage.read(key: 'private_key_e') ?? '';
+    final p = await _storage.read(key: 'private_key_p') ?? '';
+    final q = await _storage.read(key: 'private_key_q') ?? '';
+
+    return {
+      "m": m,
+      "e": e,
+      "p": p,
+      "q": q
+    };
   }
 
-  static Future<String> getRSAPrivateKeyE() async {
-    return await _storage.read(key: 'private_key_e') ?? '';
-  }
-
-  static Future<String> getRSAPrivateKeyP() async {
-    return await _storage.read(key: 'private_key_p') ?? '';
-  }
-
-  static Future<String> getRSAPrivateKeyQ() async {
-    return await _storage.read(key: 'private_key_q') ?? '';
-  }
-
-  static Future<String> getRSAPublicKeyM() async {
-    return await _storage.read(key: 'public_key_m') ?? '';
-  }
-
-  static Future<String> getRSAPublicKeyE() async {
-    return await _storage.read(key: 'public_key_e') ?? '';
+  static Future<Map<String, String>> getRSAPublicKey() async {
+    final m = await _storage.read(key: 'public_key_m') ?? '';
+    final e = await _storage.read(key: 'public_key_e') ?? '';
+    
+    return {"m": m, "e": e};
   }
 }

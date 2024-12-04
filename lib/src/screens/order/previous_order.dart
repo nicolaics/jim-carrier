@@ -480,12 +480,12 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                     Map<String, String> decrypted =
                                         await RsaEncryption.decryptBankdDetails(
                                             accountHolder:
-                                                response["account_holder"],
+                                                response["message"]["account_holder"],
                                             accountNumber:
-                                                response["account_number"]);
+                                                response["message"]["account_number"]);
 
                                     String bankName =
-                                        response["bank_name"] ?? "";
+                                        response["message"]["bank_name"] ?? "";
                                     String accountNumber = decrypted['number'] ?? "";
                                     String accountHolderName = decrypted['holder'] ?? "";
 

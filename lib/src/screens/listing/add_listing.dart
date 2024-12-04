@@ -414,7 +414,10 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
-                  
+                  print('Bank Name: ${_bankName.text}');
+                  print('Bank Account: ${_bankAccountNo.text}');
+                  print('Bank Holder: ${_accountHolderName.text}');
+
                   // Call the API to add the listing
                   dynamic response = await addListing(
                     destination: location,
@@ -453,7 +456,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       btnOkOnPress: () {},
                     ).show();
                   }
-                  Get.to(() => const BottomBar(0));
                 },
                 child:
                     const Text('SUBMIT', style: TextStyle(color: Colors.white)),

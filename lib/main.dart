@@ -24,7 +24,11 @@ void main() async {
 
   setupInterceptors();
 
-  await RsaEncryption.generateRSAkeyPair();
+  final publicKey = await StorageService.getRSAPublicKey();
+
+  if (publicKey['m'] == '' || publicKey['e'] == '') {
+    await RsaEncryption.generateRSAkeyPair();
+  }
 
   String next = "welcome";
 

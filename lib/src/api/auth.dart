@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:http_status/http_status.dart';
 import 'package:jim/src/api/api_service.dart';
-import 'package:jim/src/auth/rsa_encryption.dart';
 import 'package:jim/src/auth/secure_storage.dart';
 
 Future<dynamic> getBankDetails({required int carrierID, required api}) async {
@@ -35,7 +34,7 @@ Future<dynamic> login(
     required String password,
     required String fcmToken,
     required String api}) async {
-  Map<String, String> publicKey = await RsaEncryption.getPublicKey();
+  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
   print("public key E: ${publicKey['m'] ?? ""}");
   print("public key E: ${utf8.encode(publicKey['m'] ?? "")}");
@@ -74,7 +73,7 @@ Future<dynamic> registerUser(
   // Encode the profile picture as a base64 string
   String profilePictureBase64 = base64Encode(profilePicture);
 
-  Map<String, String> publicKey = await RsaEncryption.getPublicKey();
+  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
   // Create the request body as per your backend payload structure
   Map<String, dynamic> body = {
@@ -139,7 +138,7 @@ Future<dynamic> forgotPassword({required String email, required api}) async {
 
 Future<dynamic> loginWithGoogle(
     {required Map userInfo, required String api}) async {
-  Map<String, String> publicKey = await RsaEncryption.getPublicKey();
+  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
   userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
   userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
@@ -164,7 +163,7 @@ Future<dynamic> loginWithGoogle(
 
 Future<dynamic> registerWithGoogle(
     {required Map userInfo, required String api}) async {
-  Map<String, String> publicKey = await RsaEncryption.getPublicKey();
+  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
   userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
   userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
@@ -239,7 +238,7 @@ Future<dynamic> updateProfile(
 }
 
 dynamic autoLogin({required String api}) async {
-  Map<String, String> publicKey = await RsaEncryption.getPublicKey();
+  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
   String refreshToken = await StorageService.getRefreshToken();
   String fcmToken = await StorageService.getFcmToken();
 

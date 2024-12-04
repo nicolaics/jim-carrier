@@ -1,5 +1,3 @@
-// import 'dart:math';
-// import 'dart:typed_data';
 // ignore_for_file: implementation_imports
 
 import 'package:encrypt/encrypt.dart' as enc;
@@ -8,7 +6,6 @@ import 'package:pointycastle/src/platform_check/platform_check.dart';
 import "package:pointycastle/export.dart";
 
 class RsaEncryption {
-  // static Future<AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey>> generateRSAkeyPair(
   static Future<void> generateRSAkeyPair({int bitLength = 2048}) async {
     // Create an RSA key generator and initialize it
     final keyGen = RSAKeyGenerator();
@@ -29,56 +26,46 @@ class RsaEncryption {
     final myPublic = pair.publicKey as RSAPublicKey;
     final myPrivate = pair.privateKey as RSAPrivateKey;
 
-    await StorageService.storeRSAPrivateKeyM(myPrivate.modulus.toString());
-    await StorageService.storeRSAPrivateKeyE(
-        myPrivate.privateExponent.toString());
-    await StorageService.storeRSAPrivateKeyP(myPrivate.p.toString());
-    await StorageService.storeRSAPrivateKeyQ(myPrivate.q.toString());
+    await StorageService.storeRSAPrivateKey(
+        myPrivate.modulus.toString(),
+        myPrivate.privateExponent.toString(),
+        myPrivate.p.toString(),
+        myPrivate.q.toString());
 
-    await StorageService.storeRSAPublicKeyM(myPublic.modulus.toString());
-    await StorageService.storeRSAPublicKeyE(myPublic.exponent.toString());
+    await StorageService.storeRSAPublicKey(
+        myPublic.modulus.toString(), myPublic.exponent.toString());
   }
 
-  static Future<Map<String, String>> decryptBankdDetails({required dynamic accountNumber, required dynamic accountHolder}) async {
-    final getPublicM = await StorageService.getRSAPublicKeyM();
-    final getPublicE = await StorageService.getRSAPublicKeyE();
-
-    final getPrivateM = await StorageService.getRSAPrivateKeyM();
-    final getPrivateE = await StorageService.getRSAPrivateKeyE();
-    final getPrivateP = await StorageService.getRSAPrivateKeyP();
-    final getPrivateQ = await StorageService.getRSAPrivateKeyQ();
+  static Future<Map<String, String>> decryptBankdDetails(
+      {required dynamic accountNumber, required dynamic accountHolder}) async {
+    final getPublicKey = await StorageService.getRSAPublicKey();
+    final getPrivateKey = await StorageService.getRSAPrivateKey();
 
     final myPublic =
-        RSAPublicKey(BigInt.parse(getPublicM), BigInt.parse(getPublicE));
+        RSAPublicKey(BigInt.parse(getPublicKey['m']!), BigInt.parse(getPublicKey['e']!));
 
     final myPrivate = RSAPrivateKey(
-        BigInt.parse(getPrivateM),
-        BigInt.parse(getPrivateE),
-        BigInt.parse(getPrivateP),
-        BigInt.parse(getPrivateQ));
+        BigInt.parse(getPrivateKey['m']!),
+        BigInt.parse(getPrivateKey['e']!),
+        BigInt.parse(getPrivateKey['p']!),
+        BigInt.parse(getPrivateKey['q']!));
 
-    final encrypter =
-        enc.Encrypter(enc.RSA(publicKey: myPublic, privateKey: myPrivate));
+    final encrypter = enc.Encrypter(enc.RSA(
+        publicKey: myPublic,
+        privateKey: myPrivate,
+        encoding: enc.RSAEncoding.OAEP,
+        digest: enc.RSADigest.SHA256));
+
+    print("fromBase64 $accountNumber");
 
     final accountNumberEncrypted = enc.Encrypted.fromBase64(accountNumber);
     final accountHolderEncrypted = enc.Encrypted.fromBase64(accountHolder);
 
+    print("fromBase64 $accountNumberEncrypted");
+
     final accountNumberDecrypted = encrypter.decrypt(accountNumberEncrypted);
     final accountHolderDecrypted = encrypter.decrypt(accountHolderEncrypted);
 
-    return {
-      "number": accountNumberDecrypted,
-      "holder": accountHolderDecrypted
-    };
-  }
-
-  static Future<Map<String, String>> getPublicKey() async {
-    final getPublicM = await StorageService.getRSAPublicKeyM();
-    final getPublicE = await StorageService.getRSAPublicKeyE();
-    
-    return {
-      "m": getPublicM,
-      "e": getPublicE
-    };
+    return {"number": accountNumberDecrypted, "holder": accountHolderDecrypted};
   }
 }
