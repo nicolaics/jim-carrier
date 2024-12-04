@@ -8,14 +8,14 @@ import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/auth.dart';
 import '../../constants/sizes.dart';
 
-class ChangePasswordInside extends StatefulWidget {
-  const ChangePasswordInside({super.key});
+class UpdatePassword extends StatefulWidget {
+  const UpdatePassword({super.key});
 
   @override
-  State<ChangePasswordInside> createState() => _ChangePasswordInsideState();
+  State<UpdatePassword> createState() => _ChangePasswordInsideState();
 }
 
-class _ChangePasswordInsideState extends State<ChangePasswordInside> {
+class _ChangePasswordInsideState extends State<UpdatePassword> {
   final TextEditingController _oldpwController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _pwController2 = TextEditingController();

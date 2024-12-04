@@ -2,11 +2,10 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jim/src/api/auth.dart';
-import 'package:jim/src/screens/auth/change_password_inside.dart';
+import 'package:jim/src/screens/profile/update_password.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/sizes.dart';
 import 'dart:typed_data';
@@ -58,7 +57,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           isLoading = false; // Stop loading even if there's an error
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch user data: ${response["message"]}')),
+          SnackBar(
+              content:
+                  Text('Failed to fetch user data: ${response["message"]}')),
         );
       }
     } catch (e) {
@@ -67,15 +68,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         isLoading = false; // Stop loading in case of an error
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred while fetching user data.')),
+        const SnackBar(
+            content: Text('An error occurred while fetching user data.')),
       );
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -126,14 +126,16 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     child: GestureDetector(
                       onTap: () async {
                         final ImagePicker picker = ImagePicker();
-                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.gallery);
                         if (image == null) return;
 
                         // Convert image to bytes
                         final bytes = await File(image.path).readAsBytes();
 
                         setState(() {
-                          photo = bytes; // Update the photo variable with the new image bytes
+                          photo =
+                              bytes; // Update the photo variable with the new image bytes
                         });
 
                         // Upload the new profile picture to the backend
@@ -144,11 +146,15 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
                         if (response["status"] == "success") {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Profile picture updated successfully.')),
+                            const SnackBar(
+                                content: Text(
+                                    'Profile picture updated successfully.')),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Failed to update profile picture: ${response["message"]}')),
+                            SnackBar(
+                                content: Text(
+                                    'Failed to update profile picture: ${response["message"]}')),
                           );
                         }
                         // You can handle the response here, if needed
@@ -201,29 +207,29 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Navigate to Change Password Screen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ChangePasswordInside()),
-                        );
-                      },
-                      style: OutlinedButton.styleFrom(
-                        shape: const RoundedRectangleBorder(),
-                        backgroundColor: Colors.black, // Choose your desired color
-                      ),
-                      child: const Text(
-                        "Change Password",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Navigate to Change Password Screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UpdatePassword()),
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          shape: const RoundedRectangleBorder(),
+                          backgroundColor:
+                              Colors.black, // Choose your desired color
+                        ),
+                        child: const Text(
+                          "Change Password",
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-
-
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
