@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
 
 import '../../constants/sizes.dart';
@@ -16,6 +17,7 @@ class PasswordChange extends StatefulWidget {
 class _PasswordChangeState extends State<PasswordChange> {
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _pwController2 = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   bool _isPasswordVisible = false;
 
   @override
@@ -38,6 +40,15 @@ class _PasswordChangeState extends State<PasswordChange> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.email_outlined),
+                              labelText: "Email",
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 30),
                           TextFormField(
                             controller: _pwController,
                             obscureText: !_isPasswordVisible, // Step 3: Use the boolean for visibility
@@ -98,9 +109,10 @@ class _PasswordChangeState extends State<PasswordChange> {
 
                                 String pw1 = _pwController.text.trim();
                                 String pw2 = _pwController2.text.trim();
+                                String email= _emailController.text.trim();
 
                                 // Check if any of the fields are empty
-                                if (pw1.isEmpty || pw2.isEmpty ) {
+                                if (pw1.isEmpty || pw2.isEmpty ||email.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Please fill in all fields.'),
@@ -139,55 +151,32 @@ class _PasswordChangeState extends State<PasswordChange> {
                                 ).show();
 
                                 }
+                                dynamic result= resetPassword( newPassword: pw2, api: '/user/update-password', email: email);
+                                if(result['status']=='success'){
+                                  AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.success,
+                                    animType: AnimType.topSlide,
+                                    title: 'Success',
+                                    desc: 'Password Reset',
+                                    btnOkIcon: Icons.check,
+                                    btnOkOnPress: () {
+                                      Get.to(() => const LoginScreen());
+                                    },
+                                  ).show();
+                                }
+                                else{
+                                  AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.error,
+                                    animType: AnimType.topSlide,
+                                    title: 'ERROR',
+                                    desc: 'Password Reset Failed',
+                                    btnOkIcon: Icons.check,
+                                    btnOkOnPress: () {},
+                                  ).show();
+                                }
 
-                                //  Get.to(() => const LoginScreen());
-                                /***
-                                    await apiService.otpCode(
-                                    email: _emailController.text,
-                                    api: '/user/send-verification', // Provide your API base URL
-                                    );
-
-                                    // Check if the email text box is empty
-                                    if (_emailController.text.isEmpty) {
-                                    // Show a Snackbar for empty email
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                    content: Text('Please enter your email.'),
-                                    backgroundColor: Colors.red,
-                                    ),
-                                    );
-                                    return; // Exit if the email is empty
-                                    }
-
-                                    // Email format validation using regex
-                                    String email = _emailController.text;
-                                    final RegExp emailRegex = RegExp(
-                                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                                    );
-
-                                    if (!emailRegex.hasMatch(email)) {
-                                    // Show a Snackbar for invalid email format
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                    content: Text('Please enter a valid email address.'),
-                                    backgroundColor: Colors.red,
-                                    ),
-                                    );
-                                    return; // Exit if the email format is invalid
-                                    }
-
-                                    String result= await apiService.forgotPw(
-                                    email: email,
-                                    api: '/user/send-verification', // Provide your API base URL
-                                    );
-                                    // Proceed to the OtpScreen if the email field is filled and valid
-                                    if(result == 'success'){
-                                    print("Got Code");
-                                    }
-                                    else{
-                                    print("Failed getting code");
-                                    }
-                                    Get.to(() => const OtpScreen2()); ***/
                               },
                               style: OutlinedButton.styleFrom(
                                 shape: const RoundedRectangleBorder(),
