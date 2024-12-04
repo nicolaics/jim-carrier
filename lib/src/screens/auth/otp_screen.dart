@@ -129,7 +129,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           dialogType: DialogType.error,
                           animType: AnimType.topSlide,
                           title: 'Error',
-                          desc: 'User Already Exists',
+                          desc: response["message"].capitalize(),
                           btnOkIcon: Icons.check,
                           btnOkOnPress: () {
                             // Navigate to the BottomBar screen after the dialog is dismissed
