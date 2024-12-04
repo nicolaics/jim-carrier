@@ -144,7 +144,7 @@ Future<dynamic> updatePassword({required String oldPassword, required String new
   };
 
   try {
-    final response = await dio.post(baseUrl + api, data: body);
+    final response = await dio.patch(baseUrl + api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
