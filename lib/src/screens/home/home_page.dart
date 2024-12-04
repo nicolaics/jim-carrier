@@ -13,73 +13,71 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Map<String, dynamic>> items =
-      []; // Change the list type to dynamic to handle both String and Uint8List
-
-  String? selectedValue; // For the dropdown button
+  List<Map<String, dynamic>> items = [];
+  String? selectedValue;
+  bool isLoading = true; // Initially, the loading state is true
 
   @override
   void initState() {
     super.initState();
-    fetchListing(); // Call the function when the widget is initialized
+    fetchListing(); // Call fetchListing() when the widget is first created
   }
-
-  // Async function to fetch data and update items list
 
   Future<void> fetchListing() async {
     try {
+      setState(() {
+        isLoading = true; // Start loading before making the API call
+      });
+
       String api = "/listing/all";
-      dynamic response = await getAllListings(api: api); // Await the response
+      dynamic response = await getAllListings(api: api); // Fetch data
+      print("Response: $response");
 
       if (response["status"] == "success") {
         response["message"] = response["message"] as List;
 
-        List<Map<String, dynamic>> updatedItems =
-            []; // To store the updated items
+        List<Map<String, dynamic>> updatedItems = [];
 
-        // Map the API response to the desired format
         for (var data in response["message"]) {
           String? base64Image = data['carrierProfilePicture'];
           Uint8List? imageBytes;
 
           if (base64Image != null && base64Image.isNotEmpty) {
-            imageBytes = base64Decode(
-                base64Image); // Decode the base64 string to Uint8List
+            imageBytes = base64Decode(base64Image);
           }
-          print("carrier rating ${data["carrierRating"]}");
 
           updatedItems.add({
+            "carrierId": data['carrierId'] ?? 'Unknown',
             "id": data['id'] ?? 'Unknown',
             "currency": data['currency'] ?? 'Unknown',
-            "name": data['carrierName'] ??
-                'Unknown', // Default to 'Unknown' if not available
-            "destination": data['destination'] ??
-                'No destination', // Default to 'No destination'
-            "price": formatPrice(
-                data['pricePerKg'],
-                data['currency'] ??
-                    'KRW'), // Format the price based on the currency
-            "available_weight": formatWeight(data[
-                'weightAvailable']), // Format the available weight with space
-            "flight_date":
-                formatDate(data['departureDate']), // Format the departure date
-            "profile_pic": imageBytes, // Store the decoded image bytes
+            "name": data['carrierName'] ?? 'Unknown',
+            "destination": data['destination'] ?? 'No destination',
+            "price": formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW'),
+            "available_weight": formatWeight(data['weightAvailable']),
+            "flight_date": formatDate(data['departureDate']),
+            "profile_pic": imageBytes,
             "carrierRating": data['carrierRating'] ?? 0,
           });
         }
 
-        // Update the state with the new items
         setState(() {
           items = updatedItems;
+          isLoading = false; // Stop loading after data is fetched
         });
-      }
-      else {
-        print("FETCH LISTING ERROR ${response["message"]}");
+      } else {
+        print("FETCH LISTING ERROR: ${response["message"]}");
+        setState(() {
+          isLoading = false; // Stop loading even if the fetch failed
+        });
       }
     } catch (e) {
       print('Error: $e');
+      setState(() {
+        isLoading = false; // Stop loading if an error occurred
+      });
     }
   }
+
 
   // Format the price based on the currency
   String formatPrice(dynamic price, String currency) {
