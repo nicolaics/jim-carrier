@@ -283,3 +283,24 @@ dynamic autoLogin({required String api}) async {
     return writeErrorResponse(response: e.response);
   }
 }
+
+Future<dynamic> verifyVerificationCode(
+    {required String email, required String verificationCode, required String api}) async {
+  Map<String, String> body = {
+    'email': email,
+    'verificationCode': verificationCode
+  };
+
+  try {
+    final response = await dio.post(baseUrl + api, data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}
