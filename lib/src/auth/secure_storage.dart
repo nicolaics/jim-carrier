@@ -36,7 +36,8 @@ class StorageService {
 
   // Delete token
   static Future<void> deleteTokens() async {
-    await _storage.delete(key: 'token');
+    await _storage.delete(key: 'access_token');
+    await _storage.delete(key: 'refresh_token');
     print("deleted token");
   }
 
@@ -75,9 +76,10 @@ class StorageService {
   }
 
   static Future<String> getTempEmail() async {
-    final email = await _storage.read(key: 'email') ?? '';
-    await _storage.delete(key: 'email');
+    return await _storage.read(key: 'email') ?? '';
+  }
 
-    return email;
+  static Future<void> deleteTempEmail() async {
+    await _storage.delete(key: 'email');
   }
 }
