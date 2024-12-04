@@ -16,6 +16,10 @@ class StorageService {
     await _storage.write(key: 'fcm_token', value: fcmToken);
   }
 
+  static Future<void> storeTempEmail(String email) async {
+    await _storage.write(key: 'email', value: email);
+  }
+
   // Retrieve token
   static Future<String> getAccessToken() async {
     return await _storage.read(key: 'access_token') ?? '';
@@ -68,5 +72,12 @@ class StorageService {
     final e = await _storage.read(key: 'public_key_e') ?? '';
     
     return {"m": m, "e": e};
+  }
+
+  static Future<String> getTempEmail() async {
+    final email = await _storage.read(key: 'email') ?? '';
+    await _storage.delete(key: 'email');
+
+    return email;
   }
 }
