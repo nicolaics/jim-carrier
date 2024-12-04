@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/profile/profile_screen.dart';
 
+import '../../api/auth.dart';
 import '../../constants/sizes.dart';
 
 class ChangePasswordInside extends StatefulWidget {
@@ -16,6 +17,7 @@ class ChangePasswordInside extends StatefulWidget {
 }
 
 class _ChangePasswordInsideState extends State<ChangePasswordInside> {
+  final TextEditingController _oldpwController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _pwController2 = TextEditingController();
   bool _isPasswordVisible = false;
@@ -55,7 +57,7 @@ class _ChangePasswordInsideState extends State<ChangePasswordInside> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextFormField(
-                            controller: _pwController,
+                            controller: _oldpwController,
                             obscureText: !_isPasswordVisible, // Step 3: Use the boolean for visibility
                             decoration: InputDecoration(
                               prefixIcon: const Icon(Icons.lock),
@@ -137,12 +139,12 @@ class _ChangePasswordInsideState extends State<ChangePasswordInside> {
                             child: ElevatedButton(
                               onPressed: () async{
                                 //for UI making
-
+                                String oldpw = _oldpwController.text.trim();
                                 String pw1 = _pwController.text.trim();
                                 String pw2 = _pwController2.text.trim();
 
                                 // Check if any of the fields are empty
-                                if (pw1.isEmpty || pw2.isEmpty ) {
+                                if (pw1.isEmpty || pw2.isEmpty || oldpw.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Please fill in all fields.'),
@@ -150,7 +152,7 @@ class _ChangePasswordInsideState extends State<ChangePasswordInside> {
                                     ),
                                   );
                                 }
-                                else if (pw1.length <= 5 && pw2.length <= 5) {
+                                else if (pw1.length <= 5 && pw2.length <= 5 && oldpw.length<=5) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text('Password must be more than 5 characters.'),
@@ -167,69 +169,31 @@ class _ChangePasswordInsideState extends State<ChangePasswordInside> {
                                     ),
                                   );
                                 }
-                                else{
+                                dynamic result= updatePassword(oldPassword: oldpw, newPassword: pw2, api: '/user/update-password');
+                                if(result['status']=='success'){
                                   AwesomeDialog(
                                     context: context,
                                     dialogType: DialogType.success,
                                     animType: AnimType.topSlide,
                                     title: 'Success',
-                                    desc: 'Password Changed Successfully',
+                                    desc: 'Password Updated',
                                     btnOkIcon: Icons.check,
                                     btnOkOnPress: () {
                                       Get.to(() => const ProfileScreen());
                                     },
                                   ).show();
-
                                 }
-
-                                //  Get.to(() => const LoginScreen());
-                                /***
-                                    await apiService.otpCode(
-                                    email: _emailController.text,
-                                    api: '/user/send-verification', // Provide your API base URL
-                                    );
-
-                                    // Check if the email text box is empty
-                                    if (_emailController.text.isEmpty) {
-                                    // Show a Snackbar for empty email
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                    content: Text('Please enter your email.'),
-                                    backgroundColor: Colors.red,
-                                    ),
-                                    );
-                                    return; // Exit if the email is empty
-                                    }
-
-                                    // Email format validation using regex
-                                    String email = _emailController.text;
-                                    final RegExp emailRegex = RegExp(
-                                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                                    );
-
-                                    if (!emailRegex.hasMatch(email)) {
-                                    // Show a Snackbar for invalid email format
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                    content: Text('Please enter a valid email address.'),
-                                    backgroundColor: Colors.red,
-                                    ),
-                                    );
-                                    return; // Exit if the email format is invalid
-                                    }
-
-                                    String result= await apiService.forgotPw(
-                                    email: email,
-                                    api: '/user/send-verification', // Provide your API base URL
-                                    );
-                                    // Proceed to the OtpScreen if the email field is filled and valid
-                                    if(result == 'success'){
-                                    print("Got Code");
-                                    }
-                                    else{
-                                    print("Failed getting code");
-                                    }
-                                    Get.to(() => const OtpScreen2()); ***/
+                                else{
+                                  AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.error,
+                                    animType: AnimType.topSlide,
+                                    title: 'ERROR',
+                                    desc: 'Password Update Failed',
+                                    btnOkIcon: Icons.check,
+                                    btnOkOnPress: () {},
+                                  ).show();
+                                }
                               },
                               style: OutlinedButton.styleFrom(
                                 shape: const RoundedRectangleBorder(),
