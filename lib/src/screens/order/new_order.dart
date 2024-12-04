@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
 
+import '../review/review_page.dart';
+
 class NewOrder extends StatefulWidget {
   final Map<String, dynamic> carrier; // Accepts carrier details as a parameter
 
@@ -54,17 +56,6 @@ class _NewOrderState extends State<NewOrder> {
     }
   }
 
-  // Future<void> _pickImagePayment() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery); // Use gallery
-  //   if (image != null) {
-  //     final bytes = await File(image.path).readAsBytes();
-  //     setState(() {
-  //       photoPayment = bytes; // Update the payment proof image
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final carrier = widget.carrier; // Access the passed carrier details
@@ -86,18 +77,55 @@ class _NewOrderState extends State<NewOrder> {
           children: [
             // Profile Picture Section
             Center(
-              child: CircleAvatar(
-                backgroundImage: carrier["profile_pic"] != null &&
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: carrier["profile_pic"] != null &&
                         carrier["profile_pic"] is Uint8List
-                    ? MemoryImage(carrier["profile_pic"] as Uint8List)
-                    : null,
-                radius: 60,
-                child: carrier["profile_pic"] == null
-                    ? const Icon(Icons.person, size: 50)
-                    : null,
+                        ? MemoryImage(carrier["profile_pic"] as Uint8List)
+                        : null,
+                    radius: 60,
+                    child: carrier["profile_pic"] == null
+                        ? const Icon(Icons.person, size: 50)
+                        : null,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(5, (starIndex) {
+                      final rating = carrier["carrierRating"] ?? 0.0;
+
+                      return GestureDetector(
+                        onTap: () {
+                          // Navigate to a new page when a star is tapped
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ReviewPage(
+                                carrier: carrier, // Pass carrier data
+                              ),
+                            ),
+                          );
+                        },
+                        child: Icon(
+                          starIndex < rating.floor()
+                              ? Icons.star // Full star
+                              : starIndex < rating && rating - starIndex >= 0.5
+                              ? Icons.star_half // Half star
+                              : Icons.star_border, // Empty star
+                          color: Colors.amber,
+                          size: 24, // Adjust size as needed
+                        ),
+                      );
+                    }),
+                  ),
+                ],
               ),
             ),
+
+
             const SizedBox(height: 20),
+
 
             // Details Card
             Card(

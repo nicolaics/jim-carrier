@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/screens/auth/otp_screen_fp.dart';
 
+import '../../api/auth.dart';
+
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({super.key});
   @override
@@ -52,20 +54,17 @@ class _ForgetPassword extends State<ForgetPassword> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async{
-                            //for UI making
-                            Get.to(() => const OtpScreen2());
-/***
-                            await apiService.otpCode(
-                              email: _emailController.text,
-                              api: '/user/send-verification', // Provide your API base URL
-                            );
+                          onPressed: () async {
+                            // Get the trimmed email text
+                            String email = _emailController.text.trim();
+
+                            // Debug to ensure email is being read correctly
+                            debugPrint("Email entered: $email");
 
                             // Check if the email text box is empty
-                            if (_emailController.text.isEmpty) {
-                              // Show a Snackbar for empty email
+                            if (email.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text('Please enter your email.'),
                                   backgroundColor: Colors.red,
                                 ),
@@ -74,15 +73,13 @@ class _ForgetPassword extends State<ForgetPassword> {
                             }
 
                             // Email format validation using regex
-                            String email = _emailController.text;
                             final RegExp emailRegex = RegExp(
                               r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                             );
 
                             if (!emailRegex.hasMatch(email)) {
-                              // Show a Snackbar for invalid email format
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text('Please enter a valid email address.'),
                                   backgroundColor: Colors.red,
                                 ),
@@ -90,19 +87,32 @@ class _ForgetPassword extends State<ForgetPassword> {
                               return; // Exit if the email format is invalid
                             }
 
-                            String result= await apiService.forgotPw(
+                            // Call the API to request verification code
+                            dynamic result = await forgotPassword(
                               email: email,
-                              api: '/user/send-verification', // Provide your API base URL
+                              api: '/user/send-verification',
                             );
-                            // Proceed to the OtpScreen if the email field is filled and valid
-                            if(result == 'success'){
-                              print("Got Code");
+
+                            // Proceed only if the API call is successful
+                            if (result['status'] == 'success') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Verification code sent successfully!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                              Get.to(() => const OtpScreen2());
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to send code. Please try again.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             }
-                            else{
-                              print("Failed getting code");
-                            }
-                            Get.to(() => const OtpScreen2()); ***/
                           },
+
+
                           style: OutlinedButton.styleFrom(
                             shape: const RoundedRectangleBorder(),
                             backgroundColor: Colors.black,
