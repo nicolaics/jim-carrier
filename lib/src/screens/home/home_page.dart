@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'package:jim/src/api/listing.dart';
 import 'dart:typed_data';
@@ -40,10 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
         for (var data in response["message"]) {
           String? base64Image = data['carrierProfilePicture'];
-          Uint8List? imageBytes;
+          Uint8List imageBytes;
 
           if (base64Image != null && base64Image.isNotEmpty) {
             imageBytes = base64Decode(base64Image);
+          } else {
+            ByteData byteData = await rootBundle
+                .load('assets/images/welcomePage/welcome_screen.png');
+            imageBytes = byteData.buffer.asUint8List();
           }
 
           updatedItems.add({
@@ -77,7 +82,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-
 
   // Format the price based on the currency
   String formatPrice(dynamic price, String currency) {
