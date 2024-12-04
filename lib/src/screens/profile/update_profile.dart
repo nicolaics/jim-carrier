@@ -133,16 +133,27 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         // Convert image to bytes
                         final bytes = await File(image.path).readAsBytes();
 
+                        print("image path: ${image.path}");
+
+                        dynamic response;
+
+                        // TODO: find the path of the default image
+                        if (image.path ==
+                            'assets/images/welcomePage/welcome_screen.png') {
+                          response = await updateProfile(
+                            api: '/user/update-profile-picture',
+                          );
+                        } else {
+                          response = await updateProfile(
+                            img: bytes,
+                            api: '/user/update-profile-picture',
+                          );
+                        }
+
                         setState(() {
                           photo =
                               bytes; // Update the photo variable with the new image bytes
                         });
-
-                        // Upload the new profile picture to the backend
-                        dynamic response = await updateProfile(
-                          img: bytes,
-                          api: '/user/update-profile-picture',
-                        );
 
                         if (response["status"] == "success") {
                           ScaffoldMessenger.of(context).showSnackBar(
