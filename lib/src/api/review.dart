@@ -16,10 +16,27 @@ Future<dynamic> createReview(
   };
 
   try {
-    final response = await dio.post(
-      (baseUrl + api),
-      data: body
-    );
+    final response = await dio.post((baseUrl + api), data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}
+
+Future<dynamic> getReceivedReviews(
+    {required int carrierId, required String api}) async {
+  Map<String, dynamic> body = {
+    'carrierId': carrierId
+  };
+
+  try {
+    final response = await dio.post((baseUrl + api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);

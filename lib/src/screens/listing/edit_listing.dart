@@ -5,6 +5,7 @@ import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:jim/src/auth/rsa_encryption.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import '../../api/listing.dart';
 
@@ -103,8 +104,12 @@ class _EditScreenState extends State<EditScreen> {
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
-      String accountNumber = item['accountNumber'];
-      String accountHolderName = item['accountHolderName'];
+      Map<String, String> decrypted = RsaEncryption.decryptBankdDetails(
+          accountHolder: item["accountHolderName"],
+          accountNumber: item["accountNumber"]) as Map<String, String>;
+
+      String accountNumber = decrypted['number'] ?? "";
+      String accountHolderName = decrypted['holder'] ?? "";
 
       print("****");
       print(accountHolderName);
@@ -537,7 +542,7 @@ class _EditScreenState extends State<EditScreen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
-                  
+
                   dynamic response = await modifyListing(
                     id: id,
                     destination: location,
