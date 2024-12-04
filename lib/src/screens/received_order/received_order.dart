@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:jim/src/api/order.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
-import 'dart:typed_data'; // For Uint8List
+import 'dart:typed_data';
+
+import '../order/confirm_order.dart'; // For Uint8List
 
 class ReceivedOrder extends StatefulWidget {
   const ReceivedOrder({super.key});
@@ -86,6 +88,115 @@ class _ReceivedOrder extends State<ReceivedOrder> {
   String formatDate(DateTime date) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
+
+  void _showUpdateLocationModal(
+      BuildContext context, Map<String, dynamic> item) {
+    String? dropdownValue;
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Update Location",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                value: dropdownValue,
+                hint: const Text("Select Status"),
+                items: const [
+                  DropdownMenuItem(
+                    value: "Received by Carrier",
+                    child: Text("Received by Carrier"),
+                  ),
+                  DropdownMenuItem(
+                    value: "In-flight",
+                    child: Text("In-flight"),
+                  ),
+                  DropdownMenuItem(
+                    value: "Arrived at the Destination Country",
+                    child: Text("Arrived at the Destination Country"),
+                  ),
+                  DropdownMenuItem(
+                    value: "With Local Courier",
+                    child: Text("With Local Courier"),
+                  ),
+                  DropdownMenuItem(
+                    value: "Delivered",
+                    child: Text("Delivered"),
+                  ),
+                ],
+                onChanged: (String? value) {
+                  setState(() {
+                    dropdownValue = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  if (dropdownValue != null && dropdownValue!.isNotEmpty) {
+                    String orderStatus = "confirmed";
+                    if (dropdownValue == "In-flight" ||
+                        dropdownValue == "Arrived at the Destination Country" ||
+                        dropdownValue == "With Local Courier") {
+                      orderStatus = "en-route";
+                    } else if (dropdownValue == "Delivered") {
+                      orderStatus = "completed";
+                    }
+
+                    // Update location on the server
+                    dynamic response = await updatePackageLocation(
+                      orderNo: int.tryParse(item['id']) ?? 0,
+                      location: dropdownValue,
+                      orderStatus: orderStatus,
+                      api: "/order/package-location",
+                    );
+
+                    if (response["status"] == "success") {
+                      // Find the index of the updated item
+                      int index = items
+                          .indexWhere((element) => element['id'] == item['id']);
+                      if (index != -1) {
+                        // Update the item in the list
+                        setState(() {
+                          items[index]['packageLocation'] =
+                              dropdownValue; // Update the location
+                          items[index]['orderStatus'] =
+                              orderStatus; // Update the order status
+                        });
+                      }
+                    } else {
+                      print("Error updating the location");
+                    }
+
+                    Navigator.pop(context); // Close the modal
+                  } else {
+                    print("No status selected");
+                  }
+                },
+                child: const Text("Update"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -175,9 +286,48 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                         Text("Order Status: ${item['orderStatus']}"),
                         Text("Current Location: ${item['packageLocation']}"),
                         Text("Departure Date: ${item['departureDate']}"),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: item['orderStatus'] == "waiting"
+                                  ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ConfirmOrder(orderData: item),
+                                  ),
+                                );
+                              }
+                                  : null, // Button disabled when orderStatus is not "waiting"
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(20, 40),
+                                backgroundColor: item['orderStatus'] == "waiting"
+                                    ? Colors.green
+                                    : Colors.grey,
+                              ),
+                              child: const Text(
+                                "Confirm",
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => _showUpdateLocationModal(context, item),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(30, 40),
+                                backgroundColor: Colors.blue,
+                              ),
+                              child: const Text(
+                                "Update",
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
-                  ),
+
+                  )
                 );
               },
             ),
