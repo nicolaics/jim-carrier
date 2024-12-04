@@ -10,14 +10,14 @@ import 'package:jim/src/screens/auth/login_screen.dart';
 
 import '../../constants/sizes.dart';
 
-class PasswordChange extends StatefulWidget {
-  const PasswordChange({super.key});
+class ResetPassword extends StatefulWidget {
+  const ResetPassword({super.key});
 
   @override
-  State<PasswordChange> createState() => _PasswordChangeState();
+  State<ResetPassword> createState() => _PasswordChangeState();
 }
 
-class _PasswordChangeState extends State<PasswordChange> {
+class _PasswordChangeState extends State<ResetPassword> {
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _pwController2 = TextEditingController();
   bool _isPasswordVisible = false;

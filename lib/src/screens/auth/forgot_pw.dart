@@ -1,9 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:get/get.dart';
 import 'package:jim/src/screens/auth/otp_screen_fp.dart';
 
 import '../../api/auth.dart';
@@ -95,13 +95,20 @@ class _ForgetPassword extends State<ForgetPassword> {
 
                             // Proceed only if the API call is successful
                             if (result['status'] == 'success') {
+                              await StorageService.storeTempEmail(email);
+                              
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Verification code sent successfully!'),
                                   backgroundColor: Colors.green,
                                 ),
                               );
-                              Get.to(() => const OtpScreen2());
+                              Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const OtpScreen2()),
+                                  );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

@@ -7,7 +7,7 @@ import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:jim/src/screens/auth/password_change.dart';
+import 'package:jim/src/screens/auth/reset_password.dart';
 
 class OtpScreen2 extends StatefulWidget {
   const OtpScreen2({super.key});
@@ -91,7 +91,7 @@ class _OtpScreenState extends State<OtpScreen2> {
                           api: "/user/verify-verification");
 
                       if (response["status"] == "success") {
-                        Get.to(() => const PasswordChange());
+                        Get.to(() => const ResetPassword());
                       } else {
                         // TODO: do here
                       }
