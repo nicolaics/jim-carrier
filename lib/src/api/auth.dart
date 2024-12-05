@@ -242,7 +242,7 @@ Future<dynamic> getCurrentUser({required String api}) async {
   }
 }
 
-Future<dynamic> updateProfile(
+Future<dynamic> updateProfilePicture(
     {Uint8List? img, required String api}) async {
   Map<String, dynamic> body = {
     'profilePicture': img
@@ -308,3 +308,25 @@ Future<dynamic> verifyVerificationCode(
     return writeErrorResponse(response: e.response);
   }
 }
+
+Future<dynamic> updateProfile(
+    {required String name, required String phoneNumber, required String api}) async {
+  Map<String, String> body = {
+    'name': name,
+    'phoneNumber': phoneNumber
+  };
+
+  try {
+    final response = await dio.patch(baseUrl + api, data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}
+
