@@ -29,6 +29,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   @override
   Widget build(BuildContext context) {
     final orderData = widget.orderData;
+
     orderNo = (orderData["id"] is String)
         ? int.tryParse(orderData["id"])
         : orderData["id"] as int?;
@@ -52,38 +53,74 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Package Image
-            if (orderData["packageImage"] != null &&
-                orderData["packageImage"] is Uint8List)
+// Package Image with Text Outside (Above)
+            if (orderData["packageImage"] != null && orderData["packageImage"] is Uint8List)
               Center(
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.memory(
-                      orderData["packageImage"] as Uint8List,
-                      fit: BoxFit.cover,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Align tightly around its content
+                  children: [
+                    // Text above the image
+                    const SizedBox(height: 8), // Add spacing between text and image
+                    // Image
+                    Container(
+                      height: 150,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey, width: 1),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.memory(
+                          orderData["packageImage"] as Uint8List,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                  ),
+
+                    Text(
+                      "Package Image",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
                 ),
               )
             else
               Center(
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Text above the placeholder
+                    Text(
+                      "Package Image",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8), // Add spacing between text and placeholder
+                    // Placeholder for when there's no image
+                    Container(
+                      height: 150,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey, width: 1),
+                      ),
+                      child: const Icon(Icons.image, size: 50, color: Colors.grey),
+                    ),
+                  ],
                 ),
               ),
+
+
+
             const SizedBox(height: 20),
 
             // Order Details Card
