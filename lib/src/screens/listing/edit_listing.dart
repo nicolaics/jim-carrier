@@ -104,9 +104,13 @@ class _EditScreenState extends State<EditScreen> {
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
-      Map<String, String> decrypted = RsaEncryption.decryptBankdDetails(
+      late Map<String, String> decrypted;
+      
+      RsaEncryption.decryptBankdDetails(
           accountHolder: item["accountHolderName"],
-          accountNumber: item["accountNumber"]) as Map<String, String>;
+          accountNumber: item["accountNumber"]).then((result){
+            decrypted = result;
+          });
 
       String accountNumber = decrypted['number'] ?? "";
       String accountHolderName = decrypted['holder'] ?? "";
