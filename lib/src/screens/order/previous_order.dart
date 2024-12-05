@@ -30,6 +30,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   String? selectedValue; // For the dropdown button
   int _selectedRating = 0;
   Uint8List? photoPayment;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -145,6 +146,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   // Async function to fetch both listing and order data
   Future<void> fetchListing() async {
     try {
+      setState(() {
+        isLoading=true;
+      });
       String api = "/listing/carrier"; // Correct endpoint
       dynamic response = await getAllOrders(api: api); // Fetch API data
 
@@ -173,12 +177,19 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
         setState(() {
           listingData = updatedItems;
+          isLoading=false;
         });
       } else {
         print("Error: API returned a failure status. Response: $response");
+        setState((){
+          isLoading=false;
+        });
       }
     } catch (e) {
       print('Error fetching listing data: $e');
+      setState((){
+        isLoading=false;
+      });
     }
   }
 
@@ -279,7 +290,11 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
+      body: isLoading
+          ? Center(
+        child: CircularProgressIndicator(
+        ),
+      ): Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Tab-like buttons
