@@ -84,6 +84,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
       _weightController.text = item['available_weight']?.replaceAll('kg', '').trim() ?? '';
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
+
       final encryptedHolder = enc.Encrypted.fromBase64(item['accountHolderName']);
       final encryptedNumber = enc.Encrypted.fromBase64(item['accountNumber']);
       final decrypted = decryptData(
