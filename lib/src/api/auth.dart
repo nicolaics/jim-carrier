@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 // import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
@@ -34,17 +33,17 @@ Future<dynamic> login(
     required String password,
     required String fcmToken,
     required String api}) async {
-  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
+  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
-  print("public key E: ${publicKey['m'] ?? ""}");
-  print("public key E: ${utf8.encode(publicKey['m'] ?? "")}");
+  // print("public key E: ${publicKey['m'] ?? ""}");
+  // print("public key E: ${utf8.encode(publicKey['m'] ?? "")}");
 
   Map<String, dynamic> body = {
     'email': email,
     'password': password,
     'fcmToken': fcmToken,
-    "publicKeyM": utf8.encode(publicKey['m'] ?? ""),
-    "publicKeyE": utf8.encode(publicKey['e'] ?? ""),
+    // "publicKeyM": utf8.encode(publicKey['m'] ?? ""),
+    // "publicKeyE": utf8.encode(publicKey['e'] ?? ""),
   };
 
   try {
@@ -78,7 +77,7 @@ Future<dynamic> registerUser(
   //   profilePictureBase64 = base64Encode(profilePicture);
   // }
 
-  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
+  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
   // Create the request body as per your backend payload structure
   Map<String, dynamic> body = {
@@ -89,8 +88,8 @@ Future<dynamic> registerUser(
     'profilePicture': profilePicture,
     'verificationCode': verification,
     'fcmToken': fcmToken,
-    'publicKeyM': utf8.encode(publicKey['m'] ?? ""),
-    'publicKeyE': utf8.encode(publicKey['e'] ?? ""),
+    // 'publicKeyM': utf8.encode(publicKey['m'] ?? ""),
+    // 'publicKeyE': utf8.encode(publicKey['e'] ?? ""),
   };
 
   try {
@@ -164,10 +163,10 @@ Future<dynamic> updatePassword({required String oldPassword, required String new
 
 Future<dynamic> loginWithGoogle(
     {required Map userInfo, required String api}) async {
-  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
+  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
-  userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
-  userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
+  // userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
+  // userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
 
   try {
     final response = await dio.post(baseUrl + api, data: userInfo);
@@ -189,10 +188,10 @@ Future<dynamic> loginWithGoogle(
 
 Future<dynamic> registerWithGoogle(
     {required Map userInfo, required String api}) async {
-  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
+  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
-  userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
-  userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
+  // userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
+  // userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
 
   try {
     final response = await dio.post(baseUrl + api, data: userInfo);
@@ -264,15 +263,15 @@ Future<dynamic> updateProfile(
 }
 
 dynamic autoLogin({required String api}) async {
-  Map<String, String> publicKey = await StorageService.getRSAPublicKey();
+  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
   String refreshToken = await StorageService.getRefreshToken();
   String fcmToken = await StorageService.getFcmToken();
 
   Map<String, dynamic> body = {
     "refreshToken": refreshToken,
     "fcmToken": fcmToken,
-    "publicKeyM": utf8.encode(publicKey['m'] ?? ""),
-    "publicKeyE": utf8.encode(publicKey['e'] ?? ""),
+    // "publicKeyM": utf8.encode(publicKey['m'] ?? ""),
+    // "publicKeyE": utf8.encode(publicKey['e'] ?? ""),
   };
 
   try {

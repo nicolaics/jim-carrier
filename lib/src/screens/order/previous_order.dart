@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -10,7 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
-import 'package:jim/src/auth/rsa_encryption.dart';
+import 'package:jim/src/auth/encryption.dart';
 import '../../api/auth.dart';
 import '../listing/edit_listing.dart';
 
@@ -147,7 +148,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   Future<void> fetchListing() async {
     try {
       setState(() {
-        isLoading=true;
+        isLoading = true;
       });
       String api = "/listing/carrier"; // Correct endpoint
       dynamic response = await getAllOrders(api: api); // Fetch API data
@@ -177,18 +178,18 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
         setState(() {
           listingData = updatedItems;
-          isLoading=false;
+          isLoading = false;
         });
       } else {
         print("Error: API returned a failure status. Response: $response");
-        setState((){
-          isLoading=false;
+        setState(() {
+          isLoading = false;
         });
       }
     } catch (e) {
       print('Error fetching listing data: $e');
-      setState((){
-        isLoading=false;
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -291,29 +292,31 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(): Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Tab-like buttons
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          ? Center()
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildTabButton("LISTING", 0),
-                const SizedBox(width: 8),
-                _buildTabButton("ORDER", 1),
+                // Tab-like buttons
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildTabButton("LISTING", 0),
+                      const SizedBox(width: 8),
+                      _buildTabButton("ORDER", 1),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Display either Listing or Order data based on the button clicked
+                Expanded(
+                  child:
+                      isListingView ? _buildListingView() : _buildOrderView(),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 20),
-
-          // Display either Listing or Order data based on the button clicked
-          Expanded(
-            child: isListingView ? _buildListingView() : _buildOrderView(),
-          ),
-        ],
-      ),
     );
   }
 
@@ -488,22 +491,25 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
                                 if (response["status"] == "success" &&
                                     response["message"]["status"] == "exist") {
+                                  
                                   try {
-                                    Map<String, String> decrypted =
-                                        await RsaEncryption.decryptBankdDetails(
-                                            accountHolder:
-                                                response["message"]["account_holder"],
-                                            accountNumber:
-                                                response["message"]["account_number"]);
+                                    final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
+                                    final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
+
+                                    final decrypted = decryptData(
+                                      accountHolder: encryptedHolder,
+                                      accountNumber: encryptedNumber,
+                                    );
 
                                     String bankName =
                                         response["message"]["bank_name"] ?? "";
-                                    String accountNumber = decrypted['number'] ?? "";
-                                    String accountHolderName = decrypted['holder'] ?? "";
+                                    String accountNumber =
+                                        decrypted['number'] ?? "";
+                                    String accountHolderName =
+                                        decrypted['holder'] ?? "";
 
                                     print("Bank Name: $bankName");
-                                    print(
-                                        "Account Number: $accountNumber");
+                                    print("Account Number: $accountNumber");
                                     print(
                                         "Account Holder Name: $accountHolderName");
 

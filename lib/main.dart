@@ -4,7 +4,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:jim/firebase_options.dart';
 import 'package:jim/src/api/api_service.dart';
 import 'package:jim/src/api/auth.dart';
-import 'package:jim/src/auth/rsa_encryption.dart';
+// import 'package:jim/src/auth/rsa_encryption.dart';
 import 'package:jim/src/base_class/firebase_notif.dart';
 import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
@@ -25,11 +25,11 @@ void main() async {
 
   setupInterceptors();
 
-  final publicKey = await StorageService.getRSAPublicKey();
+  // final publicKey = await StorageService.getRSAPublicKey();
 
-  if (publicKey['m'] == '' || publicKey['e'] == '') {
-    await RsaEncryption.generateRSAkeyPair();
-  }
+  // if (publicKey['m'] == '' || publicKey['e'] == '') {
+  //   await RsaEncryption.generateRSAkeyPair();
+  // }
 
   String next = "welcome";
 

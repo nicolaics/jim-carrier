@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:jim/src/api/listing.dart';
+import 'package:jim/src/auth/encryption.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 
 class AddListingScreen extends StatefulWidget {
@@ -418,6 +419,11 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   print('Bank Account: ${_bankAccountNo.text}');
                   print('Bank Holder: ${_accountHolderName.text}');
 
+                  final encrypted = encryptData(
+                    accountHolder: _accountHolderName.text,
+                    accountNumber: _bankAccountNo.text,
+                  );
+
                   // Call the API to add the listing
                   dynamic response = await addListing(
                     destination: location,
@@ -427,8 +433,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     date: date,
                     lastDate: lastDate,
                     additionalInfo: _additionalInfoController.text,
-                    accountHolder: _accountHolderName.text,
-                    accountNumber: _bankAccountNo.text,
+                    accountHolder: encrypted["holder"]!.base64,
+                    accountNumber: encrypted["number"]!.base64,
                     bankName: _bankName.text,
                     api: "/listing",
                   );
