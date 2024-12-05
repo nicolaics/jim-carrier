@@ -24,6 +24,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
   DateTime? _selectedDate;
   DateTime? _lastDateToReceive;
   String? _selectedCurrency;
+  String fullDestination = '';
   int? id;
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
@@ -36,10 +37,12 @@ class _Edit_ScreenState extends State<Edit_Screen> {
     final item = Get.arguments;
     if (item != null) {
       print('Received Data: $item'); // Print all data for debugging
-      id=item['id'];
+      id = item['id'];
+
       // Parse destination details
       final destination = item['destination'] ?? '';
       final destinationParts = destination.split(',');
+
       if (destinationParts.length == 3) {
         _selectedCity = destinationParts[0].trim();
         _selectedState = destinationParts[1].trim();
@@ -49,27 +52,43 @@ class _Edit_ScreenState extends State<Edit_Screen> {
         _selectedCity = destinationParts[0].trim();
         _selectedState = '';
         _selectedCountry = destinationParts[1].trim();
-      } else {
+      } else if (destinationParts.length == 1) {
         // If only one part (just city or city+state)
         _selectedCity = destinationParts[0].trim();
         _selectedState = '';
-        _selectedCountry = '';
+        _selectedCountry = ''; // Set to empty by default
       }
+
+      // Build the destination string
+
+      if (_selectedCity!.isNotEmpty) {
+        fullDestination += _selectedCity!;
+      }
+      if (_selectedState!.isNotEmpty) {
+        if (fullDestination.isNotEmpty) fullDestination += ', ';
+        fullDestination += _selectedState!;
+      }
+      if (_selectedCountry!.isNotEmpty) {
+        if (fullDestination.isNotEmpty) fullDestination += ', ';
+        fullDestination += _selectedCountry!;
+      }
+
       // Set values in CSCPicker directly
       setState(() {
-        // Ensure that the state variables are set
-        // This will trigger a rebuild and pass the correct values to CSCPicker
         _selectedCountry = _selectedCountry;
         _selectedState = _selectedState;
         _selectedCity = _selectedCity;
       });
+
       // Parse dates (assume `flight_date` format matches `Nov 29, 2024`)
       _selectedDate = item['flight_date'] != null
           ? DateFormat('MMM d, yyyy').parse(item['flight_date'])
           : null;
-      _lastDateToReceive=item['lastReceiveDate'] != null
+
+      _lastDateToReceive = item['lastReceiveDate'] != null
           ? DateFormat('MMM d, yyyy').parse(item['lastReceiveDate'])
           : null;
+
       // Parse price and currency
       final priceWithSymbol = item['price'] ?? '';
       if (priceWithSymbol.startsWith('\$')) {
@@ -82,8 +101,10 @@ class _Edit_ScreenState extends State<Edit_Screen> {
         _selectedCurrency = 'KRW';
         _priceController.text = priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
       }
+
       // Parse weight (remove 'kg' and trim whitespace)
       _weightController.text = item['available_weight']?.replaceAll('kg', '').trim() ?? '';
+
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
@@ -100,11 +121,12 @@ class _Edit_ScreenState extends State<Edit_Screen> {
       print(accountNumber);
       print(item['bankName']);
       print("****");
-      _bankName.text= item['bankName'];
-      _bankAccountNo.text=accountNumber;
-      _accountHolderName.text=accountHolderName;
+      _bankName.text = item['bankName'];
+      _bankAccountNo.text = accountNumber;
+      _accountHolderName.text = accountHolderName;
     }
   }
+
   // Static list of currencies
   final List<String> _currencies = ['KRW', 'USD', 'GBP'];
   @override
@@ -132,13 +154,13 @@ class _Edit_ScreenState extends State<Edit_Screen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Old Destination',
+              'Old Destination ',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: TextEditingController(
-                text: destination,
+                text: fullDestination,
               ),
               readOnly: true, // Make the field read-only
               decoration: InputDecoration(
