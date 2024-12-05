@@ -2,13 +2,17 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/screens/profile/update_password.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/sizes.dart';
 import 'dart:typed_data';
+import 'package:jim/src/screens/home/bottom_bar.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({super.key});
@@ -140,11 +144,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         // TODO: find the path of the default image
                         if (image.path ==
                             'assets/images/welcomePage/welcome_screen.png') {
-                          response = await updateProfile(
+                          response = await updateProfilePicture(
                             api: '/user/update-profile-picture',
                           );
                         } else {
-                          response = await updateProfile(
+                          response = await updateProfilePicture(
                             img: bytes,
                             api: '/user/update-profile-picture',
                           );
@@ -207,6 +211,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         labelText: "Email",
                         border: OutlineInputBorder(),
                       ),
+                      enabled: false,
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
@@ -303,6 +308,37 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             );
                             return; // Exit if the email format is invalid
                           }
+
+                          dynamic response= await updateProfile(name: name, phoneNumber: phoneNumber, api: "/user/modify");
+
+                          if(response['status']=="success"){
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.success,
+                              animType: AnimType.topSlide,
+                              title: 'Sucess',
+                              desc: 'Profile Updated',
+                              btnOkIcon: Icons.check,
+                              btnOkOnPress: () {
+                                Get.to(() => const BottomBar(0));
+                              },
+                            ).show();
+                          }
+                          else{
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.error,
+                              animType: AnimType.topSlide,
+                              title: 'Error',
+                              desc: 'Profile Update failed',
+                              btnOkIcon: Icons.check,
+                              btnOkOnPress: () {
+                              },
+                            ).show();
+                          }
+
+
+
 
                           // All validations passed, proceed with registration
                         },
