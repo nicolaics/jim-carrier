@@ -2,17 +2,17 @@
 
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:jim/src/api/order.dart';
+import 'package:jim/src/api/listing.dart';
+import 'package:jim/src/api/order.dart'
 import 'package:jim/src/api/review.dart';
 import 'package:jim/src/auth/encryption.dart';
-import '../../api/auth.dart';
 import '../listing/edit_listing.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
@@ -161,6 +161,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         for (var data in response["message"]) {
           updatedItems.add({
             "id": data['id'] ?? 'Unknown',
+            "carrierID": data['çarrierId'] ?? 'Únknown',
             "carrier_name": data['carrierName'] ?? 'Unknown',
             "destination": data['destination'] ?? 'No destination',
             "price": formatPrice(data['pricePerKg'], 'KRW'),
@@ -298,9 +299,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(
-      ),
-      )
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -394,7 +395,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 contentPadding: const EdgeInsets.all(16),
                 leading: CircleAvatar(
                   backgroundImage: item["profile_pic"] != null &&
-                      item["profile_pic"].isNotEmpty
+                          item["profile_pic"].isNotEmpty
                       ? MemoryImage(item["profile_pic"] as typed_data.Uint8List)
                       : null,
                   radius: 20,
@@ -415,16 +416,36 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        Get.to(
-                              () => const Edit_Screen(),
-                          arguments: item,
-                        );
+                      onPressed: () async {
+                        dynamic response = await checkExistingOrder(
+                            api: '/listing/count-orders', id: item['id']);
+
+                        if (response['status'] == "success") {
+                         Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Edit_Screen(),
+                              settings: RouteSettings(arguments: item),
+                            ),
+                          );
+
+                        } else {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.topSlide,
+                            title: 'Error',
+                            desc: response["message"],
+                            btnOkIcon: Icons.check,
+                            btnOkOnPress: () {},
+                          ).show();
+                        }
                       },
                       child: const Text("Edit"),
                     ),
@@ -450,10 +471,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     );
   }
 
-
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
-    if(isLoading){
+    if (isLoading) {
       return Center(
         child: CircularProgressIndicator(),
       );
@@ -515,10 +535,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
                                 if (response["status"] == "success" &&
                                     response["message"]["status"] == "exist") {
-                                  
                                   try {
-                                    final encryptedHolder = enc.Encrypted.fromBase64(response["message"]["account_holder"]);
-                                    final encryptedNumber = enc.Encrypted.fromBase64(response["message"]["account_number"]);
+                                    final encryptedHolder =
+                                        enc.Encrypted.fromBase64(
+                                            response["message"]
+                                                ["account_holder"]);
+                                    final encryptedNumber =
+                                        enc.Encrypted.fromBase64(
+                                            response["message"]
+                                                ["account_number"]);
 
                                     final decrypted = decryptData(
                                       accountHolder: encryptedHolder,
