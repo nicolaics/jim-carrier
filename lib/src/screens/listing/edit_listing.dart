@@ -34,7 +34,7 @@ class _EditScreenState extends State<EditScreen> {
       TextEditingController();
 
   @override
-  void initState() {
+  Future<void> initState() async{
     super.initState();
 
     final item = Get.arguments;
@@ -104,13 +104,9 @@ class _EditScreenState extends State<EditScreen> {
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
-      late Map<String, String> decrypted;
-      
-      RsaEncryption.decryptBankdDetails(
+      final Map<String, String> decrypted= await RsaEncryption.decryptBankdDetails(
           accountHolder: item["accountHolderName"],
-          accountNumber: item["accountNumber"]).then((result){
-            decrypted = result;
-          });
+          accountNumber: item["accountNumber"]);
 
       String accountNumber = decrypted['number'] ?? "";
       String accountHolderName = decrypted['holder'] ?? "";
