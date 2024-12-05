@@ -24,7 +24,7 @@ Map<String, enc.Encrypted> encryptData(
   print(accountHolder);
   final holderEncrypted = holderEncrypter.encrypt(accountHolder, iv: holderIv);
   print("hoho");
-  final numberEncrypted = numberEncrypter.encrypt(accountHolder, iv: numberIv);
+  final numberEncrypted = numberEncrypter.encrypt(accountNumber, iv: numberIv);
 
   // send it later using .base64
   return {"holder": holderEncrypted, "number": numberEncrypted};
