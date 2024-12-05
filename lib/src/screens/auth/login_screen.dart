@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           animType: AnimType.topSlide,
                                           title: 'Login not Successful',
                                           desc:
-                                              response["message"].capitalize(),
+                                              response["message"],
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {},
                                         ).show();
@@ -309,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                 'Login not Successful',
                                                             desc: response[
                                                                     "message"]
-                                                                .capitalize(),
+                                                                ,
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {},
@@ -381,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
                                       title: 'Login not Successful',
-                                      desc: response["message"].capitalize(),
+                                      desc: response["message"],
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();
