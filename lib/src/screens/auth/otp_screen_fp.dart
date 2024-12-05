@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:jim/src/api/auth.dart';
@@ -91,9 +92,29 @@ class _OtpScreenState extends State<OtpScreen2> {
                           api: "/user/verify-verification");
 
                       if (response["status"] == "success") {
-                        Get.to(() => const ResetPassword());
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.success,
+                          animType: AnimType.topSlide,
+                          title: 'Success',
+                          desc: 'Directing to Next Page',
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                            Get.to(() => const ResetPassword());
+                          },
+                        ).show();
+
                       } else {
-                        // TODO: do here
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          animType: AnimType.topSlide,
+                          title: 'Error',
+                          desc: 'Wrong OTP',
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                          },
+                        ).show();
                       }
                     },
                     style: ElevatedButton.styleFrom(
