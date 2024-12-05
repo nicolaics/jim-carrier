@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // Import the intl package
 import 'package:jim/src/api/listing.dart';
-import 'dart:typed_data';
 import 'package:jim/src/screens/order/new_order.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -145,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
         child: CircularProgressIndicator(
         ),
       )

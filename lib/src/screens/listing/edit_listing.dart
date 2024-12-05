@@ -10,12 +10,13 @@ import '../../api/listing.dart';
 import '../../auth/encryption.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 
-class Edit_Screen extends StatefulWidget {
-  const Edit_Screen({super.key});
+class EditListingScreen extends StatefulWidget {
+  const EditListingScreen({super.key});
   @override
-  State<Edit_Screen> createState() => _Edit_ScreenState();
+  State<EditListingScreen> createState() => _EditListingScreenState();
 }
-class _Edit_ScreenState extends State<Edit_Screen> {
+
+class _EditListingScreenState extends State<EditListingScreen> {
   String? _selectedCountry = "";
   String? _selectedState;
   String? _selectedCity;
@@ -30,6 +31,8 @@ class _Edit_ScreenState extends State<Edit_Screen> {
   final TextEditingController _bankName = TextEditingController();
   final TextEditingController _bankAccountNo = TextEditingController();
   final TextEditingController _additionalInfoController = TextEditingController();
+  
+  @override
   void initState() {
     super.initState();
     final item = Get.arguments;
@@ -129,7 +132,8 @@ class _Edit_ScreenState extends State<Edit_Screen> {
   final List<String> _currencies = ['KRW', 'USD', 'GBP'];
   @override
   Widget build(BuildContext context) {
-    String destination= '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
+    String destination = '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,

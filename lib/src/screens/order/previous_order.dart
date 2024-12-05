@@ -430,7 +430,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const Edit_Screen(),
+                              builder: (context) => const EditListingScreen(),
                               settings: RouteSettings(arguments: item),
                             ),
                           );

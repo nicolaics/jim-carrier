@@ -78,7 +78,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       ),
                     ),
 
-                    Text(
+                    const Text(
                       "Package Image",
                       style: TextStyle(
                         color: Colors.black,
@@ -95,7 +95,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Text above the placeholder
-                    Text(
+                    const Text(
                       "Package Image",
                       style: TextStyle(
                         color: Colors.black,
