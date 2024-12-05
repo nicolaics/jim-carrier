@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -498,21 +500,12 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
+                  
                   final encrypted = encryptData(
                     accountHolder: _accountHolderName.text,
                     accountNumber: _bankAccountNo.text,
                   );
-                  print("Encrypted Data:");
-                  print("Holder: ${encrypted['holder']?.base64}");
-                  print("Number: ${encrypted['number']?.base64}");
-                  final decrypted = decryptData(
-                    accountHolder: encrypted['holder']!,
-                    accountNumber: encrypted['number']!,
-                  );
-                  print("Decrypted Data:");
-                  print("Holder: ${decrypted['holder']}");
-                  print("Number: ${decrypted['number']}");
-                  print("tumbler");
+
                   // Call the API to add the listing
                   String result = await modifyListing(
                     id: id,
@@ -528,6 +521,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                     bankName: _bankName.text,
                     api: "/listing",
                   );
+                  
                   print(result);
                   if(result=="failed"){
                     AwesomeDialog(
