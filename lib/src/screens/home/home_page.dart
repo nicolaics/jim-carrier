@@ -38,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
         response["message"] = response["message"] as List;
 
         List<Map<String, dynamic>> updatedItems = [];
-
         for (var data in response["message"]) {
           String? base64Image = data['carrierProfilePicture'];
           Uint8List imageBytes;
@@ -50,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 .load('assets/images/welcomePage/welcome_screen.png');
             imageBytes = byteData.buffer.asUint8List();
           }
-
           updatedItems.add({
             "carrierId": data['carrierId'] ?? 'Unknown',
             "id": data['id'] ?? 'Unknown',
