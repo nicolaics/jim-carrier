@@ -16,6 +16,7 @@ import 'package:jim/src/base_class/login_google.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
+import 'package:jim/src/base_class/string_extension.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -150,8 +151,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           dialogType: DialogType.error,
                                           animType: AnimType.topSlide,
                                           title: 'Login not Successful',
-                                          desc:
-                                              response["message"],
+                                          desc: response["message"]
+                                              .toString()
+                                              .capitalizeString(),
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {},
                                         ).show();
@@ -309,7 +311,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                 'Login not Successful',
                                                             desc: response[
                                                                     "message"]
-                                                                ,
+                                                                .toString()
+                                                                .capitalizeString(),
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {},
@@ -381,7 +384,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
                                       title: 'Login not Successful',
-                                      desc: response["message"],
+                                      desc: response["message"]
+                                          .toString()
+                                          .capitalizeString(),
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();
