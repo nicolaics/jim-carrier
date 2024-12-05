@@ -10,7 +10,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/api/listing.dart';
-import 'package:jim/src/api/order.dart'
+import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:jim/src/auth/encryption.dart';
 import '../listing/edit_listing.dart';
@@ -299,7 +299,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Column(
@@ -474,7 +474,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
     if (isLoading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
