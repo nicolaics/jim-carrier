@@ -127,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -143,7 +144,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
       ),
-      body: Column(
+      body: isLoading
+          ? Center(
+        child: CircularProgressIndicator(
+        ),
+      )
+          : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
@@ -182,8 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, index) {
                 return Card(
                   elevation: 4,
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8, horizontal: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -198,13 +204,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(width: 10),
-                        // Display the base64 image in CircleAvatar
                         CircleAvatar(
                           backgroundImage: items[index]["profile_pic"] !=
-                                  null //need to change this to !=null
+                              null
                               ? MemoryImage(items[index]["profile_pic"]
-                                  as Uint8List) // Use MemoryImage to display the base64 image
-                              : null, // Fallback if no image data exists
+                          as Uint8List)
+                              : null,
                           radius: 20,
                         ),
                       ],
@@ -219,31 +224,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           items[index]["destination"] ?? "Destination",
-                          style:
-                              TextStyle(fontSize: 14, color: Colors.grey[700]),
+                          style: TextStyle(
+                              fontSize: 14, color: Colors.grey[700]),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           items[index]["price"] ?? "Price",
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.grey),
                         ),
                         Text(
                           items[index]["available_weight"] ??
                               "Available Weight",
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.grey),
                         ),
                         Text(
                           items[index]["flight_date"] ?? "Flight Date",
-                          style:
-                              const TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.grey),
                         ),
                       ],
                     ),
                     trailing: Column(
-                      mainAxisSize: MainAxisSize
-                          .min, // Ensures the column uses only the space it needs
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         ElevatedButton(
@@ -251,8 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    NewOrder(carrier: items[index]),
+                                builder: (context) => NewOrder(
+                                  carrier: items[index],
+                                ),
                               ),
                             );
                           },
@@ -272,7 +277,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               final rating =
                                   items[index]["carrierRating"] ?? 0.0;
                               if (starIndex < rating.floor()) {
-                                // Full star
                                 return const Icon(
                                   Icons.star,
                                   color: Colors.amber,
@@ -280,14 +284,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 );
                               } else if (starIndex < rating &&
                                   rating - starIndex >= 0.5) {
-                                // Half star
                                 return const Icon(
                                   Icons.star_half,
                                   color: Colors.amber,
                                   size: 16,
                                 );
                               } else {
-                                // Empty star
                                 return const Icon(
                                   Icons.star_border,
                                   color: Colors.amber,
@@ -303,12 +305,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       print("Tapped on ${items[index]["name"]}");
                       print("Tapped on ${items[index]["id"]}");
                       print("Tapped on ${items[index]["currency"]}");
-                      print("Carrier Rating: ${items[index]["carrierRating"]}");
+                      print(
+                          "Carrier Rating: ${items[index]["carrierRating"]}");
 
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => NewOrder(carrier: items[index]),
+                          builder: (context) =>
+                              NewOrder(carrier: items[index]),
                         ),
                       );
                     },
@@ -321,4 +325,5 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 }
