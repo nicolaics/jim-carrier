@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +36,7 @@ class _EditScreenState extends State<EditScreen> {
       TextEditingController();
 
   @override
-  Future<void> initState() async{
+  void initState() {
     super.initState();
 
     final item = Get.arguments;
@@ -104,9 +106,23 @@ class _EditScreenState extends State<EditScreen> {
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
-      final Map<String, String> decrypted= await RsaEncryption.decryptBankdDetails(
+      Completer<Map<String, String>> completer = Completer();
+
+      late Map<String, String> decrypted;
+
+
+      RsaEncryption.decryptBankdDetails(
           accountHolder: item["accountHolderName"],
-          accountNumber: item["accountNumber"]);
+          accountNumber: item["accountNumber"]).then((result) {
+            completer.complete(result);
+          }).catchError((error) {
+            completer.completeError(error);
+          });
+
+      completer.future.then((value) {
+        print("result: $value");
+        decrypted = value;
+      });
 
       String accountNumber = decrypted['number'] ?? "";
       String accountHolderName = decrypted['holder'] ?? "";
