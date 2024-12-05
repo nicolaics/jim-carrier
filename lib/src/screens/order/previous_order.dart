@@ -168,7 +168,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             "lastReceiveDate": formatDate(data['lastReceivedDate']),
             "description": data['description'] ?? 'No description',
             "carrier_rating": data['carrierRating'] ?? 0,
-            "profile_pic": data['carrierProfileImage'],
+            "profile_pic": data['carrierProfilePicture'],
             "accountHolderName": data['bankDetail']['accountHolder'],
             "accountNumber": data['bankDetail']['accountNumber'],
             "bankName": data['bankDetail']['bankName'],
@@ -374,9 +374,12 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
               ListTile(
                 contentPadding: const EdgeInsets.all(16),
                 leading: CircleAvatar(
-                  backgroundImage: item["profile_pic"] != null &&
-                          item["profile_pic"].isNotEmpty
-                      ? MemoryImage(item["profile_pic"] as typed_data.Uint8List)
+                  backgroundImage: item["profile_pic"] != null
+                      ? (item["profile_pic"] is Uint8List
+                      ? MemoryImage(item["profile_pic"] as Uint8List)
+                      : (item["profile_pic"] is String
+                      ? NetworkImage(item["profile_pic"])
+                      : null))
                       : null,
                   radius: 20,
                 ),
@@ -396,15 +399,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
                       onPressed: () {
                         Get.to(
-                          () => const EditScreen(),
+                              () => const EditScreen(),
                           arguments: item,
                         );
                       },
@@ -413,9 +415,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
-                        // Add logic for deleting the listing
-                        print(
-                            "Delete button pressed for ${item['carrier_name']}");
+                        print("Delete button pressed for ${item['carrier_name']}");
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[300], // Red delete button
@@ -431,6 +431,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       },
     );
   }
+
+
 
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
