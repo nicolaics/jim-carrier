@@ -196,6 +196,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
   Future<void> fetchOrder() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       String api = "/order/giver"; // Correct endpoint
       dynamic response = await getAllOrders(api: api); // Fetch API data
 
@@ -225,12 +228,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
         setState(() {
           orderData = updatedOrders;
+          isLoading = false;
         });
       } else {
         print("Error: API returned a failure status. Response: $response");
+        isLoading = false;
       }
     } catch (e) {
       print('Error fetching order data: $e');
+      isLoading = false;
     }
   }
 
@@ -292,7 +298,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center()
+          ? Center(child: CircularProgressIndicator(
+      ),
+      )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -358,6 +366,17 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
   // Method to build the Listing view with dynamic data
   Widget _buildListingView() {
+    if (listingData.isEmpty) {
+      // Show "No listing yet" message when the list is empty
+      return Center(
+        child: Text(
+          "No listings yet",
+          style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+        ),
+      );
+    }
+
+    // Render the list if data exists
     return ListView.builder(
       itemCount: listingData.length,
       itemBuilder: (context, index) {
@@ -375,7 +394,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 contentPadding: const EdgeInsets.all(16),
                 leading: CircleAvatar(
                   backgroundImage: item["profile_pic"] != null &&
-                          item["profile_pic"].isNotEmpty
+                      item["profile_pic"].isNotEmpty
                       ? MemoryImage(item["profile_pic"] as typed_data.Uint8List)
                       : null,
                   radius: 20,
@@ -396,15 +415,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
                       onPressed: () {
                         Get.to(
-                          () => const Edit_Screen(),
+                              () => const Edit_Screen(),
                           arguments: item,
                         );
                       },
@@ -432,8 +450,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     );
   }
 
+
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
+    if(isLoading){
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return ListView.builder(
       itemCount: orderData.length,
       itemBuilder: (context, index) {
@@ -493,8 +517,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                     response["message"]["status"] == "exist") {
                                   
                                   try {
-                                    final encryptedHolder = enc.Encrypted.fromBase64(response["account_holder"]);
-                                    final encryptedNumber = enc.Encrypted.fromBase64(response["account_number"]);
+                                    final encryptedHolder = enc.Encrypted.fromBase64(response["message"]["account_holder"]);
+                                    final encryptedNumber = enc.Encrypted.fromBase64(response["message"]["account_number"]);
 
                                     final decrypted = decryptData(
                                       accountHolder: encryptedHolder,
