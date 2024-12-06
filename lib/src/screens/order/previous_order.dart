@@ -9,11 +9,11 @@ import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:jim/src/auth/encryption.dart';
+import 'package:jim/src/utils/formatter.dart';
 import '../listing/edit_listing.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
@@ -133,15 +133,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                       Navigator.pop(context); // Close the modal
                     } else {
                       AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.error,
-                          animType: AnimType.topSlide,
-                          title: 'Error',
-                          desc: response["message"].toString().capitalizeFirst,
-                          btnOkIcon: Icons.check,
-                          btnOkOnPress: () {
-                          },
-                        ).show();
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.topSlide,
+                        title: 'Error',
+                        desc: response["message"].toString().capitalizeFirst,
+                        btnOkIcon: Icons.check,
+                        btnOkOnPress: () {},
+                      ).show();
                     }
                   },
                   child: const Text("Submit"),
@@ -174,10 +173,12 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             "carrierID": data['carrierId'] ?? 'Únknown',
             "carrier_name": data['carrierName'] ?? 'Unknown',
             "destination": data['destination'] ?? 'No destination',
-            "price": formatPrice(data['pricePerKg'], data['currency']),
-            "available_weight": formatWeight(data['weightAvailable']),
-            "flight_date": formatDate(data['departureDate']),
-            "lastReceiveDate": formatDate(data['lastReceivedDate']),
+            "price":
+                Formatter.formatPrice(data['pricePerKg'], data['currency']),
+            "available_weight":
+                "${Formatter.formatWeight(data['weightAvailable'])} kg",
+            "flight_date": Formatter.formatDate(data['departureDate']),
+            "lastReceiveDate": Formatter.formatDate(data['lastReceivedDate']),
             "description": data['description'] ?? 'No description',
             "carrier_rating": data['carrierRating'] ?? 0,
             "profile_pic": data['carrierProfileImage'],
@@ -221,18 +222,19 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         for (var data in response["message"]) {
           updatedOrders.add({
             "id": data['id'] ?? 'Unknown',
-            "weight": formatWeight(data['weight']),
-            "price": formatPrice(data['price'], 'KRW'),
+            "weight": "${Formatter.formatWeight(data['weight'])} kg",
+            "price": Formatter.formatPrice(data['price'], data['currency']),
             "payment_status": data['paymentStatus'] ?? 'Unknown',
             "order_status": data['orderStatus'] ?? 'Unknown',
             "package_location": data['packageLocation'] ?? 'Unknown',
             "notes": data['notes'] ?? 'No notes',
-            "created_at": formatDate(data['createdAt']),
+            "created_at": Formatter.formatDate(data['createdAt']),
             "listing": {
               "carrier_name": data['listing']?['carrierName'] ?? 'Unknown',
               "destination":
                   data['listing']?['destination'] ?? 'No destination',
-              "flight_date": formatDate(data['listing']?['departureDate']),
+              "flight_date":
+                  Formatter.formatDate(data['listing']?['departureDate']),
             },
           });
         }
@@ -248,44 +250,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     } catch (e) {
       print('Error fetching order data: $e');
       isLoading = false;
-    }
-  }
-
-// Safeguards for format conversion methods
-  String formatPrice(dynamic price, String currency) {
-    try {
-      double priceAsDouble = double.tryParse(price.toString()) ?? 0.0;
-      return "$currency ${NumberFormat('#,##0.0').format(priceAsDouble)}";
-    } catch (e) {
-      print('Error formatting price: $e');
-      return 'N/A';
-    }
-  }
-
-  String formatWeight(dynamic weight) {
-    try {
-      double weightAsDouble = double.tryParse(weight.toString()) ?? 0.0;
-      return "${weightAsDouble.toStringAsFixed(1)} kg";
-    } catch (e) {
-      print('Error formatting weight: $e');
-      return 'N/A';
-    }
-  }
-
-  String formatDate(dynamic date) {
-    try {
-      DateTime parsedDate;
-      if (date is DateTime) {
-        parsedDate = date;
-      } else if (date is String) {
-        parsedDate = DateTime.parse(date);
-      } else {
-        throw const FormatException("Invalid date format");
-      }
-      return DateFormat('MMM dd, yyyy').format(parsedDate);
-    } catch (e) {
-      print('Error formatting date: $e');
-      return 'Invalid Date';
     }
   }
 
@@ -437,21 +401,21 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             api: '/listing/count-orders', id: item['id']);
 
                         if (response['status'] == "success") {
-                         Navigator.push(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const EditListingScreen(),
                               settings: RouteSettings(arguments: item),
                             ),
                           );
-
                         } else {
                           AwesomeDialog(
                             context: context,
                             dialogType: DialogType.error,
                             animType: AnimType.topSlide,
                             title: 'Error',
-                            desc: response["message"].toString().capitalizeFirst,
+                            desc:
+                                response["message"].toString().capitalizeFirst,
                             btnOkIcon: Icons.check,
                             btnOkOnPress: () {},
                           ).show();
