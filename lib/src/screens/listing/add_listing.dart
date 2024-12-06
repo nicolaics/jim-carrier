@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/auth/encryption.dart';
+import 'package:jim/src/constants/currency.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/utils/formatter.dart';
 
@@ -32,9 +33,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
   final TextEditingController _additionalInfoController =
       TextEditingController();
 
-  // Static list of currencies
-  final List<String> _currencies = ['KRW', 'USD', 'GBP'];
-
   String _lastPriceValue = "";
   String _lastWeightValue = "";
 
@@ -52,7 +50,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
       // Format the new value
       String formattedValue =
-          NumberFormat('#,##0').format(int.tryParse(rawValue) ?? 0);
+          NumberFormat('#,##0').format(double.tryParse(rawValue) ?? 0.0);
 
       // Calculate the new caret position based on the difference in string lengths
       int adjustment = formattedValue.length - rawValue.length;
@@ -80,7 +78,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
       // Format the new value
       String formattedValue =
-          NumberFormat('#,##0').format(int.tryParse(rawValue) ?? 0);
+          NumberFormat('#,##0').format(double.tryParse(rawValue) ?? 0.0);
 
       // Calculate the new caret position based on the difference in string lengths
       int adjustment = formattedValue.length - rawValue.length;
@@ -218,10 +216,10 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 Flexible(
                   child: DropdownButtonFormField<String>(
                     value: _selectedCurrency,
-                    items: _currencies
-                        .map((currency) => DropdownMenuItem(
-                              value: currency,
-                              child: Text(currency),
+                    items: currencyMap.entries
+                        .map((entry) => DropdownMenuItem(
+                              value: entry.value,
+                              child: Text(entry.value),
                             ))
                         .toList(),
                     onChanged: (value) {
