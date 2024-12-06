@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/screens/order/new_order.dart';
-import 'package:jim/src/utils/format_data.dart';
+import 'package:jim/src/utils/formatter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,9 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
             "currency": data['currency'] ?? 'Unknown',
             "name": data['carrierName'] ?? 'Unknown',
             "destination": data['destination'] ?? 'No destination',
-            "price": "${FormatPrice.formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW')} per kg",
-            "available_weight": "${FormatWeight.formatWeight(data['weightAvailable'])} kg available",
-            "flight_date": FormatDate.formatDate(data['departureDate']),
+            "price":
+                "${Formatter.formatPrice(data['pricePerKg'], data['currency'])} per kg",
+            "available_weight":
+                "${Formatter.formatWeight(data['weightAvailable'])} kg available",
+            "flight_date": Formatter.formatDate(data['departureDate']),
             "profile_pic": imageBytes,
             "carrierRating": data['carrierRating'] ?? 0,
           });
@@ -100,184 +102,182 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: isLoading
           ? const Center(
-        child: CircularProgressIndicator(
-        ),
-      )
+              child: CircularProgressIndicator(),
+            )
           : Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: DropdownButton<String>(
-                    value: selectedValue,
-                    hint: const Text("SORT BY"),
-                    items: <String>[
-                      'Alphabetical',
-                      'High to Low',
-                      'Nearest Date'
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: DropdownButton<String>(
+                          value: selectedValue,
+                          hint: const Text("SORT BY"),
+                          items: <String>[
+                            'Alphabetical',
+                            'High to Low',
+                            'Nearest Date'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedValue = newValue;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 4,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          leading: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${index + 1}', // List number
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(width: 10),
+                              CircleAvatar(
+                                backgroundImage:
+                                    items[index]["profile_pic"] != null
+                                        ? MemoryImage(items[index]
+                                            ["profile_pic"] as Uint8List)
+                                        : null,
+                                radius: 20,
+                              ),
+                            ],
+                          ),
+                          title: Text(
+                            items[index]["name"] ?? "Name",
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                items[index]["destination"] ?? "Destination",
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.grey[700]),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                items[index]["price"] ?? "Price",
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
+                              ),
+                              Text(
+                                items[index]["available_weight"] ??
+                                    "Available Weight",
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
+                              ),
+                              Text(
+                                items[index]["flight_date"] ?? "Flight Date",
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          trailing: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => NewOrder(
+                                        carrier: items[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: const Text("View"),
+                              ),
+                              const SizedBox(height: 8),
+                              Flexible(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(5, (starIndex) {
+                                    final rating =
+                                        items[index]["carrierRating"] ?? 0.0;
+                                    if (starIndex < rating.floor()) {
+                                      return const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
+                                        size: 16,
+                                      );
+                                    } else if (starIndex < rating &&
+                                        rating - starIndex >= 0.5) {
+                                      return const Icon(
+                                        Icons.star_half,
+                                        color: Colors.amber,
+                                        size: 16,
+                                      );
+                                    } else {
+                                      return const Icon(
+                                        Icons.star_border,
+                                        color: Colors.amber,
+                                        size: 16,
+                                      );
+                                    }
+                                  }),
+                                ),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            print("Tapped on ${items[index]["name"]}");
+                            print("Tapped on ${items[index]["id"]}");
+                            print("Tapped on ${items[index]["currency"]}");
+                            print(
+                                "Carrier Rating: ${items[index]["carrierRating"]}");
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    NewOrder(carrier: items[index]),
+                              ),
+                            );
+                          },
+                        ),
                       );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedValue = newValue;
-                      });
                     },
                   ),
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 8, horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '${index + 1}', // List number
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 10),
-                        CircleAvatar(
-                          backgroundImage: items[index]["profile_pic"] !=
-                              null
-                              ? MemoryImage(items[index]["profile_pic"]
-                          as Uint8List)
-                              : null,
-                          radius: 20,
-                        ),
-                      ],
-                    ),
-                    title: Text(
-                      items[index]["name"] ?? "Name",
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          items[index]["destination"] ?? "Destination",
-                          style: TextStyle(
-                              fontSize: 14, color: Colors.grey[700]),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          items[index]["price"] ?? "Price",
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.grey),
-                        ),
-                        Text(
-                          items[index]["available_weight"] ??
-                              "Available Weight",
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.grey),
-                        ),
-                        Text(
-                          items[index]["flight_date"] ?? "Flight Date",
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                    trailing: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NewOrder(
-                                  carrier: items[index],
-                                ),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text("View"),
-                        ),
-                        const SizedBox(height: 8),
-                        Flexible(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: List.generate(5, (starIndex) {
-                              final rating =
-                                  items[index]["carrierRating"] ?? 0.0;
-                              if (starIndex < rating.floor()) {
-                                return const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 16,
-                                );
-                              } else if (starIndex < rating &&
-                                  rating - starIndex >= 0.5) {
-                                return const Icon(
-                                  Icons.star_half,
-                                  color: Colors.amber,
-                                  size: 16,
-                                );
-                              } else {
-                                return const Icon(
-                                  Icons.star_border,
-                                  color: Colors.amber,
-                                  size: 16,
-                                );
-                              }
-                            }),
-                          ),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      print("Tapped on ${items[index]["name"]}");
-                      print("Tapped on ${items[index]["id"]}");
-                      print("Tapped on ${items[index]["currency"]}");
-                      print(
-                          "Carrier Rating: ${items[index]["carrierRating"]}");
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              NewOrder(carrier: items[index]),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
-
 }
