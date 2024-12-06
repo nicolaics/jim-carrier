@@ -282,7 +282,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("Country: ${item['destination']}"),
-                        Text("Price: ${item['currency']} ${item['price']}"),
+                        Text("Price: ${item['currency']}${item['price']}"),
                         Text("Weight: ${item['weight']} kg"),
                         Text("Order Status: ${item['orderStatus']}"),
                         Text("Current Location: ${item['packageLocation']}"),
