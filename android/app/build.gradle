@@ -49,14 +49,6 @@ android {
         minSdkVersion 23
     }
 
-    buildTypes {
-        release {
-            // Add your own signing config for the release build.
-            signingConfig = signingConfigs.debug // Use debug signing for testing release builds
-            // signingConfig = signingConfigs.release
-        }
-    }
-
     signingConfigs {
         debug {
             storeFile file("debug.keystore") // Path to debug keystore
@@ -64,15 +56,20 @@ android {
             keyAlias "androiddebugkey" // Debug key alias
             keyPassword "android" // Debug key password
         }
-    }
 
-    
-    signingConfigs {
         release {
             keyAlias = keystoreProperties['keyAlias']
             keyPassword = keystoreProperties['keyPassword']
             storeFile = keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
             storePassword = keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            // Add your own signing config for the release build.
+            signingConfig = signingConfigs.debug
+            // signingConfig = signingConfigs.release
         }
     }
 }
