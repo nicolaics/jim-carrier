@@ -171,10 +171,10 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         for (var data in response["message"]) {
           updatedItems.add({
             "id": data['id'] ?? 'Unknown',
-            "carrierID": data['çarrierId'] ?? 'Únknown',
+            "carrierID": data['carrierId'] ?? 'Únknown',
             "carrier_name": data['carrierName'] ?? 'Unknown',
             "destination": data['destination'] ?? 'No destination',
-            "price": formatPrice(data['pricePerKg'], 'KRW'),
+            "price": formatPrice(data['pricePerKg'], data['currency']),
             "available_weight": formatWeight(data['weightAvailable']),
             "flight_date": formatDate(data['departureDate']),
             "lastReceiveDate": formatDate(data['lastReceivedDate']),
@@ -255,7 +255,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   String formatPrice(dynamic price, String currency) {
     try {
       double priceAsDouble = double.tryParse(price.toString()) ?? 0.0;
-      return NumberFormat.simpleCurrency(name: currency).format(priceAsDouble);
+      return "$currency ${NumberFormat('#,##0.0').format(priceAsDouble)}";
     } catch (e) {
       print('Error formatting price: $e');
       return 'N/A';
@@ -265,7 +265,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   String formatWeight(dynamic weight) {
     try {
       double weightAsDouble = double.tryParse(weight.toString()) ?? 0.0;
-      return "${weightAsDouble.toStringAsFixed(2)} kg";
+      return "${weightAsDouble.toStringAsFixed(1)} kg";
     } catch (e) {
       print('Error formatting weight: $e');
       return 'N/A';

@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/screens/profile/update_password.dart';

@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
 import 'dart:typed_data';
@@ -61,8 +62,8 @@ class _ReceivedOrder extends State<ReceivedOrder> {
             "giverName": order['giverName'] ?? 'Unknown',
             "giverPhoneNumber": order['giverPhoneNumber'] ?? 'Unknown',
             "weight": order['weight']?.toString() ?? 'N/A',
-            "price": order['price']?.toString() ?? 'N/A',
-            "currency": order['currency'] ?? 'MYR',
+            "price": NumberFormat('#,##0.0').format(order['price']),
+            "currency": order['currency'] ?? 'USD',
             "packageImage": imageBytes,
             "packageLocation": order['packageLocation'] ?? 'Unknown',
             "orderStatus": order['orderStatus'] ?? 'Unknown',
