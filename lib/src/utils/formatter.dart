@@ -1,11 +1,23 @@
 import 'package:intl/intl.dart';
 
-class FormatPrice {
-  static String formatPrice(dynamic price, String currency) {
-    final currencyCode = getCurrencyFormat(currency);
-    double priceValue = price is double ? price : price.toDouble();
+class Formatter {
+  static String formatPrice(dynamic price, String? currency) {
+    double? priceValue;
 
-    return "$currencyCode${NumberFormat('#,##0.0').format(priceValue)}";
+    if (price is double) {
+      priceValue = price;
+    } else if (price is String) {
+      priceValue = double.parse(price);
+    } else if (price is int) {
+      priceValue = price.toDouble();
+    }
+
+    if (currency != null) {
+      final currencyCode = getCurrencyFormat(currency);
+      return "$currencyCode${NumberFormat('#,##0.0').format(priceValue)}";
+    }
+
+    return NumberFormat('#,##0.0').format(priceValue);
   }
 
   static String getCurrencyFormat(String currency) {
@@ -26,16 +38,21 @@ class FormatPrice {
   //       return NumberFormat.currency(locale: 'en_US', symbol: '\$');
   //   }
   // }
-}
 
-class FormatWeight {
   static String formatWeight(dynamic weight) {
-    double weightDouble = weight is double ? weight : weight.toDouble();
+    double? weightDouble;
+
+    if (weight is double) {
+      weightDouble = weight;
+    } else if (weight is String) {
+      weightDouble = double.parse(weight);
+    } else if (weight is int) {
+      weightDouble = weight.toDouble();
+    }
+
     return NumberFormat('#,##0.0').format(weightDouble);
   }
-}
 
-class FormatDate {
   static String formatDate(String? date) {
     if (date == null || date.isEmpty) {
       return "Unknown date"; // Return "Unknown date" if no date is available
@@ -48,8 +65,8 @@ class FormatDate {
       return "Invalid date"; // Return "Invalid date" if the format is not correct
     }
   }
-}
 
-String removeCommas(String string) {
+  static String removeCommas(String string) {
     return string.replaceAll(',', '');
   }
+}
