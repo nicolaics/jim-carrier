@@ -97,7 +97,7 @@ class _OtpScreenState extends State<OtpScreen2> {
                           dialogType: DialogType.success,
                           animType: AnimType.topSlide,
                           title: 'Success',
-                          desc: 'Directing to Next Page',
+                          desc: 'Directing to next page',
                           btnOkIcon: Icons.check,
                           btnOkOnPress: () {
                             Get.to(() => const ResetPassword());
@@ -110,7 +110,7 @@ class _OtpScreenState extends State<OtpScreen2> {
                           dialogType: DialogType.error,
                           animType: AnimType.topSlide,
                           title: 'Error',
-                          desc: 'Wrong OTP',
+                          desc: response["message"].toString().capitalizeFirst,
                           btnOkIcon: Icons.check,
                           btnOkOnPress: () {
                           },

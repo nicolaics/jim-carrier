@@ -3,8 +3,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,8 +43,7 @@ class _HomeScreenState extends State<TryScreen> {
   Future<void> fetchUserEmail() async {
     try {
       String api = "/user/current";
-      dynamic response =
-          await getCurrentUser(api: api); // Await the response
+      dynamic response = await getCurrentUser(api: api); // Await the response
 
       if (response["status"] == "success") {
         response["message"] = response["message"] as Map;
@@ -50,11 +51,19 @@ class _HomeScreenState extends State<TryScreen> {
         setState(() {
           userName = response["message"]['name'];
           userEmail = response["message"]['email'];
-          photo = base64Decode(
-              response["message"]['profilePicture']); // Decode the photo from base64
+          photo = base64Decode(response["message"]
+              ['profilePicture']); // Decode the photo from base64
         });
       } else {
-        // TODO: do here
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          title: 'Error',
+          desc: response["message"].toString().capitalizeFirst,
+          btnOkIcon: Icons.check,
+          btnOkOnPress: () {},
+        ).show();
       }
     } catch (e) {
       print('Error: $e');

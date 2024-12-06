@@ -445,7 +445,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       dialogType: DialogType.success,
                       animType: AnimType.topSlide,
                       title: 'Sucess',
-                      desc: 'Listing Successful',
+                      desc: 'Create listing successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
                         Get.to(() => const BottomBar(0));
@@ -456,8 +456,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       context: context,
                       dialogType: DialogType.error,
                       animType: AnimType.topSlide,
-                      title: 'ERROR',
-                      desc: 'Listing not Successful',
+                      title: 'Create Listing Failed',
+                      desc: response["message"].toString().capitalizeFirst,
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {},
                     ).show();

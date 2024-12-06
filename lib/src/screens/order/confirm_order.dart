@@ -174,14 +174,23 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                           dialogType: DialogType.success,
                           animType: AnimType.topSlide,
                           title: 'Success',
-                          desc: 'Order Confirmed',
+                          desc: 'Order confirmed',
                           btnOkIcon: Icons.check,
                           btnOkOnPress: () {
                             Get.to(() => const BottomBar(0));
                           },
                         ).show();
                       } else {
-                        // TODO: here
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          animType: AnimType.topSlide,
+                          title: 'Error',
+                          desc: response["message"].toString().capitalizeFirst,
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                          },
+                        ).show();
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -217,14 +226,23 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                           dialogType: DialogType.success,
                           animType: AnimType.topSlide,
                           title: 'Success',
-                          desc: 'Order Confirmed',
+                          desc: 'Order confirmed',
                           btnOkIcon: Icons.check,
                           btnOkOnPress: () {
                             Get.to(() => const BottomBar(0));
                           },
                         ).show();
                       } else {
-                        // TODO: do here
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          animType: AnimType.topSlide,
+                          title: 'Error',
+                          desc: response["message"].toString().capitalizeFirst,
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                          },
+                        ).show();
                       }
                     },
                     style: ElevatedButton.styleFrom(

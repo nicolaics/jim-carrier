@@ -26,7 +26,7 @@ Future<void> _showMessage(RemoteMessage message) async {
           api: '/order/carrier/detail', id: int.parse(order['id'] ?? '0'));
 
       if (response["status"] == "error") {
-        // TODO: do here
+        print("ERROR IN NOTIFICATION: ${response["message"]}");
         return;
       }
 
@@ -44,7 +44,7 @@ Future<void> _handleNotificationClick(RemoteMessage message) async {
           api: '/order/carrier/detail', id: int.parse(order['id'] ?? '0'));
 
       if (response["status"] == "error") {
-        // TODO: do here
+        print("ERROR IN NOTIFICATION CLICK: ${response["message"]}");
         return;
       }
 

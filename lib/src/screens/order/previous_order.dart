@@ -7,6 +7,7 @@ import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jim/src/api/listing.dart';
@@ -131,7 +132,16 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     if (response["status"] == "success") {
                       Navigator.pop(context); // Close the modal
                     } else {
-                      // TODO: do here
+                      AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          animType: AnimType.topSlide,
+                          title: 'Error',
+                          desc: response["message"].toString().capitalizeFirst,
+                          btnOkIcon: Icons.check,
+                          btnOkOnPress: () {
+                          },
+                        ).show();
                     }
                   },
                   child: const Text("Submit"),
@@ -441,7 +451,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             dialogType: DialogType.error,
                             animType: AnimType.topSlide,
                             title: 'Error',
-                            desc: response["message"],
+                            desc: response["message"].toString().capitalizeFirst,
                             btnOkIcon: Icons.check,
                             btnOkOnPress: () {},
                           ).show();

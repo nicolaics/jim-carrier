@@ -317,8 +317,8 @@ class _NewOrderState extends State<NewOrder> {
                         context: context,
                         dialogType: DialogType.error,
                         animType: AnimType.topSlide,
-                        title: 'Failed',
-                        desc: 'Order Failed',
+                        title: 'Create Order Failed',
+                        desc: response["message"].toString().capitalizeFirst,
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {},
                       ).show();
@@ -328,7 +328,7 @@ class _NewOrderState extends State<NewOrder> {
                         dialogType: DialogType.success,
                         animType: AnimType.topSlide,
                         title: 'Success',
-                        desc: 'Order Successful',
+                        desc: 'Create order successful',
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {
                           Get.to(() => const BottomBar(1));

@@ -532,7 +532,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                   );
 
                   // Call the API to add the listing
-                  String result = await modifyListing(
+                  dynamic result = await modifyListing(
                     id: id,
                     destination: location,
                     weight: weight,
@@ -548,13 +548,14 @@ class _EditListingScreenState extends State<EditListingScreen> {
                   );
                   
                   print(result);
-                  if(result=="failed"){
+
+                  if(result["status"] == "error"){
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,
                       animType: AnimType.topSlide,
-                      title: 'ERROR',
-                      desc: 'Listing not Successful',
+                      title: 'Edit Listing Failed',
+                      desc: result["message"].toString().capitalizeFirst,
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
                       },
@@ -566,7 +567,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                       dialogType: DialogType.success,
                       animType: AnimType.topSlide,
                       title: 'Sucess',
-                      desc: 'Listing Successful',
+                      desc: 'Modify listing successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
                         Get.to(() => const BottomBar(0));

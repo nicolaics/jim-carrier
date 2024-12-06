@@ -2,6 +2,7 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 
@@ -188,7 +189,7 @@ class _ChangePasswordInsideState extends State<UpdatePassword> {
                                 dialogType: DialogType.success,
                                 animType: AnimType.topSlide,
                                 title: 'Success',
-                                desc: 'Password Updated',
+                                desc: 'Password updated',
                                 btnOkIcon: Icons.check,
                                 btnOkOnPress: () {
                                   // Get.to(() => const ProfileScreen());
@@ -205,8 +206,8 @@ class _ChangePasswordInsideState extends State<UpdatePassword> {
                                 context: context,
                                 dialogType: DialogType.error,
                                 animType: AnimType.topSlide,
-                                title: 'ERROR',
-                                desc: 'Password Update Failed',
+                                title: 'Password Update Failed',
+                                desc: result["message"].toString().capitalizeFirst,
                                 btnOkIcon: Icons.check,
                                 btnOkOnPress: () {},
                               ).show();

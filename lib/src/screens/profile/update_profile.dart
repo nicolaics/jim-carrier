@@ -317,7 +317,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                               dialogType: DialogType.success,
                               animType: AnimType.topSlide,
                               title: 'Sucess',
-                              desc: 'Profile Updated',
+                              desc: 'Profile updated',
                               btnOkIcon: Icons.check,
                               btnOkOnPress: () {
                                 Get.to(() => const BottomBar(0));
@@ -329,8 +329,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                               context: context,
                               dialogType: DialogType.error,
                               animType: AnimType.topSlide,
-                              title: 'Error',
-                              desc: 'Profile Update failed',
+                              title: 'Profile Update Failed',
+                              desc: response["message"].toString().capitalizeFirst,
                               btnOkIcon: Icons.check,
                               btnOkOnPress: () {
                               },

@@ -16,7 +16,6 @@ import 'package:jim/src/base_class/login_google.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
-import 'package:jim/src/base_class/string_extension.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -153,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           title: 'Login not Successful',
                                           desc: response["message"]
                                               .toString()
-                                              .capitalizeString(),
+                                              .capitalizeFirst,
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {},
                                         ).show();
@@ -170,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           dialogType: DialogType.success,
                                           animType: AnimType.topSlide,
                                           title: 'Sucess',
-                                          desc: 'Login Successful',
+                                          desc: 'Login successful',
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {
                                             Get.to(() => const BottomBar(0));
@@ -312,7 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                             desc: response[
                                                                     "message"]
                                                                 .toString()
-                                                                .capitalizeString(),
+                                                                .capitalizeFirst,
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {},
@@ -345,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                 .topSlide,
                                                             title: 'Success',
                                                             desc:
-                                                                'Login Successful',
+                                                                'Login successful',
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {
@@ -386,7 +385,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       title: 'Login not Successful',
                                       desc: response["message"]
                                           .toString()
-                                          .capitalizeString(),
+                                          .capitalizeFirst,
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();
@@ -402,7 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       dialogType: DialogType.success,
                                       animType: AnimType.topSlide,
                                       title: 'Success',
-                                      desc: 'Login Successful',
+                                      desc: 'Login successful',
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {
                                         // Navigate to the BottomBar screen after the dialog is dismissed

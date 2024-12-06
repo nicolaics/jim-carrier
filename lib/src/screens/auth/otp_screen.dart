@@ -117,7 +117,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           dialogType: DialogType.success,
                           animType: AnimType.topSlide,
                           title: 'Success',
-                          desc: 'Account Registered Successfully',
+                          desc: 'Account registered successfully',
                           btnOkIcon: Icons.check,
                           btnOkOnPress: () {
                             Get.to(() => const LoginScreen());
@@ -130,7 +130,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           dialogType: DialogType.error,
                           animType: AnimType.topSlide,
                           title: 'Error',
-                          desc: response["message"].capitalize(),
+                          desc: response["message"].toString().capitalizeFirst,
                           btnOkIcon: Icons.check,
                           btnOkOnPress: () {
                             // Navigate to the BottomBar screen after the dialog is dismissed
