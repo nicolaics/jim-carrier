@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart'; // Import the intl package
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/screens/order/new_order.dart';
+import 'package:jim/src/utils/format_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,15 +48,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 .load('assets/images/welcomePage/welcome_screen.png');
             imageBytes = byteData.buffer.asUint8List();
           }
+
           updatedItems.add({
             "carrierId": data['carrierId'] ?? 'Unknown',
             "id": data['id'] ?? 'Unknown',
             "currency": data['currency'] ?? 'Unknown',
             "name": data['carrierName'] ?? 'Unknown',
             "destination": data['destination'] ?? 'No destination',
-            "price": formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW'),
-            "available_weight": formatWeight(data['weightAvailable']),
-            "flight_date": formatDate(data['departureDate']),
+            "price": "${FormatPrice.formatPrice(data['pricePerKg'], data['currency'] ?? 'KRW')} per kg",
+            "available_weight": "${FormatWeight.formatWeight(data['weightAvailable'])} kg available",
+            "flight_date": FormatDate.formatDate(data['departureDate']),
             "profile_pic": imageBytes,
             "carrierRating": data['carrierRating'] ?? 0,
           });
@@ -80,52 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Format the price based on the currency
-  String formatPrice(dynamic price, String currency) {
-    // Ensure that price is treated as a double
-    double priceValue = price is double ? price : price.toDouble();
-
-    final numberFormat = _getCurrencyFormat(currency);
-    // Append " per kg" to the formatted price
-    return "${numberFormat.format(priceValue)} per kg";
-  }
-
-  // Format the weight with a space between the number and kg
-  String formatWeight(dynamic weight) {
-    return "$weight kg available"; // Add space between number and kg
-  }
-
-  // Format the date as "Oct 19, 2024"
-  String formatDate(String? date) {
-    if (date == null || date.isEmpty) {
-      return "Unknown date"; // Return "Unknown date" if no date is available
-    }
-
-    try {
-      DateTime parsedDate = DateTime.parse(date);
-      return DateFormat('MMM dd, yyyy').format(parsedDate); // Format the date
-    } catch (e) {
-      return "Invalid date"; // Return "Invalid date" if the format is not correct
-    }
-  }
-
-  // Get the appropriate currency format based on the currency code
-  NumberFormat _getCurrencyFormat(String currency) {
-    switch (currency) {
-      case 'USD':
-        return NumberFormat.simpleCurrency(name: 'USD');
-      case 'KRW':
-        return NumberFormat.currency(locale: 'ko_KR', symbol: '₩');
-      case 'EUR':
-        return NumberFormat.currency(locale: 'de_DE', symbol: '€');
-      case 'JPY':
-        return NumberFormat.currency(locale: 'ja_JP', symbol: '¥');
-      default:
-        return NumberFormat.currency(locale: 'en_US', symbol: '\$');
-    }
-  }
-
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
