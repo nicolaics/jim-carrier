@@ -8,7 +8,7 @@ import 'package:csc_picker/csc_picker.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/auth/encryption.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
-import 'package:jim/src/utils/format_data.dart';
+import 'package:jim/src/utils/formatter.dart';
 
 class AddListingScreen extends StatefulWidget {
   const AddListingScreen({super.key});
@@ -42,15 +42,17 @@ class _AddListingScreenState extends State<AddListingScreen> {
   void initState() {
     super.initState();
     _priceController.addListener(() {
-      String rawValue = _priceController.text.replaceAll(',', ''); // Remove commas
+      String rawValue =
+          _priceController.text.replaceAll(',', ''); // Remove commas
 
       if (rawValue == _lastPriceValue) return; // Prevent infinite loop
-      
+
       // Get the current caret position
       int oldCaretPosition = _priceController.selection.baseOffset;
 
       // Format the new value
-      String formattedValue = NumberFormat('#,##0').format(int.tryParse(rawValue) ?? 0);
+      String formattedValue =
+          NumberFormat('#,##0').format(int.tryParse(rawValue) ?? 0);
 
       // Calculate the new caret position based on the difference in string lengths
       int adjustment = formattedValue.length - rawValue.length;
@@ -68,15 +70,17 @@ class _AddListingScreenState extends State<AddListingScreen> {
     });
 
     _weightController.addListener(() {
-      String rawValue = _weightController.text.replaceAll(',', ''); // Remove commas
+      String rawValue =
+          _weightController.text.replaceAll(',', ''); // Remove commas
 
       if (rawValue == _lastWeightValue) return; // Prevent infinite loop
-      
+
       // Get the current caret position
       int oldCaretPosition = _weightController.selection.baseOffset;
 
       // Format the new value
-      String formattedValue = NumberFormat('#,##0').format(int.tryParse(rawValue) ?? 0);
+      String formattedValue =
+          NumberFormat('#,##0').format(int.tryParse(rawValue) ?? 0);
 
       // Calculate the new caret position based on the difference in string lengths
       int adjustment = formattedValue.length - rawValue.length;
@@ -434,9 +438,12 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   print('Additional Info: ${_additionalInfoController.text}');
 
                   // Prepare the data for the addListing call
-                  double weight =
-                      double.tryParse(removeCommas(_weightController.text)) ?? 0.0;
-                  double price = double.tryParse(removeCommas(_priceController.text)) ?? 0.0;
+                  double weight = double.tryParse(
+                          Formatter.removeCommas(_weightController.text)) ??
+                      0.0;
+                  double price = double.tryParse(
+                          Formatter.removeCommas(_priceController.text)) ??
+                      0.0;
 
                   String formatDateWithTimeZone(DateTime dateTime) {
                     String formattedDate =
