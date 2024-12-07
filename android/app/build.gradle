@@ -31,6 +31,12 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "26.1.10909125" // Specify the NDK version
 
+    // applicationVariants.all { variant ->
+    //     variant.outputs.all {
+    //         outputFileName = "${project.name}-v${flutter.versionName}-${flutter.versionCode}.apk"
+    //     }
+    // }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -70,6 +76,12 @@ android {
             // Add your own signing config for the release build.
             signingConfig = signingConfigs.debug
             // signingConfig = signingConfigs.release
+
+            //  applicationVariants.all { variant ->
+            //     variant.outputs.all {
+            //         outputFileName = "${project.name}-v${flutter.versionName}-${flutter.versionCode}.apk"
+            //     }
+            // }
         }
     }
 }
