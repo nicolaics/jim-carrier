@@ -237,11 +237,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 // All validations passed, proceed with registration
                               },
                               style: OutlinedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 backgroundColor: Colors.black,
                               ),
                               child: Text(
-                                tsignup.toUpperCase(),
+                                tSignup.toUpperCase(),
                                 style: const TextStyle(
                                     color: Colors.white, fontSize: 20),
                               ),
@@ -367,8 +369,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                                     .error,
                                                             animType: AnimType
                                                                 .topSlide,
-                                                            title: 'Login Failed',
-                                                            desc: response["message"].toString().capitalizeFirst,
+                                                            title:
+                                                                'Login Failed',
+                                                            desc: response[
+                                                                    "message"]
+                                                                .toString()
+                                                                .capitalizeFirst,
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {},
@@ -440,7 +446,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
                                       title: 'Login Failed',
-                                      desc: response["message"].toString().capitalizeFirst,
+                                      desc: response["message"]
+                                          .toString()
+                                          .capitalizeFirst,
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();

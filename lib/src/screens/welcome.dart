@@ -57,9 +57,11 @@ class WelcomeScreen extends StatelessWidget {
                       child: ElevatedButton(
                           onPressed: () => Get.to(() => const RegisterScreen()),
                           style: OutlinedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               backgroundColor: Colors.black),
-                          child: Text(tsignup.toUpperCase(),
+                          child: Text(tSignup.toUpperCase(),
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 20))),
                     ),

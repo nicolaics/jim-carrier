@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/auth/encryption.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/constants/currency.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/utils/formatter.dart';
@@ -403,7 +404,10 @@ class _AddListingScreenState extends State<AddListingScreen> {
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: ColorsTheme.skyBlue,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
@@ -529,7 +533,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   }
                 },
                 child:
-                    const Text('SUBMIT', style: TextStyle(color: Colors.white)),
+                    const Text('Submit', style: TextStyle(fontSize: 18, color: Colors.black)),
               ),
             ),
           ],

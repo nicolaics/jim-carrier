@@ -181,7 +181,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                   },
                                   style: OutlinedButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                       backgroundColor: Colors.black),
                                   child: Text(tLogin.toUpperCase(),
                                       style: const TextStyle(
@@ -440,7 +442,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: TextStyle(color: Colors.black),
                               children: [
                                 TextSpan(
-                                    text: "Signup",
+                                    text: "Sign Up",
                                     style: TextStyle(color: Colors.blue))
                               ])),
                         ),

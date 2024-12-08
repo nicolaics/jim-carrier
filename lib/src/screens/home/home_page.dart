@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jim/src/api/listing.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/screens/order/new_order.dart';
 import 'package:jim/src/utils/formatter.dart';
 
@@ -217,12 +218,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: ColorsTheme.skyBlue,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child: const Text("View"),
+                                child: const Text("View", style: TextStyle(color: Colors.black)),
                               ),
                               const SizedBox(height: 8),
                               Flexible(

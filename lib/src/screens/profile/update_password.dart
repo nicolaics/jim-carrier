@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 
 import '../../api/auth.dart';
@@ -140,7 +141,7 @@ class _ChangePasswordInsideState extends State<UpdatePassword> {
                         ),
                       ),
                       const SizedBox(
-                        height: 30,
+                        height: 40,
                       ),
                       SizedBox(
                         width: double.infinity,
@@ -214,12 +215,15 @@ class _ChangePasswordInsideState extends State<UpdatePassword> {
                             }
                           },
                           style: OutlinedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(),
-                            backgroundColor: Colors.black,
+                          minimumSize: const Size(40, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
+                          backgroundColor: ColorsTheme.skyBlue,
+                        ),
                           child: const Text(
-                            'CHANGE PASSWORD',
-                            style: TextStyle(color: Colors.white, fontSize: 20),
+                            'Save Change',
+                            style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
                         ),
                       )

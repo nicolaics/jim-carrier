@@ -13,6 +13,7 @@ import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:jim/src/auth/encryption.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/utils/formatter.dart';
 import '../listing/edit_listing.dart';
 
@@ -263,7 +264,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'Active and History',
+          'History',
           style: TextStyle(
             color: Colors.black,
             fontSize: 24,
@@ -285,9 +286,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildTabButton("LISTING", 0),
+                      _buildTabButton("Listing", 0),
                       const SizedBox(width: 8),
-                      _buildTabButton("ORDER", 1),
+                      _buildTabButton("Order", 1),
                     ],
                   ),
                 ),
@@ -396,6 +397,12 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorsTheme.skyBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                       onPressed: () async {
                         dynamic response = await checkExistingOrder(
                             api: '/listing/count-orders', id: item['id']);
@@ -421,7 +428,10 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           ).show();
                         }
                       },
-                      child: const Text("Edit"),
+                      child: const Text(
+                        "Edit",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
@@ -431,9 +441,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             "Delete button pressed for ${item['carrier_name']}");
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[300], // Red delete button
+                        backgroundColor: Colors.red[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      child: const Text("Delete"),
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ],
                 ),
@@ -463,6 +479,11 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         final isPayNowDisabled = paymentStatus == "completed" ||
             orderStatus == "waiting" ||
             orderStatus == "cancelled";
+
+        bool isReviewDisabled = false; 
+        if (paymentStatus == "completed" && orderStatus == "completed") {
+          isReviewDisabled = true;
+        }
 
         return Card(
           elevation: 4,
@@ -740,24 +761,35 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            isPayNowDisabled ? Colors.grey[300] : Colors.blue,
+                            isPayNowDisabled ? Colors.grey[300] : Colors.red[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       child: const Text(
                         "Pay Now",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
-                        _showReviewModal(
-                          item["listing"]["carrier_name"] ?? "Unknown Carrier",
-                          item["id"],
-                        );
+                        isReviewDisabled
+                            ? null
+                            : _showReviewModal(
+                                item["listing"]["carrier_name"] ??
+                                    "Unknown Carrier",
+                                item["id"],
+                              );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
+                        backgroundColor:
+                            isReviewDisabled ? Colors.grey[300] : ColorsTheme.skyBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      child: const Text("Leave Review"),
+                      child: const Text("Leave Review", style: TextStyle(color: Colors.black)),
                     ),
                   ],
                 ),

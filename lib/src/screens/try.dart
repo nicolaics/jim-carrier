@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/auth/secure_storage.dart';
@@ -159,9 +160,11 @@ class _HomeScreenState extends State<TryScreen> {
                   onPressed:
                       _navigateToUpdateProfile, // Call the new method here
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    side: BorderSide.none,
-                    shape: const StadiumBorder(),
+                    minimumSize: const Size(20, 40),
+                    backgroundColor: ColorsTheme.skyBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: const Text("Edit Profile",
                       style: TextStyle(color: Colors.black, fontSize: 20)),
@@ -173,16 +176,22 @@ class _HomeScreenState extends State<TryScreen> {
               ProfileMenuWidget(
                 title: "Settings",
                 icon: LineAwesomeIcons.cog_solid,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
                 onPress: () {},
               ),
               ProfileMenuWidget(
                 title: "Billing Details",
                 icon: LineAwesomeIcons.wallet_solid,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
                 onPress: () {},
               ),
               ProfileMenuWidget(
                 title: "User Management",
                 icon: LineAwesomeIcons.user_check_solid,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
                 onPress: () {},
               ),
               const Divider(),
@@ -190,12 +199,18 @@ class _HomeScreenState extends State<TryScreen> {
               ProfileMenuWidget(
                 title: "Information",
                 icon: LineAwesomeIcons.info_solid,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
                 onPress: () {},
               ),
+              const Divider(),
+              const SizedBox(height: 10),
               ProfileMenuWidget(
                 title: "Log Out",
                 icon: LineAwesomeIcons.sign_out_alt_solid,
-                textColor: Colors.red,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                textColor: Colors.black,
                 endIcon: false,
                 onPress: () async {
                   logout(api: '/user/logout');
