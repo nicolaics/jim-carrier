@@ -266,6 +266,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 image: AssetImage(GoogleImg),
                                 width: 20,
                               ),
+                              style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )),
                               onPressed: () async {
                                 try {
                                   final controller =

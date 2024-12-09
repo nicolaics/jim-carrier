@@ -213,8 +213,8 @@ class _HomeScreenState extends State<TryScreen> {
                 textColor: Colors.black,
                 endIcon: false,
                 onPress: () async {
-                  logout(api: '/user/logout');
-                  StorageService.deleteTokens();
+                  await logout(api: '/user/logout');
+                  await StorageService.deleteTokens();
                   final controller = Controller();
                   await controller.signOut();
                   if (mounted) {

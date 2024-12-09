@@ -252,7 +252,7 @@ Future<dynamic> updateProfilePicture(
   }
 }
 
-dynamic autoLogin({required String api}) async {
+Future<dynamic> autoLogin({required String api}) async {
   String refreshToken = await StorageService.getRefreshToken();
   String fcmToken = await StorageService.getFcmToken();
 
