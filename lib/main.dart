@@ -2,10 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:jim/firebase_options.dart';
 import 'package:jim/src/api/api_service.dart';
-import 'package:jim/src/api/auth.dart';
+// import 'package:jim/src/api/auth.dart';
 import 'package:jim/src/base_class/firebase_notif.dart';
-import 'package:jim/src/auth/secure_storage.dart';
-import 'package:jim/src/screens/home/bottom_bar.dart';
+// import 'package:jim/src/auth/secure_storage.dart';
+// import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/screens/welcome.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -23,49 +23,17 @@ void main() async {
 
   setupInterceptors();
 
-  // final publicKey = await StorageService.getRSAPublicKey();
-
-  // if (publicKey['m'] == '' || publicKey['e'] == '') {
-  //   await RsaEncryption.generateRSAkeyPair();
-  // }
-
-  String next = "welcome";
-
-  try {
-    final response = await autoLogin(
-        api: "/user/auto-login");
-
-    if (response["status"] == "success") {
-      next = "home";
-      await StorageService.storeAccessToken(
-          response["message"]["access_token"]);
-      await StorageService.storeRefreshToken(
-          response["message"]["refresh_token"]);
-    }
-  } catch (e) {
-    print("ERROR HERE: $e");
-  }
-
-  runApp(MyApp(nextScreen: next));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final String nextScreen;
-
-  const MyApp({super.key, required this.nextScreen});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    if (nextScreen == "home") {
-      return const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: BottomBar(0),
-      );
-    } else {
-      return const MaterialApp(
+    return const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: WelcomeScreen(),
       );
-    }
   }
 }
