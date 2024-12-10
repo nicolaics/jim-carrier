@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:jim/src/utils/send_email.dart';
 
 class ConfirmOrder extends StatefulWidget {
   final Map<String, dynamic> orderData;
@@ -270,7 +270,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _launchEmail(orderData['giverEmail']),
+        onPressed: () => launchEmail(orderData['giverEmail']),
         backgroundColor: Colors.blue,
         shape: const CircleBorder(),
         child: const Icon(Icons.email, color: Colors.white),
@@ -313,23 +313,5 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
         ],
       ),
     );
-  }
-  Future<void> _launchEmail(String toEmail) async {
-    print("EMAILLLL $toEmail");
-    String? encodeQueryParameters(Map<String, String> params) {
-      return params.entries
-          .map((MapEntry<String, String> e) =>
-      '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-          .join('&');
-    }
-// ···
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: toEmail,
-      query: encodeQueryParameters(<String, String>{
-        'subject': '',
-      }),
-    );
-    launchUrl(emailLaunchUri);
   }
 }
