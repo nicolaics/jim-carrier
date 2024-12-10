@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
@@ -13,7 +14,10 @@ import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:jim/src/auth/encryption.dart';
+import 'package:jim/src/constants/colors.dart';
+import 'package:jim/src/utils/formatter.dart';
 import '../listing/edit_listing.dart';
+import 'package:jim/src/screens/home/bottom_bar.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
   const PreviousOrderScreen({super.key});
@@ -131,7 +135,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     if (response["status"] == "success") {
                       Navigator.pop(context); // Close the modal
                     } else {
-                      // TODO: do here
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.topSlide,
+                        title: 'Error',
+                        desc: response["message"].toString().capitalizeFirst,
+                        btnOkIcon: Icons.check,
+                        btnOkOnPress: () {},
+                      ).show();
                     }
                   },
                   child: const Text("Submit"),
@@ -164,10 +176,12 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             "carrierID": data['çarrierId'] ?? 'Únknown',
             "carrier_name": data['carrierName'] ?? 'Unknown',
             "destination": data['destination'] ?? 'No destination',
-            "price": formatPrice(data['pricePerKg'], 'KRW'),
-            "available_weight": formatWeight(data['weightAvailable']),
-            "flight_date": formatDate(data['departureDate']),
-            "lastReceiveDate": formatDate(data['lastReceivedDate']),
+            "price":
+                Formatter.formatPrice(data['pricePerKg'], data['currency']),
+            "available_weight":
+                "${Formatter.formatWeight(data['weightAvailable'])} kg",
+            "flight_date": Formatter.formatDate(data['departureDate']),
+            "lastReceiveDate": Formatter.formatDate(data['lastReceivedDate']),
             "description": data['description'] ?? 'No description',
             "carrier_rating": data['carrierRating'] ?? 0,
             "profile_pic": data['carrierProfileImage'],
@@ -211,18 +225,19 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         for (var data in response["message"]) {
           updatedOrders.add({
             "id": data['id'] ?? 'Unknown',
-            "weight": formatWeight(data['weight']),
-            "price": formatPrice(data['price'], 'KRW'),
+            "weight": "${Formatter.formatWeight(data['weight'])} kg",
+            "price": Formatter.formatPrice(data['price'], data['currency']),
             "payment_status": data['paymentStatus'] ?? 'Unknown',
             "order_status": data['orderStatus'] ?? 'Unknown',
             "package_location": data['packageLocation'] ?? 'Unknown',
             "notes": data['notes'] ?? 'No notes',
-            "created_at": formatDate(data['createdAt']),
+            "created_at": Formatter.formatDate(data['createdAt']),
             "listing": {
               "carrier_name": data['listing']?['carrierName'] ?? 'Unknown',
               "destination":
                   data['listing']?['destination'] ?? 'No destination',
-              "flight_date": formatDate(data['listing']?['departureDate']),
+              "flight_date":
+                  Formatter.formatDate(data['listing']?['departureDate']),
             },
           });
         }
@@ -241,44 +256,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     }
   }
 
-// Safeguards for format conversion methods
-  String formatPrice(dynamic price, String currency) {
-    try {
-      double priceAsDouble = double.tryParse(price.toString()) ?? 0.0;
-      return NumberFormat.simpleCurrency(name: currency).format(priceAsDouble);
-    } catch (e) {
-      print('Error formatting price: $e');
-      return 'N/A';
-    }
-  }
-
-  String formatWeight(dynamic weight) {
-    try {
-      double weightAsDouble = double.tryParse(weight.toString()) ?? 0.0;
-      return "${weightAsDouble.toStringAsFixed(2)} kg";
-    } catch (e) {
-      print('Error formatting weight: $e');
-      return 'N/A';
-    }
-  }
-
-  String formatDate(dynamic date) {
-    try {
-      DateTime parsedDate;
-      if (date is DateTime) {
-        parsedDate = date;
-      } else if (date is String) {
-        parsedDate = DateTime.parse(date);
-      } else {
-        throw const FormatException("Invalid date format");
-      }
-      return DateFormat('MMM dd, yyyy').format(parsedDate);
-    } catch (e) {
-      print('Error formatting date: $e');
-      return 'Invalid Date';
-    }
-  }
-
   bool isListingView = true; // Boolean to toggle between listing and order view
 
   @override
@@ -289,7 +266,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
-          'Active and History',
+          'History',
           style: TextStyle(
             color: Colors.black,
             fontSize: 24,
@@ -302,6 +279,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -311,9 +291,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildTabButton("LISTING", 0),
+                      _buildTabButton("Listing", 0),
                       const SizedBox(width: 8),
-                      _buildTabButton("ORDER", 1),
+                      _buildTabButton("Order", 1),
                     ],
                   ),
                 ),
@@ -396,6 +376,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 leading: CircleAvatar(
                   backgroundImage: item["profile_pic"] != null &&
                           item["profile_pic"].isNotEmpty
+                          item["profile_pic"].isNotEmpty
                       ? MemoryImage(item["profile_pic"] as typed_data.Uint8List)
                       : null,
                   radius: 20,
@@ -418,10 +399,47 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorsTheme.skyBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () async {
+                        dynamic response = await checkExistingOrder(
+                            api: '/listing/count-orders', id: item['id']);
+
+                        if (response['status'] == "success") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EditListingScreen(),
+                              settings: RouteSettings(arguments: item),
+                            ),
+                          );
+                        } else {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.topSlide,
+                            title: 'Error',
+                            desc:
+                                response["message"].toString().capitalizeFirst,
+                            btnOkIcon: Icons.check,
+                            btnOkOnPress: () {},
+                          ).show();
+                        }
+                      },
+                      child: const Text(
+                        "Edit",
+                        style: TextStyle(color: Colors.black),
+                      ),
                       onPressed: () async {
                         dynamic response = await checkExistingOrder(
                             api: '/listing/count-orders', id: item['id']);
@@ -454,12 +472,71 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                       onPressed: () {
                         // Add logic for deleting the listing
                         print(
-                            "Delete button pressed for ${item['carrier_name']}");
+                            "Delete button pressed for ${item['id']}");
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.warning,
+                          animType: AnimType.scale,
+                          title: 'Delete',
+                          desc: 'Are you sure you want to delete?',
+                          btnCancelOnPress: () {},
+                          btnOkOnPress: () async {
+                            print('Deleting the listing...');
+                            try {
+                              dynamic response = await deleteListing(id: item['id'], api: '/listing'); // Await the response
+                              if (response['status'] == "error") {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.topSlide,
+                                  title: 'Error',
+                                  desc: response["message"].toString().capitalizeFirst,
+                                  btnOkIcon: Icons.check,
+                                  btnOkOnPress: () {},
+                                ).show();
+                              } else {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.success,
+                                  animType: AnimType.bottomSlide,
+                                  title: 'Success',
+                                  desc: 'Listing deleted successfully.',
+                                  btnOkIcon: Icons.check,
+                                  btnOkOnPress: () {
+                                    setState(() {
+                                      fetchListing();
+                                    });
+                                  },
+                                ).show();
+                              }
+                            } catch (error) {
+                              // Handle any unexpected errors
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.topSlide,
+                                title: 'Error',
+                                desc: 'Something went wrong. Please try again later.',
+                                btnOkIcon: Icons.check,
+                                btnOkOnPress: () {},
+                              ).show();
+                            }
+                          },
+                        ).show();
+
+
+
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[300], // Red delete button
+                        backgroundColor: Colors.red[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      child: const Text("Delete"),
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
                   ],
                 ),
@@ -473,6 +550,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
+    if (isLoading) {
+      return const Center(
     if (isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -489,6 +568,11 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
         final isPayNowDisabled = paymentStatus == "completed" ||
             orderStatus == "waiting" ||
             orderStatus == "cancelled";
+
+        bool isReviewDisabled = false; 
+        if (paymentStatus == "completed" && orderStatus == "completed") {
+          isReviewDisabled = true;
+        }
 
         return Card(
           elevation: 4,
@@ -535,6 +619,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
                                 if (response["status"] == "success" &&
                                     response["message"]["status"] == "exist") {
+                                  try {
+                                    final encryptedHolder =
+                                        enc.Encrypted.fromBase64(
+                                            response["message"]
+                                                ["account_holder"]);
+                                    final encryptedNumber =
+                                        enc.Encrypted.fromBase64(
+                                            response["message"]
+                                                ["account_number"]);
                                   try {
                                     final encryptedHolder =
                                         enc.Encrypted.fromBase64(
@@ -766,24 +859,35 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            isPayNowDisabled ? Colors.grey[300] : Colors.blue,
+                            isPayNowDisabled ? Colors.grey[300] : Colors.red[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       child: const Text(
                         "Pay Now",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: () {
-                        _showReviewModal(
-                          item["listing"]["carrier_name"] ?? "Unknown Carrier",
-                          item["id"],
-                        );
+                        isReviewDisabled
+                            ? null
+                            : _showReviewModal(
+                                item["listing"]["carrier_name"] ??
+                                    "Unknown Carrier",
+                                item["id"],
+                              );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
+                        backgroundColor:
+                            isReviewDisabled ? Colors.grey[300] : ColorsTheme.skyBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      child: const Text("Leave Review"),
+                      child: const Text("Leave Review", style: TextStyle(color: Colors.black)),
                     ),
                   ],
                 ),

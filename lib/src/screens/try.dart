@@ -3,13 +3,17 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
+import 'package:jim/src/screens/coming_soon.dart';
 import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
 import 'package:jim/src/base_class/login_google.dart';
@@ -41,8 +45,7 @@ class _HomeScreenState extends State<TryScreen> {
   Future<void> fetchUserEmail() async {
     try {
       String api = "/user/current";
-      dynamic response =
-          await getCurrentUser(api: api); // Await the response
+      dynamic response = await getCurrentUser(api: api); // Await the response
 
       if (response["status"] == "success") {
         response["message"] = response["message"] as Map;
@@ -50,11 +53,19 @@ class _HomeScreenState extends State<TryScreen> {
         setState(() {
           userName = response["message"]['name'];
           userEmail = response["message"]['email'];
-          photo = base64Decode(
-              response["message"]['profilePicture']); // Decode the photo from base64
+          photo = base64Decode(response["message"]
+              ['profilePicture']); // Decode the photo from base64
         });
       } else {
-        // TODO: do here
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          title: 'Error',
+          desc: response["message"].toString().capitalizeFirst,
+          btnOkIcon: Icons.check,
+          btnOkOnPress: () {},
+        ).show();
       }
     } catch (e) {
       print('Error: $e');
@@ -150,9 +161,11 @@ class _HomeScreenState extends State<TryScreen> {
                   onPressed:
                       _navigateToUpdateProfile, // Call the new method here
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    side: BorderSide.none,
-                    shape: const StadiumBorder(),
+                    minimumSize: const Size(20, 40),
+                    backgroundColor: ColorsTheme.skyBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: const Text("Edit Profile",
                       style: TextStyle(color: Colors.black, fontSize: 20)),
@@ -164,33 +177,53 @@ class _HomeScreenState extends State<TryScreen> {
               ProfileMenuWidget(
                 title: "Settings",
                 icon: LineAwesomeIcons.cog_solid,
-                onPress: () {},
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Settings');
+                },
               ),
               ProfileMenuWidget(
                 title: "Billing Details",
                 icon: LineAwesomeIcons.wallet_solid,
-                onPress: () {},
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Billing Details');
+                },
               ),
               ProfileMenuWidget(
                 title: "User Management",
                 icon: LineAwesomeIcons.user_check_solid,
-                onPress: () {},
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'User Management');
+                },
               ),
               const Divider(),
               const SizedBox(height: 10),
               ProfileMenuWidget(
                 title: "Information",
                 icon: LineAwesomeIcons.info_solid,
-                onPress: () {},
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Information');
+                },
               ),
+              const Divider(),
+              const SizedBox(height: 10),
               ProfileMenuWidget(
                 title: "Log Out",
                 icon: LineAwesomeIcons.sign_out_alt_solid,
-                textColor: Colors.red,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                textColor: Colors.black,
                 endIcon: false,
                 onPress: () async {
-                  logout(api: '/user/logout');
-                  StorageService.deleteTokens();
+                  await logout(api: '/user/logout');
+                  await StorageService.deleteTokens();
                   final controller = Controller();
                   await controller.signOut();
                   if (mounted) {

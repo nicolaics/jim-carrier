@@ -2,7 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jim/src/auth/secure_storage.dart';
 import 'package:dio/dio.dart';
 
-final baseUrl = dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1';
+// final baseUrl = dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1';  
 
 Map<String, dynamic> writeSuccessResponse({required dynamic response}) {
   return {"status": "success", "message": response.data};
@@ -17,7 +17,18 @@ Map<String, String> writeToRegistResponse() {
   return {"status": "registration", "message": "toRegist"};
 }
 
-final Dio dio = Dio();
+Map<String, String> writeConnectionTimeoutResponse() {
+  return {"status": "registration", "message": "Connection timeout"};
+}
+
+
+final Dio dio = Dio(
+  BaseOptions(
+    baseUrl: dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1',
+    connectTimeout: const Duration(seconds: 10), // 3 seconds
+    contentType: "application/json",
+  ),
+);
 
 void setupInterceptors() {
   dio.interceptors.add(InterceptorsWrapper(
@@ -33,6 +44,7 @@ void setupInterceptors() {
       handler.next(options); // Continue with the request
     },
     onError: (error, handler) async {
+      print("ERROR DIO: ${error.message}");
       if (error.response?.statusCode == 401 && error.response?.data['error'].contains("access token expired")) {
         final refreshed = await _refreshToken();
 
@@ -67,7 +79,7 @@ Future<bool> _refreshToken() async {
     }
 
     final response = await dio.post(
-      "$baseUrl/user/refresh",
+      "/user/refresh",
       data: {'refreshToken': refreshToken},
     );
 

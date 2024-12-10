@@ -5,10 +5,11 @@ import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/screens/profile/update_password.dart';
+import 'package:jim/src/utils/formatter.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../../constants/sizes.dart';
 import 'dart:typed_data';
@@ -25,6 +26,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _joinedAtController = TextEditingController();
 
   Uint8List? photo;
   bool isLoading = true; // Track loading state
@@ -53,6 +55,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           _nameController.text = response["message"]['name'] ?? '';
           _emailController.text = response["message"]['email'] ?? '';
           _phoneController.text = response["message"]['phoneNumber'] ?? '';
+          _joinedAtController.text = Formatter.formatDate(response["message"]['createdAt']!);
           photo = base64Decode(response["message"]['profilePicture'] ?? '');
           isLoading = false; // Stop loading after fetching data
         });
@@ -222,7 +225,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 40),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -235,17 +238,20 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           );
                         },
                         style: OutlinedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(),
+                          minimumSize: const Size(40, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           backgroundColor:
-                              Colors.black, // Choose your desired color
+                              Colors.grey.withOpacity(0.3), // Choose your desired color
                         ),
                         child: const Text(
                           "Change Password",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: TextStyle(color: Colors.black, fontSize: 20),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -309,57 +315,60 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             return; // Exit if the email format is invalid
                           }
 
-                          dynamic response= await updateProfile(name: name, phoneNumber: phoneNumber, api: "/user/modify");
+                          dynamic response = await updateProfile(
+                              name: name,
+                              phoneNumber: phoneNumber,
+                              api: "/user/modify");
 
-                          if(response['status']=="success"){
+                          if (response['status'] == "success") {
                             AwesomeDialog(
                               context: context,
                               dialogType: DialogType.success,
                               animType: AnimType.topSlide,
                               title: 'Sucess',
-                              desc: 'Profile Updated',
+                              desc: 'Profile updated',
                               btnOkIcon: Icons.check,
                               btnOkOnPress: () {
                                 Get.to(() => const BottomBar(0));
                               },
                             ).show();
-                          }
-                          else{
+                          } else {
                             AwesomeDialog(
                               context: context,
                               dialogType: DialogType.error,
                               animType: AnimType.topSlide,
-                              title: 'Error',
-                              desc: 'Profile Update failed',
+                              title: 'Profile Update Failed',
+                              desc: response["message"]
+                                  .toString()
+                                  .capitalizeFirst,
                               btnOkIcon: Icons.check,
-                              btnOkOnPress: () {
-                              },
+                              btnOkOnPress: () {},
                             ).show();
                           }
-
-
-
 
                           // All validations passed, proceed with registration
                         },
                         style: OutlinedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(),
-                          backgroundColor: Colors.black,
+                          minimumSize: const Size(40, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: ColorsTheme.skyBlue,
                         ),
                         child: const Text(
                           "Save Changes",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: TextStyle(color: Colors.black, fontSize: 20),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 200),
+                    const SizedBox(height: 170),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            "Joined at October 19, 2024",
-                            style: TextStyle(color: Colors.black),
+                            "Joined at ${_joinedAtController.text}",
+                            style: const TextStyle(color: Colors.black),
                           ),
                         ),
                         ElevatedButton(
@@ -368,8 +377,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             backgroundColor: Colors.redAccent.withOpacity(0.1),
                             elevation: 0,
                             foregroundColor: Colors.red,
-                            shape: const StadiumBorder(),
-                            side: BorderSide.none,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                           child: const Text("Delete"),
                         ),

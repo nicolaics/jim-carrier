@@ -237,11 +237,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 // All validations passed, proceed with registration
                               },
                               style: OutlinedButton.styleFrom(
-                                shape: const RoundedRectangleBorder(),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 backgroundColor: Colors.black,
                               ),
                               child: Text(
-                                tsignup.toUpperCase(),
+                                tSignup.toUpperCase(),
                                 style: const TextStyle(
                                     color: Colors.white, fontSize: 20),
                               ),
@@ -264,6 +266,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 image: AssetImage(GoogleImg),
                                 width: 20,
                               ),
+                              style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )),
                               onPressed: () async {
                                 try {
                                   final controller =
@@ -367,9 +373,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                                     .error,
                                                             animType: AnimType
                                                                 .topSlide,
-                                                            title: 'ERROR',
-                                                            desc:
-                                                                'Login not Successful',
+                                                            title:
+                                                                'Login Failed',
+                                                            desc: response[
+                                                                    "message"]
+                                                                .toString()
+                                                                .capitalizeFirst,
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {},
@@ -402,7 +411,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                                 .topSlide,
                                                             title: 'Success',
                                                             desc:
-                                                                'Login Successful',
+                                                                'Login successful',
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {
@@ -440,8 +449,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       context: context,
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
-                                      title: 'ERROR',
-                                      desc: 'Login not Successful',
+                                      title: 'Login Failed',
+                                      desc: response["message"]
+                                          .toString()
+                                          .capitalizeFirst,
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();
@@ -457,7 +468,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       dialogType: DialogType.success,
                                       animType: AnimType.topSlide,
                                       title: 'Success',
-                                      desc: 'Login Successful',
+                                      desc: 'Login successful',
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {
                                         // Navigate to the BottomBar screen after the dialog is dismissed

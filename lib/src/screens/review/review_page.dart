@@ -14,6 +14,7 @@ class _ReviewPageState extends State<ReviewPage> {
   Widget build(BuildContext context) {
     final carrier = widget.carrier; // Access the carrier data
 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Carrier Reviews'),

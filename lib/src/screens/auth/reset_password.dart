@@ -147,7 +147,7 @@ class _PasswordChangeState extends State<ResetPassword> {
                               dialogType: DialogType.success,
                               animType: AnimType.topSlide,
                               title: 'Success',
-                              desc: 'Password Reset',
+                              desc: 'Password reset successfully',
                               btnOkIcon: Icons.check,
                               btnOkOnPress: () {
                                 Get.to(() => const LoginScreen());
@@ -158,8 +158,8 @@ class _PasswordChangeState extends State<ResetPassword> {
                               context: context,
                               dialogType: DialogType.error,
                               animType: AnimType.topSlide,
-                              title: 'ERROR',
-                              desc: 'Password Reset Failed',
+                              title: 'Password Reset Failed',
+                              desc: result["message"].toString().capitalizeFirst,
                               btnOkIcon: Icons.check,
                               btnOkOnPress: () {},
                             ).show();
