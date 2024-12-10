@@ -13,6 +13,7 @@ import '../../auth/encryption.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 
 class Edit_Screen extends StatefulWidget {
+
   const Edit_Screen({super.key});
   @override
   State<Edit_Screen> createState() => _Edit_ScreenState();
@@ -72,13 +73,13 @@ class _Edit_ScreenState extends State<Edit_Screen> {
         if (fullDestination.isNotEmpty) fullDestination += ', ';
         fullDestination += _selectedCountry!;
       }
-
+/***
       // Set values in CSCPicker directly
       setState(() {
         _selectedCountry = _selectedCountry;
         _selectedState = _selectedState;
         _selectedCity = _selectedCity;
-      });
+      });***/
 
       // Parse dates (assume `flight_date` format matches `Nov 29, 2024`)
       _selectedDate = item['flight_date'] != null
@@ -203,22 +204,21 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                       .black, // Set text color to black for better readability
                 ),
                 onCountryChanged: (country) {
-                  setState(() {
                     _selectedCountry = country;
                     _selectedState = null;
                     _selectedCity = null;
-                  });
+
                 },
                 onStateChanged: (state) {
-                  setState(() {
+
                     _selectedState = state;
                     _selectedCity = null;
-                  });
+
                 },
                 onCityChanged: (city) {
-                  setState(() {
+
                     _selectedCity = city;
-                  });
+
                 },
               ),
             ),
@@ -275,9 +275,9 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                     ))
                         .toList(),
                     onChanged: (value) {
-                      setState(() {
+
                         _selectedCurrency = value;
-                      });
+
                     },
                     decoration: InputDecoration(
                       filled: true,
@@ -316,9 +316,8 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                             lastDate: DateTime(2101),
                           );
                           if (picked != null && picked != _selectedDate) {
-                            setState(() {
                               _selectedDate = picked;
-                            });
+
                           }
                         },
                         child: Container(
@@ -362,9 +361,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                             lastDate: DateTime(2101),
                           );
                           if (picked != null && picked != _lastDateToReceive) {
-                            setState(() {
                               _lastDateToReceive = picked;
-                            });
                           }
                         },
                         child: Container(
@@ -462,6 +459,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                     );
                     return input.replaceAll(regex, '');
                   }
+                  print("I AM HERE");
                   String location;
 // Check if a new destination is selected
                   if ((_selectedCity?.isEmpty ?? true) &&
@@ -523,14 +521,14 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
-                  
+
                   final encrypted = encryptData(
                     accountHolder: _accountHolderName.text,
                     accountNumber: _bankAccountNo.text,
                   );
 
                   // Call the API to add the listing
-                  String result = await modifyListing(
+                  dynamic result = await modifyListing(
                     id: id,
                     destination: location,
                     weight: weight,
@@ -544,9 +542,9 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                     bankName: _bankName.text,
                     api: "/listing",
                   );
-                  
+
                   print(result);
-                  if(result=="failed"){
+                  if(result['status']=="error"){
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,
@@ -563,7 +561,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                       context: context,
                       dialogType: DialogType.success,
                       animType: AnimType.topSlide,
-                      title: 'Sucess',
+                      title: 'Success',
                       desc: 'Listing Successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
