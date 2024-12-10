@@ -438,9 +438,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                       onPressed: () {
                         // Add logic for deleting the listing
                         print(
-                            "Delete button pressed for ${item['id']}");
+                            "Delete button pressed for ${item['carrier_name']}");
                       },
-
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[300],
                         shape: RoundedRectangleBorder(
