@@ -2,23 +2,23 @@
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:csc_picker/csc_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:jim/src/constants/currency.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
+import 'package:jim/src/utils/formatter.dart';
 import '../../api/listing.dart';
 import '../../auth/encryption.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 
-class Edit_Screen extends StatefulWidget {
-
-  const Edit_Screen({super.key});
+class EditListingScreen extends StatefulWidget {
+  const EditListingScreen({super.key});
   @override
-  State<Edit_Screen> createState() => _Edit_ScreenState();
+  State<EditListingScreen> createState() => _EditListingScreenState();
 }
-class _Edit_ScreenState extends State<Edit_Screen> {
+
+class _EditListingScreenState extends State<EditListingScreen> {
   String? _selectedCountry = "";
   String? _selectedState;
   String? _selectedCity;
@@ -32,10 +32,17 @@ class _Edit_ScreenState extends State<Edit_Screen> {
   final TextEditingController _accountHolderName = TextEditingController();
   final TextEditingController _bankName = TextEditingController();
   final TextEditingController _bankAccountNo = TextEditingController();
-  final TextEditingController _additionalInfoController = TextEditingController();
+  final TextEditingController _additionalInfoController =
+      TextEditingController();
+
+  String _lastPriceValue = "";
+  // String _lastWeightValue = "";
+
+  @override
   void initState() {
     super.initState();
     final item = Get.arguments;
+
     if (item != null) {
       print('Received Data: $item'); // Print all data for debugging
       id = item['id'];
@@ -61,7 +68,6 @@ class _Edit_ScreenState extends State<Edit_Screen> {
       }
 
       // Build the destination string
-
       if (_selectedCity!.isNotEmpty) {
         fullDestination += _selectedCity!;
       }
@@ -73,13 +79,13 @@ class _Edit_ScreenState extends State<Edit_Screen> {
         if (fullDestination.isNotEmpty) fullDestination += ', ';
         fullDestination += _selectedCountry!;
       }
-/***
+
       // Set values in CSCPicker directly
       setState(() {
         _selectedCountry = _selectedCountry;
         _selectedState = _selectedState;
         _selectedCity = _selectedCity;
-      });***/
+      });
 
       // Parse dates (assume `flight_date` format matches `Nov 29, 2024`)
       _selectedDate = item['flight_date'] != null
@@ -92,24 +98,72 @@ class _Edit_ScreenState extends State<Edit_Screen> {
 
       // Parse price and currency
       final priceWithSymbol = item['price'] ?? '';
-      if (priceWithSymbol.startsWith('\$')) {
-        _selectedCurrency = 'USD';
-        _priceController.text = priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
-      } else if (priceWithSymbol.startsWith('£')) {
-        _selectedCurrency = 'GBP';
-        _priceController.text = priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
-      } else if (priceWithSymbol.startsWith('₩')) {
-        _selectedCurrency = 'KRW';
-        _priceController.text = priceWithSymbol.replaceAll(RegExp(r'[^\d,]'), '');
+
+      String? matchedCurrency;
+
+      for (String symbol in currencyMap.keys) {
+        if (priceWithSymbol.startsWith(symbol)) {
+          matchedCurrency = symbol;
+          break; // Stop searching once a match is found
+        }
       }
 
+      if (matchedCurrency != null) {
+        _selectedCurrency =
+            currencyMap[matchedCurrency]!; // Get the 3-letter currency code
+        _priceController.text = Formatter.formatPrice(
+            Formatter.removeCommas(
+                priceWithSymbol.replaceAll(RegExp(r'[^\d,.]'), '')),
+            null);
+      } else {
+        // Handle the case where no currency symbol matches
+        print('Unknown currency symbol');
+      }
+
+      _lastPriceValue = _priceController.text;
+      
+      _priceController.addListener(() {
+        String rawValue =
+            _priceController.text.replaceAll(',', ''); // Remove commas
+
+        if (rawValue == _lastPriceValue) return; // Prevent infinite loop
+
+        // Get the current caret position
+        int oldCaretPosition = _priceController.selection.baseOffset;
+
+        // Format the new value
+        String formattedValue =
+            NumberFormat('#,##0').format(int.tryParse(rawValue) ?? Formatter.formatPrice(
+            Formatter.removeCommas(
+                priceWithSymbol.replaceAll(RegExp(r'[^\d,.]'), '')),
+            null));
+
+        // Calculate the new caret position based on the difference in string lengths
+        int adjustment = formattedValue.length - rawValue.length;
+        int newCaretPosition = oldCaretPosition + adjustment;
+
+        setState(() {
+          _lastPriceValue = rawValue;
+          _priceController.value = TextEditingValue(
+            text: formattedValue,
+            selection: TextSelection.collapsed(
+              offset: newCaretPosition.clamp(0, formattedValue.length),
+            ),
+          );
+        });
+      });
+
+
+
       // Parse weight (remove 'kg' and trim whitespace)
-      _weightController.text = item['available_weight']?.replaceAll('kg', '').trim() ?? '';
+      _weightController.text =
+          item['available_weight']?.replaceAll('kg', '').trim() ?? '';
 
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
 
-      final encryptedHolder = enc.Encrypted.fromBase64(item['accountHolderName']);
+      final encryptedHolder =
+          enc.Encrypted.fromBase64(item['accountHolderName']);
       final encryptedNumber = enc.Encrypted.fromBase64(item['accountNumber']);
       final decrypted = decryptData(
         accountHolder: encryptedHolder,
@@ -117,22 +171,21 @@ class _Edit_ScreenState extends State<Edit_Screen> {
       );
       String accountNumber = decrypted['number'] ?? "";
       String accountHolderName = decrypted['holder'] ?? "";
+
       print("****");
       print(accountHolderName);
       print(accountNumber);
       print(item['bankName']);
       print("****");
+
       _bankName.text = item['bankName'];
       _bankAccountNo.text = accountNumber;
       _accountHolderName.text = accountHolderName;
     }
   }
 
-  // Static list of currencies
-  final List<String> _currencies = ['KRW', 'USD', 'GBP'];
   @override
   Widget build(BuildContext context) {
-    String destination= '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -166,7 +219,8 @@ class _Edit_ScreenState extends State<Edit_Screen> {
               readOnly: true, // Make the field read-only
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.grey[200], // Light grey background to indicate immutability
+                fillColor: Colors.grey[
+                    200], // Light grey background to indicate immutability
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(5),
                   borderSide: const BorderSide(color: Colors.black),
@@ -204,21 +258,22 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                       .black, // Set text color to black for better readability
                 ),
                 onCountryChanged: (country) {
+                  setState(() {
                     _selectedCountry = country;
                     _selectedState = null;
                     _selectedCity = null;
-
+                  });
                 },
                 onStateChanged: (state) {
-
+                  setState(() {
                     _selectedState = state;
                     _selectedCity = null;
-
+                  });
                 },
                 onCityChanged: (city) {
-
+                  setState(() {
                     _selectedCity = city;
-
+                  });
                 },
               ),
             ),
@@ -268,16 +323,16 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                 Flexible(
                   child: DropdownButtonFormField<String>(
                     value: _selectedCurrency,
-                    items: _currencies
-                        .map((currency) => DropdownMenuItem(
-                      value: currency,
-                      child: Text(currency),
-                    ))
+                    items: currencyMap.entries
+                        .map((entry) => DropdownMenuItem(
+                              value: entry.value,
+                              child: Text(entry.value),
+                            ))
                         .toList(),
                     onChanged: (value) {
-
+                      setState(() {
                         _selectedCurrency = value;
-
+                      });
                     },
                     decoration: InputDecoration(
                       filled: true,
@@ -316,8 +371,9 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                             lastDate: DateTime(2101),
                           );
                           if (picked != null && picked != _selectedDate) {
+                            setState(() {
                               _selectedDate = picked;
-
+                            });
                           }
                         },
                         child: Container(
@@ -331,7 +387,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                           child: Text(
                             _selectedDate != null
                                 ? DateFormat('yyyy-MM-dd')
-                                .format(_selectedDate!)
+                                    .format(_selectedDate!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -361,7 +417,9 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                             lastDate: DateTime(2101),
                           );
                           if (picked != null && picked != _lastDateToReceive) {
+                            setState(() {
                               _lastDateToReceive = picked;
+                            });
                           }
                         },
                         child: Container(
@@ -375,7 +433,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                           child: Text(
                             _lastDateToReceive != null
                                 ? DateFormat('yyyy-MM-dd')
-                                .format(_lastDateToReceive!)
+                                    .format(_lastDateToReceive!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -448,7 +506,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
                 onPressed: () async {
                   String removeFlags(String input) {
@@ -459,14 +517,15 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                     );
                     return input.replaceAll(regex, '');
                   }
-                  print("I AM HERE");
+
                   String location;
-// Check if a new destination is selected
+                  // Check if a new destination is selected
                   if ((_selectedCity?.isEmpty ?? true) &&
                       (_selectedState?.isEmpty ?? true) &&
                       (_selectedCountry?.isEmpty ?? true)) {
                     // Use old destination if no new selection
-                    location = '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
+                    location =
+                        '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
                   } else {
                     // Construct new destination
                     location = [
@@ -486,32 +545,36 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                   print(
                       'Last Date to Receive: ${_lastDateToReceive != null ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!) : 'Not Selected'}');
                   print('Additional Info: ${_additionalInfoController.text}');
+
                   // Prepare the data for the addListing call
                   double weight =
                       double.tryParse(_weightController.text) ?? 0.0;
-                  double price = double.tryParse(_priceController.text) ?? 0.0;
+
+                  double price = double.tryParse(Formatter.removeCommas(_priceController.text)) ?? 0.0;
+
                   String formatDateWithTimeZone(DateTime dateTime) {
                     String formattedDate =
-                    DateFormat('yyyy-MM-dd').format(dateTime);
+                        DateFormat('yyyy-MM-dd').format(dateTime);
                     String timeZoneOffset = dateTime.timeZoneOffset.inHours >= 0
                         ? '+${dateTime.timeZoneOffset.inHours.toString().padLeft(2, '0')}'
                         : dateTime.timeZoneOffset.inHours
-                        .toString()
-                        .padLeft(3, '0');
+                            .toString()
+                            .padLeft(3, '0');
                     // Adjust for minutes if needed
                     if (dateTime.timeZoneOffset.inMinutes % 60 != 0) {
                       int minutes =
-                      (dateTime.timeZoneOffset.inMinutes.abs() % 60);
+                          (dateTime.timeZoneOffset.inMinutes.abs() % 60);
                       timeZoneOffset += minutes < 10 ? '0$minutes' : '$minutes';
                     } else {
                       timeZoneOffset +=
-                      '00'; // Append zero minutes if no additional offset
+                          '00'; // Append zero minutes if no additional offset
                     }
                     // Assuming KST as a constant, you can replace this with a dynamic value if needed
                     String timeZoneAbbreviation =
                         'KST'; // Change this according to the actual timezone if needed
                     return '$formattedDate $timeZoneOffset$timeZoneAbbreviation';
                   }
+
                   String date = _selectedDate != null
                       ? formatDateWithTimeZone(_selectedDate!)
                       : '';
@@ -544,34 +607,39 @@ class _Edit_ScreenState extends State<Edit_Screen> {
                   );
 
                   print(result);
-                  if(result['status']=="error"){
+
+                  if (result["status"] == "error") {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.error,
                       animType: AnimType.topSlide,
-                      title: 'ERROR',
-                      desc: 'Listing not Successful',
+                      title: 'Edit Listing Failed',
+                      desc: result["message"].toString().capitalizeFirst,
                       btnOkIcon: Icons.check,
-                      btnOkOnPress: () {
-                      },
+                      btnOkOnPress: () {},
                     ).show();
-                  }
-                  else{
+                  } else {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.success,
                       animType: AnimType.topSlide,
-                      title: 'Success',
-                      desc: 'Listing Successful',
+                      title: 'Sucess',
+                      desc: 'Modify listing successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
-                        Get.to(() => const BottomBar(0));
+                        // Get.to(() => const BottomBar(0));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const BottomBar(0),
+                            ),
+                          );
                       },
                     ).show();
                   }
                 },
                 child:
-                const Text('EDIT', style: TextStyle(color: Colors.white)),
+                    const Text('EDIT', style: TextStyle(color: Colors.white)),
               ),
             ),
           ],

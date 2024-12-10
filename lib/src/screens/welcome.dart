@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jim/src/api/auth.dart';
+import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/constants/image_strings.dart';
 import 'package:jim/src/constants/sizes.dart';
 import 'package:jim/src/constants/text_strings.dart';
@@ -6,9 +8,33 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/screens/auth/register_screen.dart';
+import 'package:jim/src/screens/home/bottom_bar.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    checkTokens();
+  }
+
+  Future<void> checkTokens() async {
+    try {
+      final response = await autoLogin(api: "/user/auto-login");
+      if (response["status"] == "success") {
+        await StorageService.storeAccessToken(response["message"]["access_token"]);
+        await StorageService.storeRefreshToken(response["message"]["refresh_token"]);
+        Get.to(() => const BottomBar(0));
+      }
+    } catch (e) {
+      print("ERROR HERE: $e");
+    }
+  }
 
   // This widget is the root of your application.
   @override
@@ -47,7 +73,9 @@ class WelcomeScreen extends StatelessWidget {
                       child: OutlinedButton(
                           onPressed: () => Get.to(() => const LoginScreen()),
                           style: OutlinedButton.styleFrom(
-                              shape: const RoundedRectangleBorder()),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )),
                           child: Text(tLogin.toUpperCase(),
                               style: const TextStyle(
                                   color: Colors.black, fontSize: 20))),
@@ -57,9 +85,11 @@ class WelcomeScreen extends StatelessWidget {
                       child: ElevatedButton(
                           onPressed: () => Get.to(() => const RegisterScreen()),
                           style: OutlinedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               backgroundColor: Colors.black),
-                          child: Text(tsignup.toUpperCase(),
+                          child: Text(tSignup.toUpperCase(),
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 20))),
                     ),

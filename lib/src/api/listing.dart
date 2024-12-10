@@ -14,7 +14,6 @@ Future<dynamic> addListing(
     required String bankName,
     required String accountNumber,
     required api}) async {
-
   Map<String, dynamic> body = {
     'destination': destination,
     'weightAvailable': weight,
@@ -29,10 +28,7 @@ Future<dynamic> addListing(
   };
 
   try {
-    final response = await dio.post(
-      (baseUrl + api),
-      data: body
-    );
+    final response = await dio.post((api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -40,6 +36,9 @@ Future<dynamic> addListing(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -47,9 +46,7 @@ Future<dynamic> addListing(
 
 Future<dynamic> getMyListing({required String api}) async {
   try {
-    final response = await dio.get(
-      (baseUrl + api)
-    );
+    final response = await dio.get((api));
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -57,6 +54,9 @@ Future<dynamic> getMyListing({required String api}) async {
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -64,9 +64,7 @@ Future<dynamic> getMyListing({required String api}) async {
 
 Future<dynamic> getAllListings({required String api}) async {
   try {
-    final response = await dio.get(
-      (baseUrl + api)
-    );
+    final response = await dio.get((api));
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -74,6 +72,9 @@ Future<dynamic> getAllListings({required String api}) async {
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -107,10 +108,7 @@ Future<dynamic> modifyListing(
   };
 
   try {
-    final response = await dio.patch(
-      (baseUrl + api),
-      data: body
-    );
+    final response = await dio.patch((api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -118,6 +116,51 @@ Future<dynamic> modifyListing(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}
+
+Future<dynamic> checkExistingOrder(
+    {required int id, required String api}) async {
+  Map<String, int> body = {'id': id};
+
+  try {
+    final response = await dio.post((api), data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}
+
+Future<dynamic> deleteListing(
+    {required int id, required String api}) async {
+  Map<String, int> body = {'id': id};
+
+  try {
+    final response = await dio.post((api), data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }

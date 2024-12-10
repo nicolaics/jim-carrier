@@ -7,7 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/auth/encryption.dart';
+import 'package:jim/src/constants/colors.dart';
+import 'package:jim/src/constants/currency.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
+import 'package:jim/src/utils/formatter.dart';
 
 class AddListingScreen extends StatefulWidget {
   const AddListingScreen({super.key});
@@ -31,8 +34,68 @@ class _AddListingScreenState extends State<AddListingScreen> {
   final TextEditingController _additionalInfoController =
       TextEditingController();
 
-  // Static list of currencies
-  final List<String> _currencies = ['KRW', 'USD', 'GBP'];
+  String _lastPriceValue = "";
+  String _lastWeightValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _priceController.addListener(() {
+      String rawValue =
+          _priceController.text.replaceAll(',', ''); // Remove commas
+
+      if (rawValue == _lastPriceValue) return; // Prevent infinite loop
+
+      // Get the current caret position
+      int oldCaretPosition = _priceController.selection.baseOffset;
+
+      // Format the new value
+      String formattedValue =
+          NumberFormat('#,##0').format(double.tryParse(rawValue) ?? 0.0);
+
+      // Calculate the new caret position based on the difference in string lengths
+      int adjustment = formattedValue.length - rawValue.length;
+      int newCaretPosition = oldCaretPosition + adjustment;
+
+      setState(() {
+        _lastPriceValue = rawValue;
+        _priceController.value = TextEditingValue(
+          text: formattedValue,
+          selection: TextSelection.collapsed(
+            offset: newCaretPosition.clamp(0, formattedValue.length),
+          ),
+        );
+      });
+    });
+
+    _weightController.addListener(() {
+      String rawValue =
+          _weightController.text.replaceAll(',', ''); // Remove commas
+
+      if (rawValue == _lastWeightValue) return; // Prevent infinite loop
+
+      // Get the current caret position
+      int oldCaretPosition = _weightController.selection.baseOffset;
+
+      // Format the new value
+      String formattedValue =
+          NumberFormat('#,##0').format(double.tryParse(rawValue) ?? 0.0);
+
+      // Calculate the new caret position based on the difference in string lengths
+      int adjustment = formattedValue.length - rawValue.length;
+      int newCaretPosition = oldCaretPosition + adjustment;
+
+      setState(() {
+        _lastWeightValue = rawValue;
+        _weightController.value = TextEditingValue(
+          text: formattedValue,
+          selection: TextSelection.collapsed(
+            offset: newCaretPosition.clamp(0, formattedValue.length),
+          ),
+        );
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,10 +217,10 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 Flexible(
                   child: DropdownButtonFormField<String>(
                     value: _selectedCurrency,
-                    items: _currencies
-                        .map((currency) => DropdownMenuItem(
-                              value: currency,
-                              child: Text(currency),
+                    items: currencyMap.entries
+                        .map((entry) => DropdownMenuItem(
+                              value: entry.value,
+                              child: Text(entry.value),
                             ))
                         .toList(),
                     onChanged: (value) {
@@ -341,7 +404,10 @@ class _AddListingScreenState extends State<AddListingScreen> {
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: ColorsTheme.skyBlue,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
@@ -374,9 +440,12 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   print('Additional Info: ${_additionalInfoController.text}');
 
                   // Prepare the data for the addListing call
-                  double weight =
-                      double.tryParse(_weightController.text) ?? 0.0;
-                  double price = double.tryParse(_priceController.text) ?? 0.0;
+                  double weight = double.tryParse(
+                          Formatter.removeCommas(_weightController.text)) ??
+                      0.0;
+                  double price = double.tryParse(
+                          Formatter.removeCommas(_priceController.text)) ??
+                      0.0;
 
                   String formatDateWithTimeZone(DateTime dateTime) {
                     String formattedDate =
@@ -445,7 +514,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       dialogType: DialogType.success,
                       animType: AnimType.topSlide,
                       title: 'Sucess',
-                      desc: 'Listing Successful',
+                      desc: 'Create listing successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
                         Get.to(() => const BottomBar(0));
@@ -456,15 +525,15 @@ class _AddListingScreenState extends State<AddListingScreen> {
                       context: context,
                       dialogType: DialogType.error,
                       animType: AnimType.topSlide,
-                      title: 'ERROR',
-                      desc: 'Listing not Successful',
+                      title: 'Create Listing Failed',
+                      desc: response["message"].toString().capitalizeFirst,
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {},
                     ).show();
                   }
                 },
                 child:
-                    const Text('SUBMIT', style: TextStyle(color: Colors.white)),
+                    const Text('Submit', style: TextStyle(fontSize: 18, color: Colors.black)),
               ),
             ),
           ],

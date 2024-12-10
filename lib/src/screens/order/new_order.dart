@@ -2,6 +2,7 @@
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -207,7 +208,7 @@ class _NewOrderState extends State<NewOrder> {
                   borderSide: BorderSide.none,
                 ),
                 hintText: _weightController.text.isNotEmpty
-                    ? "${_calculateTotalPrice()} ${widget.carrier['currency'] ?? ''}"
+                    ? "${widget.carrier['currency'] ?? ''} ${NumberFormat('#,##0.0').format(_calculateTotalPrice())}"
                     : "Enter weight to see total price",
                 hintStyle: const TextStyle(fontSize: 18, color: Colors.black87),
               ),
@@ -280,27 +281,16 @@ class _NewOrderState extends State<NewOrder> {
                   onPressed: () async {
                     final orderWeight = _weightController.text.trim();
                     double weight = double.tryParse(orderWeight) ?? 0.0;
+
                     print("weight $weight");
                     print("Pay Later for $orderWeight kg");
                     print(carrier["price"]);
                     print(carrier["id"]);
                     print(carrier["currency"]);
-                    final regex = RegExp(r'^([^\d]+)?([\d,\.]+)');
-                    final match = regex.firstMatch(carrier["price"]);
-                    double carrierPrice = 0.0;
-                    String currencySymbol = "";
-
-                    if (match != null) {
-                      // Capture the currency symbol and numeric value
-                      currencySymbol = match.group(1)?.trim() ?? ""; // E.g., $
-                      String numericPart =
-                          match.group(2)?.replaceAll(",", "") ??
-                              ""; // Remove commas from numbers
-                      // Try parsing the numeric part to double
-                      carrierPrice = double.tryParse(numericPart) ?? 0.0;
-                    }
+                    
                     // Calculate the total price
                     double price = _calculateTotalPrice();
+
                     // Handle Pay Later logic here
                     dynamic response = await createOrder(
                       listid: carrier["id"],
@@ -317,8 +307,8 @@ class _NewOrderState extends State<NewOrder> {
                         context: context,
                         dialogType: DialogType.error,
                         animType: AnimType.topSlide,
-                        title: 'Failed',
-                        desc: 'Order Failed',
+                        title: 'Create Order Failed',
+                        desc: response["message"].toString().capitalizeFirst,
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {},
                       ).show();
@@ -328,7 +318,7 @@ class _NewOrderState extends State<NewOrder> {
                         dialogType: DialogType.success,
                         animType: AnimType.topSlide,
                         title: 'Success',
-                        desc: 'Order Successful',
+                        desc: 'Create order successful',
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {
                           Get.to(() => const BottomBar(1));

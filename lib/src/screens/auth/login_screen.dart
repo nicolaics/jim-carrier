@@ -150,8 +150,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                           dialogType: DialogType.error,
                                           animType: AnimType.topSlide,
                                           title: 'Login not Successful',
-                                          desc:
-                                              response["message"],
+                                          desc: response["message"]
+                                              .toString()
+                                              .capitalizeFirst,
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {},
                                         ).show();
@@ -168,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           dialogType: DialogType.success,
                                           animType: AnimType.topSlide,
                                           title: 'Sucess',
-                                          desc: 'Login Successful',
+                                          desc: 'Login successful',
                                           btnOkIcon: Icons.check,
                                           btnOkOnPress: () {
                                             Get.to(() => const BottomBar(0));
@@ -180,7 +181,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                   },
                                   style: OutlinedButton.styleFrom(
-                                      shape: const RoundedRectangleBorder(),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                       backgroundColor: Colors.black),
                                   child: Text(tLogin.toUpperCase(),
                                       style: const TextStyle(
@@ -202,6 +205,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 image: AssetImage(GoogleImg),
                                 width: 20,
                               ),
+                              style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              )),
                               onPressed: () async {
                                 try {
                                   final controller =
@@ -309,7 +316,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                 'Login not Successful',
                                                             desc: response[
                                                                     "message"]
-                                                                ,
+                                                                .toString()
+                                                                .capitalizeFirst,
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {},
@@ -342,7 +350,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                 .topSlide,
                                                             title: 'Success',
                                                             desc:
-                                                                'Login Successful',
+                                                                'Login successful',
                                                             btnOkIcon:
                                                                 Icons.check,
                                                             btnOkOnPress: () {
@@ -381,7 +389,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
                                       title: 'Login not Successful',
-                                      desc: response["message"],
+                                      desc: response["message"]
+                                          .toString()
+                                          .capitalizeFirst,
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();
@@ -397,7 +407,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       dialogType: DialogType.success,
                                       animType: AnimType.topSlide,
                                       title: 'Success',
-                                      desc: 'Login Successful',
+                                      desc: 'Login successful',
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {
                                         // Navigate to the BottomBar screen after the dialog is dismissed
@@ -436,7 +446,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: TextStyle(color: Colors.black),
                               children: [
                                 TextSpan(
-                                    text: "Signup",
+                                    text: "Sign Up",
                                     style: TextStyle(color: Colors.blue))
                               ])),
                         ),

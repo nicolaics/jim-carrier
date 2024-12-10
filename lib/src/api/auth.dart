@@ -5,49 +5,19 @@ import 'package:http_status/http_status.dart';
 import 'package:jim/src/api/api_service.dart';
 import 'package:jim/src/auth/secure_storage.dart';
 
-Future<dynamic> getBankDetails({required int carrierID, required api}) async {
-  Map<String, int> body = {
-    'carrierId': carrierID,
-  };
-
-  try {
-    final response = await dio.post(baseUrl + api, data: body);
-
-    if (response.statusCode!.isSuccessfulHttpStatusCode) {
-      if (response.data['status'] == 'exist') {
-        return writeSuccessResponse(response: response);
-      } else {
-        return writeErrorResponse(response: response);
-      }
-    } else {
-      return writeErrorResponse(response: response);
-    }
-  } on DioException catch (e) {
-    print('Error occurred: ${e.response?.data['error']}');
-    return writeErrorResponse(response: e.response);
-  }
-}
-
 Future<dynamic> login(
     {required String email,
     required String password,
     required String fcmToken,
     required String api}) async {
-  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
-
-  // print("public key E: ${publicKey['m'] ?? ""}");
-  // print("public key E: ${utf8.encode(publicKey['m'] ?? "")}");
-
   Map<String, dynamic> body = {
     'email': email,
     'password': password,
-    'fcmToken': fcmToken,
-    // "publicKeyM": utf8.encode(publicKey['m'] ?? ""),
-    // "publicKeyE": utf8.encode(publicKey['e'] ?? ""),
+    'fcmToken': fcmToken
   };
 
   try {
-    final response = await dio.post((baseUrl + api), data: body);
+    final response = await dio.post((api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -55,6 +25,9 @@ Future<dynamic> login(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -69,15 +42,13 @@ Future<dynamic> registerUser(
     required String verification,
     required String fcmToken,
     required String api}) async {
-      // TODO: check this one
+  // TODO: check this one
   // Encode the profile picture as a base64 string
   // String profilePictureBase64 = '';
 
   // if (profilePicture != null) {
   //   profilePictureBase64 = base64Encode(profilePicture);
   // }
-
-  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
 
   // Create the request body as per your backend payload structure
   Map<String, dynamic> body = {
@@ -87,13 +58,11 @@ Future<dynamic> registerUser(
     'phoneNumber': phoneNumber,
     'profilePicture': profilePicture,
     'verificationCode': verification,
-    'fcmToken': fcmToken,
-    // 'publicKeyM': utf8.encode(publicKey['m'] ?? ""),
-    // 'publicKeyE': utf8.encode(publicKey['e'] ?? ""),
+    'fcmToken': fcmToken
   };
 
   try {
-    final response = await dio.post(baseUrl + api, data: body);
+    final response = await dio.post(api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -101,6 +70,9 @@ Future<dynamic> registerUser(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -108,7 +80,7 @@ Future<dynamic> registerUser(
 
 Future<dynamic> logout({required api}) async {
   try {
-    final response = await dio.post(baseUrl + api);
+    final response = await dio.post(api);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -116,19 +88,25 @@ Future<dynamic> logout({required api}) async {
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
 }
 
-Future<dynamic> resetPassword({required String email, required String newPassword, required String api}) async {
+Future<dynamic> resetPassword(
+    {required String email,
+    required String newPassword,
+    required String api}) async {
   Map<String, String> body = {
     'email': email,
     'newPassword': newPassword,
   };
 
   try {
-    final response = await dio.patch(baseUrl + api, data: body);
+    final response = await dio.patch(api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -136,19 +114,25 @@ Future<dynamic> resetPassword({required String email, required String newPasswor
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
 }
 
-Future<dynamic> updatePassword({required String oldPassword, required String newPassword, required String api}) async {
+Future<dynamic> updatePassword(
+    {required String oldPassword,
+    required String newPassword,
+    required String api}) async {
   Map<String, String> body = {
     'oldPassword': oldPassword,
     'newPassword': newPassword,
   };
 
   try {
-    final response = await dio.patch(baseUrl + api, data: body);
+    final response = await dio.patch(api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -156,6 +140,9 @@ Future<dynamic> updatePassword({required String oldPassword, required String new
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -163,13 +150,8 @@ Future<dynamic> updatePassword({required String oldPassword, required String new
 
 Future<dynamic> loginWithGoogle(
     {required Map userInfo, required String api}) async {
-  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
-
-  // userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
-  // userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
-
   try {
-    final response = await dio.post(baseUrl + api, data: userInfo);
+    final response = await dio.post(api, data: userInfo);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -181,6 +163,9 @@ Future<dynamic> loginWithGoogle(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -188,13 +173,8 @@ Future<dynamic> loginWithGoogle(
 
 Future<dynamic> registerWithGoogle(
     {required Map userInfo, required String api}) async {
-  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
-
-  // userInfo['publicKeyM'] = utf8.encode(publicKey['m'] ?? "");
-  // userInfo['publicKeyE'] = utf8.encode(publicKey['e'] ?? "");
-
   try {
-    final response = await dio.post(baseUrl + api, data: userInfo);
+    final response = await dio.post(api, data: userInfo);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -202,6 +182,9 @@ Future<dynamic> registerWithGoogle(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -214,7 +197,7 @@ Future<dynamic> requestVerificationCode(
   };
 
   try {
-    final response = await dio.post(baseUrl + api, data: body);
+    final response = await dio.post(api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -222,6 +205,9 @@ Future<dynamic> requestVerificationCode(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -229,7 +215,7 @@ Future<dynamic> requestVerificationCode(
 
 Future<dynamic> getCurrentUser({required String api}) async {
   try {
-    final response = await dio.get((baseUrl + api));
+    final response = await dio.get((api));
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -237,6 +223,9 @@ Future<dynamic> getCurrentUser({required String api}) async {
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
@@ -244,12 +233,10 @@ Future<dynamic> getCurrentUser({required String api}) async {
 
 Future<dynamic> updateProfilePicture(
     {Uint8List? img, required String api}) async {
-  Map<String, dynamic> body = {
-    'profilePicture': img
-  };
+  Map<String, dynamic> body = {'profilePicture': img};
 
   try {
-    final response = await dio.patch((baseUrl + api), data: body);
+    final response = await dio.patch((api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -257,25 +244,25 @@ Future<dynamic> updateProfilePicture(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
 }
 
-dynamic autoLogin({required String api}) async {
-  // Map<String, String> publicKey = await StorageService.getRSAPublicKey();
+Future<dynamic> autoLogin({required String api}) async {
   String refreshToken = await StorageService.getRefreshToken();
   String fcmToken = await StorageService.getFcmToken();
 
   Map<String, dynamic> body = {
     "refreshToken": refreshToken,
-    "fcmToken": fcmToken,
-    // "publicKeyM": utf8.encode(publicKey['m'] ?? ""),
-    // "publicKeyE": utf8.encode(publicKey['e'] ?? ""),
+    "fcmToken": fcmToken
   };
 
   try {
-    final response = await dio.post((baseUrl + api), data: body);
+    final response = await dio.post((api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -283,20 +270,25 @@ dynamic autoLogin({required String api}) async {
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> verifyVerificationCode(
-    {required String email, required String verificationCode, required String api}) async {
+    {required String email,
+    required String verificationCode,
+    required String api}) async {
   Map<String, String> body = {
     'email': email,
     'verificationCode': verificationCode
   };
 
   try {
-    final response = await dio.post(baseUrl + api, data: body);
+    final response = await dio.post(api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -304,20 +296,22 @@ Future<dynamic> verifyVerificationCode(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
 }
 
 Future<dynamic> updateProfile(
-    {required String name, required String phoneNumber, required String api}) async {
-  Map<String, String> body = {
-    'name': name,
-    'phoneNumber': phoneNumber
-  };
+    {required String name,
+    required String phoneNumber,
+    required String api}) async {
+  Map<String, String> body = {'name': name, 'phoneNumber': phoneNumber};
 
   try {
-    final response = await dio.patch(baseUrl + api, data: body);
+    final response = await dio.patch(api, data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
@@ -325,8 +319,10 @@ Future<dynamic> updateProfile(
       return writeErrorResponse(response: response);
     }
   } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
     print('Error occurred: ${e.response?.data['error']}');
     return writeErrorResponse(response: e.response);
   }
 }
-

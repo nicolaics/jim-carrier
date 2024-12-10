@@ -15,6 +15,8 @@ class ProfileMenuWidget extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.onPress,
+    required this.fontWeight,
+    required this.fontStyle,
     this.endIcon=true,
     this.textColor,
   });
@@ -24,6 +26,8 @@ class ProfileMenuWidget extends StatelessWidget {
   final VoidCallback onPress;
   final bool endIcon;
   final Color? textColor;
+  final FontWeight? fontWeight;
+  final FontStyle? fontStyle;
 
   @override
 
@@ -38,7 +42,7 @@ class ProfileMenuWidget extends StatelessWidget {
         ),
         child: Icon(icon, color: Colors.blue),
       ),
-      title: Text(title,style: GoogleFonts.roboto(fontSize: 20).apply(color: textColor),),
+      title: Text(title, style: GoogleFonts.roboto(fontSize: 20, fontWeight: fontWeight).apply(color: textColor, fontStyle: fontStyle),),
       trailing: endIcon? Container(
           width: 30,
           height: 30,
