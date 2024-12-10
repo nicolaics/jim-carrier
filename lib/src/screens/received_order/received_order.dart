@@ -6,6 +6,7 @@ import 'package:jim/src/api/order.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
 import 'dart:typed_data';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../order/confirm_order.dart'; // For Uint8List
 
@@ -60,6 +61,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                 : 'N/A',
             "id": order['id']?.toString() ?? 'Unknown',
             "giverName": order['giverName'] ?? 'Unknown',
+            'giverEmail': order['giverEmail'] ?? 'Unknown',
             "giverPhoneNumber": order['giverPhoneNumber'] ?? 'Unknown',
             "weight": order['weight']?.toString() ?? 'N/A',
             "price": NumberFormat('#,##0.0').format(order['price']),
@@ -228,166 +230,142 @@ class _ReceivedOrder extends State<ReceivedOrder> {
       ),
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(), // Loading spinner
-            )
+        child: CircularProgressIndicator(), // Loading spinner
+      )
           : items.isEmpty
-              ? const Center(
-                  child: Text(
-                    "No orders yet",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+          ? const Center(
+        child: Text(
+          "No orders yet",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      )
+          : Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 8, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(16),
+                    leading: CircleAvatar(
+                      backgroundImage: item['packageImage'] != null
+                          ? MemoryImage(
+                          item['packageImage'] as Uint8List)
+                          : null,
+                      radius: 20,
+                    ),
+                    title: Text(
+                      "Order ID: ${item['id']}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Country: ${item['destination']}"),
+                        Text("Price: ${item['currency']}${item['price']}"),
+                        Text("Weight: ${item['weight']} kg"),
+                        Text("Order Status: ${item['orderStatus']}"),
+                        Text(
+                            "Current Location: ${item['packageLocation']}"),
+                        Text(
+                            "Departure Date: ${item['departureDate']}"),
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: item['orderStatus'] ==
+                                  "waiting"
+                                  ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ConfirmOrder(
+                                            orderData: item),
+                                  ),
+                                );
+                              }
+                                  : null, // Button disabled when orderStatus is not "waiting"
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(20, 40),
+                                backgroundColor:
+                                item['orderStatus'] == "waiting"
+                                    ? Colors.red[300]
+                                    : Colors.grey,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                "Confirm",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () =>
+                              (item["orderStatus"] == "waiting" ||
+                                  item["orderStatus"] ==
+                                      "confirmed" ||
+                                  item["orderStatus"] ==
+                                      "en-route")
+                                  ? _showUpdateLocationModal(
+                                  context, item)
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(30, 40),
+                                backgroundColor:
+                                (item["orderStatus"] == "waiting" ||
+                                    item["orderStatus"] ==
+                                        "confirmed" ||
+                                    item["orderStatus"] ==
+                                        "en-route")
+                                    ? ColorsTheme.skyBlue
+                                    : Colors.grey[300],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text(
+                                "Update",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: DropdownButton<String>(
-                        value: selectedValue,
-                        hint: const Text("SORT BY"),
-                        items: <String>[
-                          'Alphabetical',
-                          'High to Low',
-                          'Nearest Date'
-                        ]
-                            .map((String value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                ))
-                            .toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedValue = newValue;
-                          });
-                        },
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          final item = items[index];
-                          return Card(
-                              elevation: 4,
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.all(16),
-                                leading: CircleAvatar(
-                                  backgroundImage: item['packageImage'] != null
-                                      ? MemoryImage(
-                                          item['packageImage'] as Uint8List)
-                                      : null,
-                                  radius: 20,
-                                ),
-                                title: Text(
-                                  "Order ID: ${item['id']}",
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Country: ${item['destination']}"),
-                                    Text(
-                                        "Price: ${item['currency']}${item['price']}"),
-                                    Text("Weight: ${item['weight']} kg"),
-                                    Text(
-                                        "Order Status: ${item['orderStatus']}"),
-                                    Text(
-                                        "Current Location: ${item['packageLocation']}"),
-                                    Text(
-                                        "Departure Date: ${item['departureDate']}"),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: item['orderStatus'] ==
-                                                  "waiting"
-                                              ? () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ConfirmOrder(
-                                                              orderData: item),
-                                                    ),
-                                                  );
-                                                }
-                                              : null, // Button disabled when orderStatus is not "waiting"
-                                          style: ElevatedButton.styleFrom(
-                                            minimumSize: const Size(20, 40),
-                                            backgroundColor:
-                                                item['orderStatus'] == "waiting"
-                                                    ? Colors.red[300]
-                                                    : Colors.grey,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Confirm",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () =>
-                                              (item["orderStatus"] ==
-                                                          "waiting" ||
-                                                      item["orderStatus"] ==
-                                                          "confirmed" ||
-                                                      item["orderStatus"] ==
-                                                          "en-route")
-                                                  ? _showUpdateLocationModal(
-                                                      context, item)
-                                                  : null,
-                                          style: ElevatedButton.styleFrom(
-                                            minimumSize: const Size(30, 40),
-                                            backgroundColor:
-                                                (item["orderStatus"] ==
-                                                            "waiting" ||
-                                                        item["orderStatus"] ==
-                                                            "confirmed" ||
-                                                        item["orderStatus"] ==
-                                                            "en-route")
-                                                    ? ColorsTheme.skyBlue
-                                                    : Colors.grey[300],
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Update",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ));
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+
     );
   }
 }
