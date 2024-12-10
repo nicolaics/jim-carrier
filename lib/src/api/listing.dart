@@ -144,3 +144,24 @@ Future<dynamic> checkExistingOrder(
     return writeErrorResponse(response: e.response);
   }
 }
+
+Future<dynamic> deleteListing(
+    {required int id, required String api}) async {
+  Map<String, int> body = {'id': id};
+
+  try {
+    final response = await dio.delete((api), data: body);
+
+    if (response.statusCode!.isSuccessfulHttpStatusCode) {
+      return writeSuccessResponse(response: response);
+    } else {
+      return writeErrorResponse(response: response);
+    }
+  } on DioException catch (e) {
+    if (e.type == DioExceptionType.connectionTimeout) {
+      return writeConnectionTimeoutResponse();
+    }
+    print('Error occurred: ${e.response?.data['error']}');
+    return writeErrorResponse(response: e.response);
+  }
+}

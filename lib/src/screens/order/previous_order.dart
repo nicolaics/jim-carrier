@@ -3,13 +3,12 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/material.dart';
 import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
@@ -17,7 +16,6 @@ import 'package:jim/src/auth/encryption.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/utils/formatter.dart';
 import '../listing/edit_listing.dart';
-import 'package:jim/src/screens/home/bottom_bar.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
   const PreviousOrderScreen({super.key});
@@ -279,9 +277,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -376,7 +371,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 leading: CircleAvatar(
                   backgroundImage: item["profile_pic"] != null &&
                           item["profile_pic"].isNotEmpty
-                          item["profile_pic"].isNotEmpty
                       ? MemoryImage(item["profile_pic"] as typed_data.Uint8List)
                       : null,
                   radius: 20,
@@ -397,8 +391,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
@@ -440,32 +432,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         "Edit",
                         style: TextStyle(color: Colors.black),
                       ),
-                      onPressed: () async {
-                        dynamic response = await checkExistingOrder(
-                            api: '/listing/count-orders', id: item['id']);
-
-                        if (response['status'] == "success") {
-                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const EditListingScreen(),
-                              settings: RouteSettings(arguments: item),
-                            ),
-                          );
-
-                        } else {
-                          AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.error,
-                            animType: AnimType.topSlide,
-                            title: 'Error',
-                            desc: response["message"],
-                            btnOkIcon: Icons.check,
-                            btnOkOnPress: () {},
-                          ).show();
-                        }
-                      },
-                      child: const Text("Edit"),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
@@ -552,8 +518,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   Widget _buildOrderView() {
     if (isLoading) {
       return const Center(
-    if (isLoading) {
-      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -619,15 +583,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
                                 if (response["status"] == "success" &&
                                     response["message"]["status"] == "exist") {
-                                  try {
-                                    final encryptedHolder =
-                                        enc.Encrypted.fromBase64(
-                                            response["message"]
-                                                ["account_holder"]);
-                                    final encryptedNumber =
-                                        enc.Encrypted.fromBase64(
-                                            response["message"]
-                                                ["account_number"]);
                                   try {
                                     final encryptedHolder =
                                         enc.Encrypted.fromBase64(

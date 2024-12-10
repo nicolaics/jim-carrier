@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       body: isLoading
-          ? const const Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Column(

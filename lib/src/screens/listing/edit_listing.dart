@@ -14,14 +14,9 @@ import 'package:encrypt/encrypt.dart' as enc;
 
 class EditListingScreen extends StatefulWidget {
   const EditListingScreen({super.key});
-class EditListingScreen extends StatefulWidget {
-  const EditListingScreen({super.key});
   @override
   State<EditListingScreen> createState() => _EditListingScreenState();
-  State<EditListingScreen> createState() => _EditListingScreenState();
 }
-
-class _EditListingScreenState extends State<EditListingScreen> {
 
 class _EditListingScreenState extends State<EditListingScreen> {
   String? _selectedCountry = "";

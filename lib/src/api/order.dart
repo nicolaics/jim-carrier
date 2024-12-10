@@ -217,26 +217,3 @@ Future<dynamic> getBankDetails({required int carrierID, required api}) async {
     return writeErrorResponse(response: e.response);
   }
 }
-
-Future<dynamic> getBankDetails({required int carrierID, required api}) async {
-  Map<String, int> body = {
-    'carrierId': carrierID,
-  };
-
-  try {
-    final response = await dio.post(baseUrl + api, data: body);
-
-    if (response.statusCode!.isSuccessfulHttpStatusCode) {
-      if (response.data['status'] == 'exist') {
-        return writeSuccessResponse(response: response);
-      } else {
-        return writeErrorResponse(response: response);
-      }
-    } else {
-      return writeErrorResponse(response: response);
-    }
-  } on DioException catch (e) {
-    print('Error occurred: ${e.response?.data['error']}');
-    return writeErrorResponse(response: e.response);
-  }
-}
