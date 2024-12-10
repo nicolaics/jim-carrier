@@ -150,7 +150,7 @@ Future<dynamic> deleteListing(
   Map<String, int> body = {'id': id};
 
   try {
-    final response = await dio.post((api), data: body);
+    final response = await dio.delete((api), data: body);
 
     if (response.statusCode!.isSuccessfulHttpStatusCode) {
       return writeSuccessResponse(response: response);
