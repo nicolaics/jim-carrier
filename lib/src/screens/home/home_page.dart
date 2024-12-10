@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           updatedItems.add({
             "carrierId": data['carrierId'] ?? 'Unknown',
+            "carrierEmail": data['carrierEmail']?? 'Unknown',
             "id": data['id'] ?? 'Unknown',
             "currency": data['currency'] ?? 'Unknown',
             "name": data['carrierName'] ?? 'Unknown',
