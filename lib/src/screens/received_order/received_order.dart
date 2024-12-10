@@ -6,7 +6,6 @@ import 'package:jim/src/api/order.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'dart:convert'; // For base64Decode and Uint8List
 import 'dart:typed_data';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../order/confirm_order.dart'; // For Uint8List
 
@@ -284,6 +283,8 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                             "Current Location: ${item['packageLocation']}"),
                         Text(
                             "Departure Date: ${item['departureDate']}"),
+                            Text(
+                            "email Date: ${item['giverEmail']}"),
                         Row(
                           mainAxisAlignment:
                           MainAxisAlignment.spaceBetween,
