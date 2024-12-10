@@ -186,8 +186,6 @@ class _EditListingScreenState extends State<EditListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String destination = '${_selectedCity ?? ''}, ${_selectedState ?? ''}, ${_selectedCountry ?? ''}';
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
