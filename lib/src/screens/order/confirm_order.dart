@@ -327,7 +327,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       scheme: 'mailto',
       path: toEmail,
       query: encodeQueryParameters(<String, String>{
-        'subject': 'Example Subject & Symbols are allowed!',
+        'subject': '',
       }),
     );
     launchUrl(emailLaunchUri);
