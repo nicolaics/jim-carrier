@@ -109,36 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: DropdownButton<String>(
-                          value: selectedValue,
-                          hint: const Text("SORT BY"),
-                          items: <String>[
-                            'Alphabetical',
-                            'High to Low',
-                            'Nearest Date'
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedValue = newValue;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: items.length,
@@ -282,4 +252,5 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
     );
   }
+
 }
