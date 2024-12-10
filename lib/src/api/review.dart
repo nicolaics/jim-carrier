@@ -8,6 +8,8 @@ Future<dynamic> createReview(
     required String? reviewContent,
     required int rating,
     required String api}) async {
+
+  print("REVIEW CONTENT $reviewContent");
   Map<String, dynamic> body = {
     'orderId': orderId,
     'revieweeName': reviewName,
