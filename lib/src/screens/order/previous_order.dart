@@ -16,6 +16,7 @@ import 'package:jim/src/auth/encryption.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/utils/formatter.dart';
 import '../listing/edit_listing.dart';
+import 'package:jim/src/screens/home/bottom_bar.dart';
 
 class PreviousOrderScreen extends StatefulWidget {
   const PreviousOrderScreen({super.key});
@@ -438,7 +439,60 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                       onPressed: () {
                         // Add logic for deleting the listing
                         print(
-                            "Delete button pressed for ${item['carrier_name']}");
+                            "Delete button pressed for ${item['id']}");
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.warning,
+                          animType: AnimType.scale,
+                          title: 'Delete',
+                          desc: 'Are you sure you want to delete?',
+                          btnCancelOnPress: () {},
+                          btnOkOnPress: () async {
+                            print('Deleting the listing...');
+                            try {
+                              dynamic response = await deleteListing(id: item['id'], api: '/listing'); // Await the response
+                              if (response['status'] == "error") {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.topSlide,
+                                  title: 'Error',
+                                  desc: response["message"].toString().capitalizeFirst,
+                                  btnOkIcon: Icons.check,
+                                  btnOkOnPress: () {},
+                                ).show();
+                              } else {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.success,
+                                  animType: AnimType.bottomSlide,
+                                  title: 'Success',
+                                  desc: 'Listing deleted successfully.',
+                                  btnOkIcon: Icons.check,
+                                  btnOkOnPress: () {
+                                    setState(() {
+                                      fetchListing();
+                                    });
+                                  },
+                                ).show();
+                              }
+                            } catch (error) {
+                              // Handle any unexpected errors
+                              AwesomeDialog(
+                                context: context,
+                                dialogType: DialogType.error,
+                                animType: AnimType.topSlide,
+                                title: 'Error',
+                                desc: 'Something went wrong. Please try again later.',
+                                btnOkIcon: Icons.check,
+                                btnOkOnPress: () {},
+                              ).show();
+                            }
+                          },
+                        ).show();
+
+
+
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red[300],
