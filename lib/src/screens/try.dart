@@ -13,6 +13,7 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
+import 'package:jim/src/screens/coming_soon.dart';
 import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
 import 'package:jim/src/base_class/login_google.dart';
@@ -178,21 +179,27 @@ class _HomeScreenState extends State<TryScreen> {
                 icon: LineAwesomeIcons.cog_solid,
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
-                onPress: () {},
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Settings');
+                },
               ),
               ProfileMenuWidget(
                 title: "Billing Details",
                 icon: LineAwesomeIcons.wallet_solid,
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
-                onPress: () {},
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Billing Details');
+                },
               ),
               ProfileMenuWidget(
                 title: "User Management",
                 icon: LineAwesomeIcons.user_check_solid,
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
-                onPress: () {},
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'User Management');
+                },
               ),
               const Divider(),
               const SizedBox(height: 10),
@@ -201,7 +208,9 @@ class _HomeScreenState extends State<TryScreen> {
                 icon: LineAwesomeIcons.info_solid,
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
-                onPress: () {},
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Information');
+                },
               ),
               const Divider(),
               const SizedBox(height: 10),
