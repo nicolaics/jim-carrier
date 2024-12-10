@@ -8,6 +8,7 @@ import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:typed_data';
 
 import '../review/review_page.dart';
@@ -28,6 +29,8 @@ class _NewOrderState extends State<NewOrder> {
 
   Uint8List? photo;
   Uint8List? photoPayment;
+
+
 
   double _calculateTotalPrice() {
     final weight = double.tryParse(_weightController.text) ?? 0.0;
@@ -57,9 +60,12 @@ class _NewOrderState extends State<NewOrder> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final carrier = widget.carrier; // Access the passed carrier details
+    print("CARRIER: $carrier");
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -344,7 +350,14 @@ class _NewOrderState extends State<NewOrder> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _launchEmail(carrier['carrierEmail']),
+        backgroundColor: Colors.redAccent,
+        child: const Icon(Icons.email, color: Colors.white),
+      ),
     );
+
+
   }
 
   // Helper method to create each detail row with icon, label, and value
@@ -383,4 +396,25 @@ class _NewOrderState extends State<NewOrder> {
       ),
     );
   }
+
+  Future<void> _launchEmail(String toEmail) async {
+    print("EMAILLLL $toEmail");
+    String? encodeQueryParameters(Map<String, String> params) {
+      return params.entries
+          .map((MapEntry<String, String> e) =>
+      '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .join('&');
+    }
+// ···
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: toEmail,
+      query: encodeQueryParameters(<String, String>{
+        'subject': 'Example Subject & Symbols are allowed!',
+      }),
+    );
+
+    launchUrl(emailLaunchUri);
+  }
 }
+
