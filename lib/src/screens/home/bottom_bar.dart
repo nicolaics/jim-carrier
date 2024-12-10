@@ -3,14 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:jim/src/screens/order/received_order.dart';
+import 'package:jim/src/screens/profile/profile_screen.dart';
 import '../../api/auth.dart';
 import '../../base_class/login_google.dart';
 import '../../auth/secure_storage.dart';
 import '../auth/login_screen.dart';
-import '../try.dart';
 import 'home_page.dart';
 import '../order/previous_order.dart';
-import '../received_order/received_order.dart';
 import '../listing/add_listing.dart';
 
 class BottomBar extends StatefulWidget {
@@ -107,7 +107,7 @@ class NavigationController extends GetxController {
     const PreviousOrderScreen(),
     const AddListingScreen(),
     const ReceivedOrder(),
-    const TryScreen(),
+    const ProfileScreen(),
   ];
 
   void setInitialIndex(int index) {

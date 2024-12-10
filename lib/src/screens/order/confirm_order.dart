@@ -5,6 +5,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/api/order.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,7 +43,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          "CONFIRM ORDER",
+          "Confirm Order",
           style: TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -195,7 +196,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: ColorsTheme.skyBlue,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -207,7 +208,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: Colors.black),
                     ),
                   ),
                   const SizedBox(width: 16), // Spacing between buttons
@@ -247,7 +248,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.redAccent.withOpacity(0.7),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -259,7 +260,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: Colors.black),
                     ),
                   ),
                 ],
@@ -270,7 +271,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _launchEmail(orderData['giverEmail']),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Colors.blue,
+        shape: const CircleBorder(),
         child: const Icon(Icons.email, color: Colors.white),
       ),
     );

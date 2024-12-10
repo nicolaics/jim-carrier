@@ -283,8 +283,6 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                             "Current Location: ${item['packageLocation']}"),
                         Text(
                             "Departure Date: ${item['departureDate']}"),
-                            Text(
-                            "email Date: ${item['giverEmail']}"),
                         Row(
                           mainAxisAlignment:
                           MainAxisAlignment.spaceBetween,
@@ -307,7 +305,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                                 minimumSize: const Size(20, 40),
                                 backgroundColor:
                                 item['orderStatus'] == "waiting"
-                                    ? Colors.red[300]
+                                    ? Colors.redAccent.withOpacity(0.7)
                                     : Colors.grey,
                                 shape: RoundedRectangleBorder(
                                   borderRadius:

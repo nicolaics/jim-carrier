@@ -455,7 +455,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           dialogType: DialogType.warning,
                           animType: AnimType.scale,
                           title: 'Delete',
-                          desc: 'Are you sure you want to delete?',
+                          desc: 'Are you sure you want to delete this listing?',
                           btnCancelOnPress: () {},
                           btnOkOnPress: () async {
                             print('Deleting the listing...');
@@ -505,7 +505,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[300],
+                        backgroundColor: Colors.redAccent.withOpacity(0.7),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -825,7 +825,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            isPayNowDisabled ? Colors.grey[300] : Colors.red[300],
+                            isPayNowDisabled ? Colors.grey[300] : Colors.redAccent.withOpacity(0.7),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
