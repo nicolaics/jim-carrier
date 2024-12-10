@@ -116,9 +116,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     int rating = _selectedRating.toInt();
+
                     print(
-                        "Review Submitted: ${_reviewController.text}, Rating: $_selectedRating");
-                    _reviewController.clear();
+                        "Review Submitted: ${_reviewController.text}, Rating: $rating");
                     setState(() {
                       _selectedRating = 0; // Reset rating after submission
                     });
@@ -131,7 +131,18 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     );
 
                     if (response["status"] == "success") {
-                      Navigator.pop(context); // Close the modal
+                        AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.success,
+                        animType: AnimType.topSlide,
+                        title: 'Success',
+                        desc: response["message"].toString().capitalizeFirst,
+                        btnOkIcon: Icons.check,
+                        btnOkOnPress: () {
+                          Navigator.pop(context); // Close the modal
+                        },
+                        ).show();
+
                     } else {
                       AwesomeDialog(
                         context: context,
