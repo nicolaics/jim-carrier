@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:csc_picker/csc_picker.dart';
@@ -15,8 +15,10 @@ import 'package:encrypt/encrypt.dart' as enc;
 
 class EditListingScreen extends StatefulWidget {
   const EditListingScreen({super.key});
+
   @override
-  State<EditListingScreen> createState() => _EditListingScreenState();
+  _EditListingScreenState createState() => _EditListingScreenState();
+  // State<EditListingScreen> createState() => _EditListingScreenState();
 }
 
 class _EditListingScreenState extends State<EditListingScreen> {
@@ -93,6 +95,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
       _lastPriceValue = _priceController.text;
       oldValues["price"] = _lastPriceValue;
 
+      /*
       _priceController.addListener(() {
         String rawValue =
             _priceController.text.replaceAll(',', ''); // Remove commas
@@ -124,6 +127,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
           );
         });
       });
+      */
 
       // Parse weight (remove 'kg' and trim whitespace)
       _weightController.text =
