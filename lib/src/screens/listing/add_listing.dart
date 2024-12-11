@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:jim/src/api/listing.dart';
-import 'package:jim/src/auth/encryption.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/constants/currency.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
@@ -28,9 +27,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
   String? _selectedCurrency;
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _accountHolderName = TextEditingController();
-  final TextEditingController _bankName = TextEditingController();
-  final TextEditingController _bankAccountNo = TextEditingController();
   final TextEditingController _additionalInfoController =
       TextEditingController();
 
@@ -445,14 +441,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   // Print statements
                   print('Departure Date: $date');
                   print('Last Date to Receive: $lastDate');
-                  print('Bank Name: ${_bankName.text}');
-                  print('Bank Account: ${_bankAccountNo.text}');
-                  print('Bank Holder: ${_accountHolderName.text}');
-
-                  final encrypted = encryptData(
-                    accountHolder: _accountHolderName.text,
-                    accountNumber: _bankAccountNo.text,
-                  );
 
                   // Call the API to add the listing
                   dynamic response = await addListing(
