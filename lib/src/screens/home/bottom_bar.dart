@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:jim/src/api/bank_detail.dart';
 import 'package:jim/src/screens/order/received_order.dart';
 import 'package:jim/src/screens/profile/profile_screen.dart';
 import '../../api/auth.dart';
@@ -63,15 +64,28 @@ class _BottomBar extends State<BottomBar> {
           () => NavigationBar(
             elevation: 0,
             selectedIndex: controller.selectedindex.value,
-            onDestinationSelected: (index) {
+            onDestinationSelected: (index) async {
               if (index == 2) {
                 //api call to check whether the bank details are present or not.
-                // Navigate to the Add Listing screen separately
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddListingScreen()),
-                );
+                dynamic response=await getBankDetail();
+                if(response['status']=='success' && response['message']==null){
+                  AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.error,
+                    animType: AnimType.topSlide,
+                    title: 'Cannot Add Listing',
+                    desc: 'Please Add Bank Details',
+                    btnOkIcon: Icons.check,
+                    btnOkOnPress: () {},
+                  ).show();
+                }else {
+                  // Navigate to the Add Listing screen separately
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AddListingScreen()),
+                  );
+                }
               } else {
                 // Change the selected index for other screens
                 controller.selectedindex.value = index;
