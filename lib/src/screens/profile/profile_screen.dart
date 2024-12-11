@@ -13,6 +13,7 @@ import 'package:jim/src/constants/sizes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jim/src/auth/secure_storage.dart';
 import 'package:jim/src/screens/auth/login_screen.dart';
+import 'package:jim/src/screens/bank/bank.dart';
 import 'package:jim/src/screens/coming_soon.dart';
 import 'package:jim/src/screens/profile/profile_menu.dart';
 import 'package:jim/src/screens/profile/update_profile.dart';
@@ -181,6 +182,15 @@ class _HomeScreenState extends State<ProfileScreen> {
                 fontStyle: FontStyle.normal,
                 onPress: () {
                   Get.to(() => const ComingSoonScreen(), arguments: 'Settings');
+                },
+              ),
+              ProfileMenuWidget(
+                title: "Update Bank Details",
+                icon: LineAwesomeIcons.wallet_solid,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                onPress: () {
+                  Get.to(() => const BankScreen(), arguments: 'Billing Details');
                 },
               ),
               ProfileMenuWidget(
