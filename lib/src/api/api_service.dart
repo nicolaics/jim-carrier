@@ -25,7 +25,7 @@ Map<String, String> writeConnectionTimeoutResponse() {
 final Dio dio = Dio(
   BaseOptions(
     baseUrl: dotenv.env['BASE_URL'] ?? 'http://ion-suhalim:9988/api/v1',
-    connectTimeout: const Duration(seconds: 10), // 3 seconds
+    connectTimeout: const Duration(seconds: 3), // 3 seconds
     contentType: "application/json",
   ),
 );
