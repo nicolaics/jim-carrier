@@ -128,7 +128,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     );
 
                     if (response["status"] == "success") {
-                        AwesomeDialog(
+                      AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,
                         animType: AnimType.topSlide,
@@ -138,8 +138,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         btnOkOnPress: () {
                           Navigator.pop(context); // Close the modal
                         },
-                        ).show();
-
+                      ).show();
                     } else {
                       AwesomeDialog(
                         context: context,
@@ -194,7 +193,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             "accountHolderName": data['bankDetail']['accountHolder'],
             "accountNumber": data['bankDetail']['accountNumber'],
             "bankName": data['bankDetail']['bankName'],
-            "listStatus": data['expStatus']??'Unknown',
+            "listStatus": data['expStatus'] ?? 'Unknown',
           });
         }
 
@@ -385,20 +384,23 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     contentPadding: const EdgeInsets.all(16),
                     title: Text(
                       item["carrier_name"] ?? "Carrier Name",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Destination: ${item["destination"] ?? "N/A"}'),
                         Text('Price: ${item["price"] ?? "N/A"}'),
-                        Text('Available Weight: ${item["available_weight"] ?? "N/A"}'),
+                        Text(
+                            'Available Weight: ${item["available_weight"] ?? "N/A"}'),
                         Text('Flight Date: ${item["flight_date"] ?? "N/A"}'),
                       ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -410,13 +412,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                             ),
                           ),
                           onPressed: () async {
-                            dynamic response = await checkExistingOrder(api: '/listing/count-orders', id: item['id']);
+                            dynamic response = await checkExistingOrder(
+                                api: '/listing/count-orders', id: item['id']);
 
                             if (response['status'] == "success") {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const EditListingScreen(),
+                                  builder: (context) =>
+                                      const EditListingScreen(),
                                   settings: RouteSettings(arguments: item),
                                 ),
                               );
@@ -426,7 +430,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                 dialogType: DialogType.error,
                                 animType: AnimType.topSlide,
                                 title: 'Error',
-                                desc: response["message"].toString().capitalizeFirst,
+                                desc: response["message"]
+                                    .toString()
+                                    .capitalizeFirst,
                                 btnOkIcon: Icons.check,
                                 btnOkOnPress: () {},
                               ).show();
@@ -447,19 +453,23 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                               dialogType: DialogType.warning,
                               animType: AnimType.scale,
                               title: 'Delete',
-                              desc: 'Are you sure you want to delete this listing?',
+                              desc:
+                                  'Are you sure you want to delete this listing?',
                               btnCancelOnPress: () {},
                               btnOkOnPress: () async {
                                 print('Deleting the listing...');
                                 try {
-                                  dynamic response = await deleteListing(id: item['id'], api: '/listing');
+                                  dynamic response = await deleteListing(
+                                      id: item['id'], api: '/listing');
                                   if (response['status'] == "error") {
                                     AwesomeDialog(
                                       context: context,
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
                                       title: 'Error',
-                                      desc: response["message"].toString().capitalizeFirst,
+                                      desc: response["message"]
+                                          .toString()
+                                          .capitalizeFirst,
                                       btnOkIcon: Icons.check,
                                       btnOkOnPress: () {},
                                     ).show();
@@ -484,7 +494,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                     dialogType: DialogType.error,
                                     animType: AnimType.topSlide,
                                     title: 'Error',
-                                    desc: 'Something went wrong. Please try again later.',
+                                    desc:
+                                        'Something went wrong. Please try again later.',
                                     btnOkIcon: Icons.check,
                                     btnOkOnPress: () {},
                                   ).show();
@@ -524,7 +535,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
     );
   }
 
-
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
     if (isLoading) {
@@ -545,7 +555,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             orderStatus == "cancelled";
 
         // Determine if the bulb should light up
-        final isBulbLit = orderStatus != "completed" && orderStatus != "cancelled";
+        final isBulbLit =
+            orderStatus != "completed" && orderStatus != "cancelled";
 
         bool isReviewDisabled = false;
         if (paymentStatus == "completed" && orderStatus == "completed") {
@@ -571,9 +582,11 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
-                    Text('Payment Status: ${item["payment_status"] ?? "Unknown"}'),
+                    Text(
+                        'Payment Status: ${item["payment_status"] ?? "Unknown"}'),
                     Text('Order Status: ${item["order_status"] ?? "Unknown"}'),
-                    Text('Package Location: ${item["package_location"] ?? "Unknown"}'),
+                    Text(
+                        'Package Location: ${item["package_location"] ?? "Unknown"}'),
                     Text('Notes: ${item["notes"] ?? "No notes"}'),
                     Text('Created At: ${item["created_at"] ?? "Unknown"}'),
                     const SizedBox(height: 8),
@@ -588,8 +601,8 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           onPressed: isPayNowDisabled
                               ? null
                               : () {
-                            // Payment processing logic
-                          },
+                                  // Payment processing logic
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isPayNowDisabled
                                 ? Colors.grey[300]
@@ -608,8 +621,12 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           onPressed: isReviewDisabled
                               ? null
                               : () {
-                            // Review modal logic
-                          },
+                                  _showReviewModal(
+                                    item["listing"]["carrier_name"] ??
+                                        "Unknown Carrier",
+                                    item["id"],
+                                  );
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isReviewDisabled
                                 ? Colors.grey[300]
@@ -643,7 +660,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       },
     );
   }
-
 
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Padding(
