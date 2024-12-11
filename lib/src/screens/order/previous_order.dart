@@ -12,7 +12,9 @@ import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/utils/formatter.dart';
+import '../../auth/encryption.dart';
 import '../listing/edit_listing.dart';
+import 'package:encrypt/encrypt.dart' as enc;
 
 class PreviousOrderScreen extends StatefulWidget {
   const PreviousOrderScreen({super.key});
@@ -383,18 +385,61 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   ListTile(
                     contentPadding: const EdgeInsets.all(16),
                     title: Text(
-                      item["carrier_name"] ?? "Carrier Name",
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w600),
+                      'LISTING #${item["id"].toString() ?? "Carrier Name"}',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Destination: ${item["destination"] ?? "N/A"}'),
-                        Text('Price: ${item["price"] ?? "N/A"}'),
-                        Text(
-                            'Available Weight: ${item["available_weight"] ?? "N/A"}'),
-                        Text('Flight Date: ${item["flight_date"] ?? "N/A"}'),
+                        Row(
+                          children: [
+                            Text(
+                              'Destination:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(width: 8), // Adds some spacing between title and data
+                            Text(
+                              '${item["destination"]!.toString().capitalizeFirst}',
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Price:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(width: 8), // Adds some spacing between title and data
+                            Text(
+                              '${item["price"] ?? "N/A"}',
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Available Weight:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(width: 8), // Adds some spacing between title and data
+                            Text(
+                              '${item["available_weight"] ?? "N/A"}',
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Flight Date:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(width: 8), // Adds some spacing between title and data
+                            Text(
+                              '${item["flight_date"] ?? "N/A"}',
+                            ),
+                          ],
+                        ),
+
                       ],
                     ),
                   ),
@@ -581,18 +626,105 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.w600),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                        'Payment Status: ${item["payment_status"] ?? "Unknown"}'),
-                    Text('Order Status: ${item["order_status"] ?? "Unknown"}'),
-                    Text(
-                        'Package Location: ${item["package_location"] ?? "Unknown"}'),
-                    Text('Notes: ${item["notes"] ?? "No notes"}'),
-                    Text('Created At: ${item["created_at"] ?? "Unknown"}'),
-                    const SizedBox(height: 8),
-                    Text('Carrier: ${item["listing"]["carrier_name"]}'),
-                    Text('Destination: ${item["listing"]["destination"]}'),
-                    Text('Flight Date: ${item["listing"]["flight_date"]}'),
+                    Row(
+                      children: [
+                        Text(
+                          'Payment Status:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8), // Adds some spacing between title and data
+                        Text(
+                          '${(item["payment_status"]!).toString().capitalizeFirst}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Order Status:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${(item["order_status"]!).toString().capitalizeFirst}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Package Location:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${item["package_location"] ?? "Unknown"}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Notes:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${item["notes"] ?? "No notes"}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Created At:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${item["created_at"] ?? "Unknown"}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Carrier:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${item["listing"]["carrier_name"]}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Destination:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${item["listing"]["destination"]}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'Flight Date:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          '${item["listing"]["flight_date"]}',
+                        ),
+                      ],
+                    ),
+
+
+
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -600,9 +732,246 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         ElevatedButton(
                           onPressed: isPayNowDisabled
                               ? null
-                              : () {
-                                  // Payment processing logic
-                                },
+                              : () async {
+                            print(
+                                "Processing payment for Order ID: ${item['id']}");
+                            String api = "/order/get-payment-details";
+
+                            try {
+                              dynamic response = await getBankDetails(
+                                  carrierID: 3, api: api);
+
+                              if (response["status"] == "success" &&
+                                  response["message"]["status"] == "exist") {
+                                try {
+                                  final encryptedHolder =
+                                  enc.Encrypted.fromBase64(
+                                      response["message"]
+                                      ["account_holder"]);
+                                  final encryptedNumber =
+                                  enc.Encrypted.fromBase64(
+                                      response["message"]
+                                      ["account_number"]);
+
+                                  final decrypted = decryptData(
+                                    accountHolder: encryptedHolder,
+                                    accountNumber: encryptedNumber,
+                                  );
+
+                                  String bankName =
+                                      response["message"]["bank_name"] ?? "";
+                                  String accountNumber =
+                                      decrypted['number'] ?? "";
+                                  String accountHolderName =
+                                      decrypted['holder'] ?? "";
+
+                                  print("Bank Name: $bankName");
+                                  print("Account Number: $accountNumber");
+                                  print(
+                                      "Account Holder Name: $accountHolderName");
+
+                                  // Display payment details modal
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20),
+                                      ),
+                                    ),
+                                    builder: (BuildContext context) {
+                                      return StatefulBuilder(
+                                        builder: (BuildContext context,
+                                            StateSetter setModalState) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              top: 16.0,
+                                              left: 16.0,
+                                              right: 16.0,
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom,
+                                            ),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisSize:
+                                                MainAxisSize.min,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                            Icons.arrow_back,
+                                                            size: 28),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      ),
+                                                      const Text(
+                                                        "Payment Details",
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                          FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  _buildDetailRow(
+                                                      Icons.account_balance,
+                                                      "Bank Name:",
+                                                      bankName),
+                                                  _buildDetailRow(
+                                                      Icons.credit_card,
+                                                      "Account No:",
+                                                      accountNumber),
+                                                  _buildDetailRow(
+                                                      Icons.person,
+                                                      "Account Holder:",
+                                                      accountHolderName),
+                                                  const SizedBox(height: 12),
+                                                  Row(
+                                                    children: [
+                                                      ElevatedButton.icon(
+                                                        onPressed: () async {
+                                                          await _pickImagePayment();
+                                                          setModalState(
+                                                                  () {});
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons
+                                                                .photo_library,
+                                                            size: 24),
+                                                        label: const Text(
+                                                            "Upload Proof of Payment"),
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                          Colors
+                                                              .grey[300],
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal:
+                                                              20,
+                                                              vertical:
+                                                              12),
+                                                          shape:
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                12),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  if (photoPayment != null)
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        const Text(
+                                                          "Uploaded Image:",
+                                                          style: TextStyle(
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            color: Colors
+                                                                .black87,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 8),
+                                                        Container(
+                                                          alignment: Alignment
+                                                              .center,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            border: Border.all(
+                                                                color: Colors
+                                                                    .grey,
+                                                                width: 1),
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                8),
+                                                          ),
+                                                          padding:
+                                                          const EdgeInsets
+                                                              .all(8),
+                                                          child: Image.memory(
+                                                            photoPayment!,
+                                                            height: 500,
+                                                            width: double
+                                                                .infinity,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  const SizedBox(height: 20),
+                                                  Center(
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(
+                                                            context);
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                        Colors.blue,
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal:
+                                                            40,
+                                                            vertical: 16),
+                                                        shape:
+                                                        RoundedRectangleBorder(
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(
+                                                              12),
+                                                        ),
+                                                      ),
+                                                      child: const Text(
+                                                        "Proceed",
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                } catch (e) {
+                                  print("Error during decryption: $e");
+                                }
+                              } else if (response['status'] == 'error') {
+                                print(
+                                    "Failed to fetch payment details. Response: $response");
+                              }
+                            } catch (e) {
+                              print("An error occurred: $e");
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isPayNowDisabled
                                 ? Colors.grey[300]
@@ -618,15 +987,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
-                          onPressed: isReviewDisabled
-                              ? null
-                              : () {
-                                  _showReviewModal(
-                                    item["listing"]["carrier_name"] ??
-                                        "Unknown Carrier",
-                                    item["id"],
-                                  );
-                                },
+                          onPressed: () {
+                            isReviewDisabled
+                                ? null
+                                : _showReviewModal(
+                              item["listing"]["carrier_name"] ??
+                                  "Unknown Carrier",
+                              item["id"],
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isReviewDisabled
                                 ? Colors.grey[300]
