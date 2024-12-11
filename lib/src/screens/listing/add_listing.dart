@@ -253,8 +253,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     children: [
                       const Text(
                         'Departure Date',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       InkWell(
@@ -262,18 +261,23 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           final DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
+                            firstDate: DateTime.now(), // Cannot select dates in the past
                             lastDate: DateTime(2101),
                           );
                           if (picked != null && picked != _selectedDate) {
                             setState(() {
                               _selectedDate = picked;
+
+                              // Clear the "Last Date to Receive" if it conflicts
+                              if (_lastDateToReceive != null &&
+                                  _lastDateToReceive!.isAfter(_selectedDate!)) {
+                                _lastDateToReceive = null;
+                              }
                             });
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black),
@@ -281,8 +285,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           ),
                           child: Text(
                             _selectedDate != null
-                                ? DateFormat('yyyy-MM-dd')
-                                    .format(_selectedDate!)
+                                ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -300,17 +303,16 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     children: [
                       const Text(
                         'Last Date to Receive',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       InkWell(
                         onTap: () async {
                           final DateTime? picked = await showDatePicker(
                             context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2101),
+                            initialDate: _selectedDate ?? DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: _selectedDate ?? DateTime(2101),
                           );
                           if (picked != null && picked != _lastDateToReceive) {
                             setState(() {
@@ -319,8 +321,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black),
@@ -328,8 +329,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                           ),
                           child: Text(
                             _lastDateToReceive != null
-                                ? DateFormat('yyyy-MM-dd')
-                                    .format(_lastDateToReceive!)
+                                ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -340,6 +340,7 @@ class _AddListingScreenState extends State<AddListingScreen> {
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
 
             const Text(
@@ -358,46 +359,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
                   borderSide: const BorderSide(color: Colors.black),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Account Holder Name',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            TextFormField(
-              controller: _accountHolderName,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.person_outline_outlined),
-                  labelText: "Account Holder Name",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 20),
-
-            const SizedBox(height: 20),
-            const Text(
-              'Bank Name',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            TextFormField(
-              controller: _bankName,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.house),
-                  labelText: "Bank Name",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 20),
-
-            const SizedBox(height: 20),
-            const Text(
-              'Bank Account Number',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            TextFormField(
-              controller: _bankAccountNo,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.numbers),
-                  labelText: "Account Number",
-                  border: OutlineInputBorder()),
             ),
             const SizedBox(height: 20),
 
@@ -502,9 +463,6 @@ class _AddListingScreenState extends State<AddListingScreen> {
                     date: date,
                     lastDate: lastDate,
                     additionalInfo: _additionalInfoController.text,
-                    accountHolder: encrypted["holder"]!.base64,
-                    accountNumber: encrypted["number"]!.base64,
-                    bankName: _bankName.text,
                     api: "/listing",
                   );
 
