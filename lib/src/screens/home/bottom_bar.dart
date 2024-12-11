@@ -63,6 +63,7 @@ class _BottomBar extends State<BottomBar> {
         bottomNavigationBar: Obx(
           () => NavigationBar(
             elevation: 0,
+            backgroundColor: Colors.white,
             selectedIndex: controller.selectedindex.value,
             onDestinationSelected: (index) async {
               if (index == 2) {

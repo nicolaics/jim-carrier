@@ -144,19 +144,55 @@ class _BankScreenState extends State<BankScreen> {
                       ),
                     );
                   } else {
+                    // Fetch and compare data
+                    final response = await getBankDetail();
+                    final message = response['message'];
+
+                    if (message != null) {
+                      final encryptedHolderBase64 = message['accountHolder'] as String?;
+                      final encryptedNumberBase64 = message['accountNumber'] as String?;
+                      final existingBankName = message['bankName'] as String? ?? '';
+
+                      if (encryptedHolderBase64 != null && encryptedNumberBase64 != null) {
+                        final encryptedHolder = enc.Encrypted.fromBase64(encryptedHolderBase64);
+                        final encryptedNumber = enc.Encrypted.fromBase64(encryptedNumberBase64);
+
+                        final decrypted = decryptData(
+                          accountHolder: encryptedHolder,
+                          accountNumber: encryptedNumber,
+                        );
+
+                        String existingAccountHolderName = decrypted['holder'] ?? '';
+                        String existingAccountNumber = decrypted['number'] ?? '';
+
+                        if (existingAccountHolderName == accountHolder &&
+                            existingAccountNumber == bankNumber &&
+                            existingBankName == bankName) {
+                          // No changes made
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('No changes made.'),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          );
+                          return;
+                        }
+                      }
+                    }
+
                     // Encrypt and Update
                     final encrypted = encryptData(
                       accountHolder: accountHolder,
                       accountNumber: bankNumber,
                     );
 
-                    dynamic response = await updateBankDetail(
+                    dynamic updateResponse = await updateBankDetail(
                       bankName: bankName,
                       accountNumber: encrypted["number"]!.base64,
                       accountHolder: encrypted["holder"]!.base64,
                     );
 
-                    if (response['status'] == 'success') {
+                    if (updateResponse['status'] == 'success') {
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,
@@ -165,22 +201,27 @@ class _BankScreenState extends State<BankScreen> {
                         desc: 'Update Successful',
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {
-                          Get.to(() => const BottomBar(0));
+                          // Defer navigation to avoid setState or markNeedsBuild() error
+                          Future.microtask(() {
+                            Get.to(() => const BottomBar(0));
+                          });
                         },
                       ).show();
-                    } else {
+                    }
+                    else {
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.error,
                         animType: AnimType.topSlide,
                         title: 'Update Failed',
-                        desc: response["message"].toString().capitalizeFirst,
+                        desc: updateResponse["message"].toString().capitalizeFirst,
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {},
                       ).show();
                     }
                   }
                 },
+
                 style: OutlinedButton.styleFrom(
                   shape: const RoundedRectangleBorder(),
                   backgroundColor: Colors.black,
