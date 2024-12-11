@@ -177,7 +177,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ).show();
                                       }
                                     } catch (e) {
-                                      print('Error: $e');
+                                      AwesomeDialog(
+                                        context: context,
+                                        dialogType: DialogType.error,
+                                        animType: AnimType.topSlide,
+                                        title: 'Login not Successful',
+                                        desc: "Request timeout",
+                                        btnOkIcon: Icons.check,
+                                        btnOkOnPress: () {},
+                                      ).show();
                                     }
                                   },
                                   style: OutlinedButton.styleFrom(
