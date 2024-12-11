@@ -3,13 +3,17 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/material.dart';
+import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jim/src/api/bank_detail.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
+import 'package:jim/src/auth/encryption.dart';
 import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/utils/formatter.dart';
 import '../listing/edit_listing.dart';
@@ -128,7 +132,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     );
 
                     if (response["status"] == "success") {
-                        AwesomeDialog(
+                      AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,
                         animType: AnimType.topSlide,
@@ -138,8 +142,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         btnOkOnPress: () {
                           Navigator.pop(context); // Close the modal
                         },
-                        ).show();
-
+                      ).show();
                     } else {
                       AwesomeDialog(
                         context: context,
@@ -194,7 +197,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             "accountHolderName": data['bankDetail']['accountHolder'],
             "accountNumber": data['bankDetail']['accountNumber'],
             "bankName": data['bankDetail']['bankName'],
-            "listStatus": data['expStatus']??'Unknown',
           });
         }
 
@@ -366,164 +368,163 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       itemCount: listingData.length,
       itemBuilder: (context, index) {
         final item = listingData[index];
-
-        // Determine if the bulb should be green (available) or grey (not available)
-        final isBulbGreen = item['listStatus']?.toLowerCase() == 'available';
-
-        return Stack(
-          children: [
-            Card(
-              elevation: 4,
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+        return Card(
+          elevation: 4,
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                leading: CircleAvatar(
+                  backgroundImage: item["profile_pic"] != null &&
+                          item["profile_pic"].isNotEmpty
+                      ? MemoryImage(item["profile_pic"] as typed_data.Uint8List)
+                      : null,
+                  radius: 20,
+                ),
+                title: Text(
+                  item["carrier_name"] ?? "Carrier Name",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item["destination"] ?? "Destination"),
+                    Text(item["price"] ?? "Price"),
+                    Text(item["available_weight"] ?? "Available Weight"),
+                    Text(item["flight_date"] ?? "Flight Date"),
+                  ],
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    title: Text(
-                      item["carrier_name"] ?? "Carrier Name",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Destination: ${item["destination"] ?? "N/A"}'),
-                        Text('Price: ${item["price"] ?? "N/A"}'),
-                        Text('Available Weight: ${item["available_weight"] ?? "N/A"}'),
-                        Text('Flight Date: ${item["flight_date"] ?? "N/A"}'),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorsTheme.skyBlue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () async {
-                            dynamic response = await checkExistingOrder(api: '/listing/count-orders', id: item['id']);
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorsTheme.skyBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () async {
+                        dynamic response = await checkExistingOrder(
+                            api: '/listing/count-orders', id: item['id']);
 
-                            if (response['status'] == "success") {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const EditListingScreen(),
-                                  settings: RouteSettings(arguments: item),
-                                ),
-                              );
-                            } else {
+                        if (response['status'] == "success") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EditListingScreen(),
+                              settings: RouteSettings(arguments: item),
+                            ),
+                          );
+                        } else {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.error,
+                            animType: AnimType.topSlide,
+                            title: 'Error',
+                            desc:
+                                response["message"].toString().capitalizeFirst,
+                            btnOkIcon: Icons.check,
+                            btnOkOnPress: () {},
+                          ).show();
+                        }
+                      },
+                      child: const Text(
+                        "Edit",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add logic for deleting the listing
+                        print("Delete button pressed for ${item['id']}");
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.warning,
+                          animType: AnimType.scale,
+                          title: 'Delete',
+                          desc: 'Are you sure you want to delete this listing?',
+                          btnCancelOnPress: () {},
+                          btnOkOnPress: () async {
+                            print('Deleting the listing...');
+                            try {
+                              dynamic response = await deleteListing(
+                                  id: item['id'],
+                                  api: '/listing'); // Await the response
+                              if (response['status'] == "error") {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.topSlide,
+                                  title: 'Error',
+                                  desc: response["message"]
+                                      .toString()
+                                      .capitalizeFirst,
+                                  btnOkIcon: Icons.check,
+                                  btnOkOnPress: () {},
+                                ).show();
+                              } else {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.success,
+                                  animType: AnimType.bottomSlide,
+                                  title: 'Success',
+                                  desc: 'Listing deleted successfully.',
+                                  btnOkIcon: Icons.check,
+                                  btnOkOnPress: () {
+                                    setState(() {
+                                      fetchListing();
+                                    });
+                                  },
+                                ).show();
+                              }
+                            } catch (error) {
+                              // Handle any unexpected errors
                               AwesomeDialog(
                                 context: context,
                                 dialogType: DialogType.error,
                                 animType: AnimType.topSlide,
                                 title: 'Error',
-                                desc: response["message"].toString().capitalizeFirst,
+                                desc:
+                                    'Something went wrong. Please try again later.',
                                 btnOkIcon: Icons.check,
                                 btnOkOnPress: () {},
                               ).show();
                             }
                           },
-                          child: const Text(
-                            "Edit",
-                            style: TextStyle(color: Colors.black),
-                          ),
+                        ).show();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent.withOpacity(0.7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add logic for deleting the listing
-                            print("Delete button pressed for ${item['id']}");
-                            AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.warning,
-                              animType: AnimType.scale,
-                              title: 'Delete',
-                              desc: 'Are you sure you want to delete this listing?',
-                              btnCancelOnPress: () {},
-                              btnOkOnPress: () async {
-                                print('Deleting the listing...');
-                                try {
-                                  dynamic response = await deleteListing(id: item['id'], api: '/listing');
-                                  if (response['status'] == "error") {
-                                    AwesomeDialog(
-                                      context: context,
-                                      dialogType: DialogType.error,
-                                      animType: AnimType.topSlide,
-                                      title: 'Error',
-                                      desc: response["message"].toString().capitalizeFirst,
-                                      btnOkIcon: Icons.check,
-                                      btnOkOnPress: () {},
-                                    ).show();
-                                  } else {
-                                    AwesomeDialog(
-                                      context: context,
-                                      dialogType: DialogType.success,
-                                      animType: AnimType.bottomSlide,
-                                      title: 'Success',
-                                      desc: 'Listing deleted successfully.',
-                                      btnOkIcon: Icons.check,
-                                      btnOkOnPress: () {
-                                        setState(() {
-                                          fetchListing();
-                                        });
-                                      },
-                                    ).show();
-                                  }
-                                } catch (error) {
-                                  AwesomeDialog(
-                                    context: context,
-                                    dialogType: DialogType.error,
-                                    animType: AnimType.topSlide,
-                                    title: 'Error',
-                                    desc: 'Something went wrong. Please try again later.',
-                                    btnOkIcon: Icons.check,
-                                    btnOkOnPress: () {},
-                                  ).show();
-                                }
-                              },
-                            ).show();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent.withOpacity(0.7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            "Delete",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      ],
+                      ),
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-              top: 25,
-              right: 35,
-              child: Icon(
-                Icons.circle,
-                color: isBulbGreen ? Colors.green : Colors.grey,
-                size: 20,
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
   }
-
 
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
@@ -544,106 +545,329 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             orderStatus == "waiting" ||
             orderStatus == "cancelled";
 
-        // Determine if the bulb should light up
-        final isBulbLit = orderStatus != "completed" && orderStatus != "cancelled";
-
         bool isReviewDisabled = false;
         if (paymentStatus == "completed" && orderStatus == "completed") {
           isReviewDisabled = true;
         }
 
-        return Stack(
-          children: [
-            Card(
-              elevation: 4,
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        return Card(
+          elevation: 4,
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Order #${item["id"]}',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                Text('Payment Status: ${item["payment_status"] ?? "Unknown"}'),
+                Text('Order Status: ${item["order_status"] ?? "Unknown"}'),
+                Text(
+                    'Package Location: ${item["package_location"] ?? "Unknown"}'),
+                Text('Notes: ${item["notes"] ?? "No notes"}'),
+                Text('Created At: ${item["created_at"] ?? "Unknown"}'),
+                const SizedBox(height: 8),
+                Text('Carrier: ${item["listing"]["carrier_name"]}'),
+                Text('Destination: ${item["listing"]["destination"]}'),
+                Text('Flight Date: ${item["listing"]["flight_date"]}'),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text(
-                      'Order #${item["id"]}',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w600),
+                    ElevatedButton(
+                      onPressed: isPayNowDisabled
+                          ? null
+                          : () async {
+                              print(
+                                  "Processing payment for Order ID: ${item['id']}");
+                              String api = "/order/get-payment-details";
+
+                              try {
+                                dynamic response = await getCarrierBankDetail(
+                                    carrierID: 3, api: api);
+
+                                if (response["status"] == "success" &&
+                                    response["message"]["status"] == "exist") {
+                                  try {
+                                    final encryptedHolder =
+                                        enc.Encrypted.fromBase64(
+                                            response["message"]
+                                                ["account_holder"]);
+                                    final encryptedNumber =
+                                        enc.Encrypted.fromBase64(
+                                            response["message"]
+                                                ["account_number"]);
+
+                                    final decrypted = decryptData(
+                                      accountHolder: encryptedHolder,
+                                      accountNumber: encryptedNumber,
+                                    );
+
+                                    String bankName =
+                                        response["message"]["bank_name"] ?? "";
+                                    String accountNumber =
+                                        decrypted['number'] ?? "";
+                                    String accountHolderName =
+                                        decrypted['holder'] ?? "";
+
+                                    print("Bank Name: $bankName");
+                                    print("Account Number: $accountNumber");
+                                    print(
+                                        "Account Holder Name: $accountHolderName");
+
+                                    // Display payment details modal
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(20),
+                                        ),
+                                      ),
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                          builder: (BuildContext context,
+                                              StateSetter setModalState) {
+                                            return Padding(
+                                              padding: EdgeInsets.only(
+                                                top: 16.0,
+                                                left: 16.0,
+                                                right: 16.0,
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom,
+                                              ),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        IconButton(
+                                                          icon: const Icon(
+                                                              Icons.arrow_back,
+                                                              size: 28),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                        const Text(
+                                                          "Payment Details",
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 12),
+                                                    _buildDetailRow(
+                                                        Icons.account_balance,
+                                                        "Bank Name:",
+                                                        bankName),
+                                                    _buildDetailRow(
+                                                        Icons.credit_card,
+                                                        "Account No:",
+                                                        accountNumber),
+                                                    _buildDetailRow(
+                                                        Icons.person,
+                                                        "Account Holder:",
+                                                        accountHolderName),
+                                                    const SizedBox(height: 12),
+                                                    Row(
+                                                      children: [
+                                                        ElevatedButton.icon(
+                                                          onPressed: () async {
+                                                            await _pickImagePayment();
+                                                            setModalState(
+                                                                () {});
+                                                          },
+                                                          icon: const Icon(
+                                                              Icons
+                                                                  .photo_library,
+                                                              size: 24),
+                                                          label: const Text(
+                                                              "Upload Proof of Payment"),
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .grey[300],
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        12),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 12),
+                                                    if (photoPayment != null)
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          const Text(
+                                                            "Uploaded Image:",
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors
+                                                                  .black87,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 8),
+                                                          Container(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .grey,
+                                                                  width: 1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8),
+                                                            child: Image.memory(
+                                                              photoPayment!,
+                                                              height: 500,
+                                                              width: double
+                                                                  .infinity,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    const SizedBox(height: 20),
+                                                    Center(
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              Colors.blue,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      40,
+                                                                  vertical: 16),
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        12),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          "Proceed",
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  } catch (e) {
+                                    print("Error during decryption: $e");
+                                  }
+                                } else if (response['status'] == 'error') {
+                                  print(
+                                      "Failed to fetch payment details. Response: $response");
+                                }
+                              } catch (e) {
+                                print("An error occurred: $e");
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isPayNowDisabled
+                            ? Colors.grey[300]
+                            : Colors.redAccent.withOpacity(0.7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        "Pay Now",
+                        style: TextStyle(color: Colors.black),
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Text('Payment Status: ${item["payment_status"] ?? "Unknown"}'),
-                    Text('Order Status: ${item["order_status"] ?? "Unknown"}'),
-                    Text('Package Location: ${item["package_location"] ?? "Unknown"}'),
-                    Text('Notes: ${item["notes"] ?? "No notes"}'),
-                    Text('Created At: ${item["created_at"] ?? "Unknown"}'),
-                    const SizedBox(height: 8),
-                    Text('Carrier: ${item["listing"]["carrier_name"]}'),
-                    Text('Destination: ${item["listing"]["destination"]}'),
-                    Text('Flight Date: ${item["listing"]["flight_date"]}'),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          onPressed: isPayNowDisabled
-                              ? null
-                              : () {
-                            // Payment processing logic
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: isPayNowDisabled
-                                ? Colors.grey[300]
-                                : Colors.redAccent.withOpacity(0.7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            "Pay Now",
-                            style: TextStyle(color: Colors.black),
-                          ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        isReviewDisabled
+                            ? null
+                            : _showReviewModal(
+                                item["listing"]["carrier_name"] ??
+                                    "Unknown Carrier",
+                                item["id"],
+                              );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isReviewDisabled
+                            ? Colors.grey[300]
+                            : ColorsTheme.skyBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: isReviewDisabled
-                              ? null
-                              : () {
-                            // Review modal logic
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: isReviewDisabled
-                                ? Colors.grey[300]
-                                : Colors.blue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            "Leave Review",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      ],
+                      ),
+                      child: const Text("Leave Review",
+                          style: TextStyle(color: Colors.black)),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
-            Positioned(
-              top: 25,
-              right: 35,
-              child: Icon(
-                Icons.circle,
-                color: isBulbLit ? Colors.green : Colors.grey,
-                size: 20,
-              ),
-            ),
-          ],
+          ),
         );
       },
     );
   }
-
 
   Widget _buildDetailRow(IconData icon, String label, String value) {
     return Padding(
