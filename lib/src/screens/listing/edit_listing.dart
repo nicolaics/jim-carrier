@@ -32,9 +32,6 @@ class _EditListingScreenState extends State<EditListingScreen> {
   int? id;
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _accountHolderName = TextEditingController();
-  final TextEditingController _bankName = TextEditingController();
-  final TextEditingController _bankAccountNo = TextEditingController();
   final TextEditingController _additionalInfoController =
       TextEditingController();
 
@@ -138,29 +135,6 @@ class _EditListingScreenState extends State<EditListingScreen> {
       _additionalInfoController.text = item['description'] ?? '';
       oldValues["description"] = _additionalInfoController.text;
 
-      final encryptedHolder =
-          enc.Encrypted.fromBase64(item['accountHolderName']);
-      final encryptedNumber = enc.Encrypted.fromBase64(item['accountNumber']);
-      final decrypted = decryptData(
-        accountHolder: encryptedHolder,
-        accountNumber: encryptedNumber,
-      );
-      String accountNumber = decrypted['number'] ?? "";
-      String accountHolderName = decrypted['holder'] ?? "";
-
-      print("****");
-      print(accountHolderName);
-      print(accountNumber);
-      print(item['bankName']);
-      print("****");
-
-      _bankName.text = item['bankName'];
-      _bankAccountNo.text = accountNumber;
-      _accountHolderName.text = accountHolderName;
-
-      oldValues["bank_name"] = item['bankName'];
-      oldValues["bank_account_holder"] = accountHolderName;
-      oldValues["bank_account_number"] = accountNumber;
     }
   }
 
@@ -338,8 +312,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                     children: [
                       const Text(
                         'Departure Date',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       InkWell(
@@ -347,18 +320,23 @@ class _EditListingScreenState extends State<EditListingScreen> {
                           final DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
+                            firstDate: DateTime.now(), // Cannot select dates in the past
                             lastDate: DateTime(2101),
                           );
                           if (picked != null && picked != _selectedDate) {
                             setState(() {
                               _selectedDate = picked;
+
+                              // Clear the "Last Date to Receive" if it conflicts
+                              if (_lastDateToReceive != null &&
+                                  _lastDateToReceive!.isAfter(_selectedDate!)) {
+                                _lastDateToReceive = null;
+                              }
                             });
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black),
@@ -366,8 +344,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                           ),
                           child: Text(
                             _selectedDate != null
-                                ? DateFormat('yyyy-MM-dd')
-                                    .format(_selectedDate!)
+                                ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -377,6 +354,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                   ),
                 ),
                 const SizedBox(width: 20),
+
                 // Last Date to Receive Picker
                 Expanded(
                   child: Column(
@@ -384,17 +362,16 @@ class _EditListingScreenState extends State<EditListingScreen> {
                     children: [
                       const Text(
                         'Last Date to Receive',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       InkWell(
                         onTap: () async {
                           final DateTime? picked = await showDatePicker(
                             context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2101),
+                            initialDate: _selectedDate ?? DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: _selectedDate ?? DateTime(2101),
                           );
                           if (picked != null && picked != _lastDateToReceive) {
                             setState(() {
@@ -403,8 +380,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black),
@@ -412,8 +388,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                           ),
                           child: Text(
                             _lastDateToReceive != null
-                                ? DateFormat('yyyy-MM-dd')
-                                    .format(_lastDateToReceive!)
+                                ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!)
                                 : 'Select Date',
                             style: const TextStyle(fontSize: 16),
                           ),
@@ -424,6 +399,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
             const Text(
               'Additional Info',
@@ -441,44 +417,6 @@ class _EditListingScreenState extends State<EditListingScreen> {
                   borderSide: const BorderSide(color: Colors.black),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Account Holder Name',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            TextFormField(
-              controller: _accountHolderName,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.person_outline_outlined),
-                  labelText: "Account Holder Name",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 20),
-            const SizedBox(height: 20),
-            const Text(
-              'Bank Name',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            TextFormField(
-              controller: _bankName,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.house),
-                  labelText: "Bank Name",
-                  border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 20),
-            const SizedBox(height: 20),
-            const Text(
-              'Bank Account Number',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            TextFormField(
-              controller: _bankAccountNo,
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.numbers),
-                  labelText: "Account Number",
-                  border: OutlineInputBorder()),
             ),
             const SizedBox(height: 20),
             Center(
@@ -540,11 +478,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
                       _selectedDate == oldValues["departure_date"] &&
                       _lastDateToReceive == oldValues["last_received_date"] &&
                       _additionalInfoController.text ==
-                          oldValues["description"] &&
-                      _accountHolderName.text ==
-                          oldValues["bank_account_holder"] &&
-                      _bankName.text == oldValues["bank_name"] &&
-                      _bankAccountNo.text == oldValues["bank_account_number"]) {
+                          oldValues["description"]) {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.warning,
@@ -598,10 +532,6 @@ class _EditListingScreenState extends State<EditListingScreen> {
                     print('Departure Date: $date');
                     print('Last Date to Receive: $lastDate');
 
-                    final encrypted = encryptData(
-                      accountHolder: _accountHolderName.text,
-                      accountNumber: _bankAccountNo.text,
-                    );
 
                     // Call the API to add the listing
                     dynamic result = await modifyListing(
@@ -613,9 +543,6 @@ class _EditListingScreenState extends State<EditListingScreen> {
                       date: date,
                       lastDate: lastDate,
                       additionalInfo: _additionalInfoController.text,
-                      accountHolder: encrypted["holder"]!.base64,
-                      accountNumber: encrypted["number"]!.base64,
-                      bankName: _bankName.text,
                       api: "/listing",
                     );
 
