@@ -56,8 +56,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   void _showReviewModal(String carrierName, int orderId) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled:
-          true, // Allow the bottom sheet to be resized with the keyboard
+      isScrollControlled: true, // Allow the bottom sheet to be resized with the keyboard
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -67,8 +66,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             left: 16.0,
             right: 16.0,
             top: 16.0,
-            bottom: MediaQuery.of(context).viewInsets.bottom +
-                16.0, // Adjust for keyboard
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16.0, // Adjust for keyboard
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -77,7 +75,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
               children: [
                 const SizedBox(height: 12),
                 Text(
-                  "Leave a Review for $carrierName $orderId",
+                  "Leave a Review for $carrierName",
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
@@ -87,18 +85,16 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
                 RatingBar.builder(
-                  initialRating:
-                      _selectedRating.toDouble(), // Sets initial rating
+                  initialRating: _selectedRating.toDouble(), // Sets initial rating
                   minRating: 0,
                   direction: Axis.horizontal,
                   allowHalfRating: true, // Allow half-star ratings if desired
                   itemCount: 5,
                   itemBuilder: (context, _) =>
-                      const Icon(Icons.star, color: Colors.amber),
+                  const Icon(Icons.star, color: Colors.amber),
                   onRatingUpdate: (rating) {
                     setState(() {
-                      _selectedRating =
-                          rating.toInt(); // Update selected rating
+                      _selectedRating = rating.toInt(); // Update selected rating
                     });
                   },
                 ),
@@ -149,7 +145,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         title: 'Error',
                         desc: response["message"].toString().capitalizeFirst,
                         btnOkIcon: Icons.check,
-                        btnOkOnPress: () {},
+                        btnOkOnPress: () {
+                          _reviewController.clear(); // Clear text on error
+                        },
                       ).show();
                     }
                   },
@@ -160,8 +158,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      _reviewController.clear(); // Clear review text when modal is closed
+      setState(() {
+        _selectedRating = 0; // Reset rating when modal is closed
+      });
+    });
   }
+
+
 
   // Async function to fetch both listing and order data
   Future<void> fetchListing() async {

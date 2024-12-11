@@ -41,6 +41,7 @@ class _ChangePasswordInsideState extends State<UpdatePassword> {
         ),
         body: SingleChildScrollView(
           child: Container(
+            color: Colors.white,
             padding: const EdgeInsets.all(tDefaultSize),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,12 +195,14 @@ class _ChangePasswordInsideState extends State<UpdatePassword> {
                                 btnOkIcon: Icons.check,
                                 btnOkOnPress: () {
                                   // Get.to(() => const ProfileScreen());
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const BottomBar(0)),
-                                  );
+                                  Future.microtask(() {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                          const BottomBar(0)),
+                                    );
+                                  });
                                 },
                               ).show();
                             } else {
@@ -225,8 +228,12 @@ class _ChangePasswordInsideState extends State<UpdatePassword> {
                             'Save Change',
                             style: TextStyle(color: Colors.black, fontSize: 20),
                           ),
+
                         ),
-                      )
+                      ),
+                      const SizedBox(
+                        height: 400,
+                      ),
                     ],
                   ),
                 )),

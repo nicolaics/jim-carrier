@@ -108,150 +108,154 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        elevation: 4,
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
-                          leading: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${index + 1}', // List number
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(width: 10),
-                              CircleAvatar(
-                                backgroundImage:
-                                    items[index]["profile_pic"] != null
-                                        ? MemoryImage(items[index]
-                                            ["profile_pic"] as Uint8List)
-                                        : null,
-                                radius: 20,
-                              ),
-                            ],
-                          ),
-                          title: Text(
-                            items[index]["name"] ?? "Name",
+          : Container(
+        color: Colors.white, // Set the background color to white
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Colors.white,
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '${index + 1}', // List number
                             style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                items[index]["destination"] ?? "Destination",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.grey[700]),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                items[index]["price"] ?? "Price",
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.grey),
-                              ),
-                              Text(
-                                items[index]["available_weight"] ??
-                                    "Available Weight",
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.grey),
-                              ),
-                              Text(
-                                items[index]["flight_date"] ?? "Flight Date",
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.grey),
-                              ),
-                            ],
+                          const SizedBox(width: 10),
+                          CircleAvatar(
+                            backgroundImage: items[index]["profile_pic"] != null
+                                ? MemoryImage(items[index]["profile_pic"] as Uint8List)
+                                : null,
+                            radius: 20,
                           ),
-                          trailing: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => NewOrder(
-                                        carrier: items[index],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorsTheme.skyBlue,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                        ],
+                      ),
+                      title: Text(
+                        items[index]["name"] ?? "Name",
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            items[index]["destination"] ?? "Destination",
+                            style: TextStyle(
+                                fontSize: 14, color: Colors.grey[700]),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            items[index]["price"] ?? "Price",
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                          Text(
+                            items[index]["available_weight"] ??
+                                "Available Weight",
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                          Text(
+                            items[index]["flight_date"] ?? "Flight Date",
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      trailing: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NewOrder(
+                                    carrier: items[index],
                                   ),
                                 ),
-                                child: const Text("View", style: TextStyle(color: Colors.black)),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorsTheme.skyBlue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              const SizedBox(height: 8),
-                              Flexible(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(5, (starIndex) {
-                                    final rating =
-                                        items[index]["carrierRating"] ?? 0.0;
-                                    if (starIndex < rating.floor()) {
-                                      return const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                        size: 16,
-                                      );
-                                    } else if (starIndex < rating &&
-                                        rating - starIndex >= 0.5) {
-                                      return const Icon(
-                                        Icons.star_half,
-                                        color: Colors.amber,
-                                        size: 16,
-                                      );
-                                    } else {
-                                      return const Icon(
-                                        Icons.star_border,
-                                        color: Colors.amber,
-                                        size: 16,
-                                      );
-                                    }
-                                  }),
-                                ),
-                              ),
-                            ],
+                            ),
+                            child: const Text("View",
+                                style: TextStyle(color: Colors.black)),
                           ),
-                          onTap: () {
-                            print("Tapped on ${items[index]["name"]}");
-                            print("Tapped on ${items[index]["id"]}");
-                            print("Tapped on ${items[index]["currency"]}");
-                            print(
-                                "Carrier Rating: ${items[index]["carrierRating"]}");
+                          const SizedBox(height: 8),
+                          Flexible(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(5, (starIndex) {
+                                final rating =
+                                    items[index]["carrierRating"] ?? 0.0;
+                                if (starIndex < rating.floor()) {
+                                  return const Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  );
+                                } else if (starIndex < rating &&
+                                    rating - starIndex >= 0.5) {
+                                  return const Icon(
+                                    Icons.star_half,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  );
+                                } else {
+                                  return const Icon(
+                                    Icons.star_border,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  );
+                                }
+                              }),
+                            ),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        print("Tapped on ${items[index]["name"]}");
+                        print("Tapped on ${items[index]["id"]}");
+                        print("Tapped on ${items[index]["currency"]}");
+                        print(
+                            "Carrier Rating: ${items[index]["carrierRating"]}");
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    NewOrder(carrier: items[index]),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NewOrder(carrier: items[index]),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
+          ],
+        ),
+      )
+
 
     );
   }
