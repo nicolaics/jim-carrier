@@ -10,9 +10,6 @@ Future<dynamic> addListing(
     required String date,
     required String lastDate,
     required String additionalInfo,
-    required String accountHolder,
-    required String bankName,
-    required String accountNumber,
     required api}) async {
   Map<String, dynamic> body = {
     'destination': destination,
@@ -22,9 +19,6 @@ Future<dynamic> addListing(
     'departureDate': date,
     'lastReceivedDate': lastDate,
     'description': additionalInfo,
-    'accountNumber': accountNumber,
-    'accountHolder': accountHolder,
-    'bankName': bankName,
   };
 
   try {
@@ -89,9 +83,6 @@ Future<dynamic> modifyListing(
     required String date,
     required String lastDate,
     required String additionalInfo,
-    required String accountHolder,
-    required String bankName,
-    required String accountNumber,
     required api}) async {
   Map<String, dynamic> body = {
     'id': id,
@@ -102,9 +93,6 @@ Future<dynamic> modifyListing(
     'departureDate': date,
     'lastReceivedDate': lastDate,
     'description': additionalInfo,
-    'accountNumber': accountNumber,
-    'accountHolder': accountHolder,
-    'bankName': bankName,
   };
 
   try {
