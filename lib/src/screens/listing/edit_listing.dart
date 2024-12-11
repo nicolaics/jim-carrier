@@ -5,6 +5,7 @@ import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/constants/currency.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/utils/formatter.dart';
@@ -38,6 +39,8 @@ class _EditListingScreenState extends State<EditListingScreen> {
   String _lastPriceValue = "";
   // String _lastWeightValue = "";
 
+  Map<String, dynamic> oldValues = {};
+
   @override
   void initState() {
     super.initState();
@@ -48,53 +51,18 @@ class _EditListingScreenState extends State<EditListingScreen> {
       id = item['id'];
 
       // Parse destination details
-      final destination = item['destination'] ?? '';
-      final destinationParts = destination.split(',');
-
-      if (destinationParts.length == 3) {
-        _selectedCity = destinationParts[0].trim();
-        _selectedState = destinationParts[1].trim();
-        _selectedCountry = destinationParts[2].trim();
-      } else if (destinationParts.length == 2) {
-        // If we only have two parts (city, country)
-        _selectedCity = destinationParts[0].trim();
-        _selectedState = '';
-        _selectedCountry = destinationParts[1].trim();
-      } else if (destinationParts.length == 1) {
-        // If only one part (just city or city+state)
-        _selectedCity = destinationParts[0].trim();
-        _selectedState = '';
-        _selectedCountry = ''; // Set to empty by default
-      }
-
-      // Build the destination string
-      if (_selectedCity!.isNotEmpty) {
-        fullDestination += _selectedCity!;
-      }
-      if (_selectedState!.isNotEmpty) {
-        if (fullDestination.isNotEmpty) fullDestination += ', ';
-        fullDestination += _selectedState!;
-      }
-      if (_selectedCountry!.isNotEmpty) {
-        if (fullDestination.isNotEmpty) fullDestination += ', ';
-        fullDestination += _selectedCountry!;
-      }
-
-      // Set values in CSCPicker directly
-      setState(() {
-        _selectedCountry = _selectedCountry;
-        _selectedState = _selectedState;
-        _selectedCity = _selectedCity;
-      });
+      oldValues["destination"] = item['destination'] ?? '';
 
       // Parse dates (assume `flight_date` format matches `Nov 29, 2024`)
       _selectedDate = item['flight_date'] != null
           ? DateFormat('MMM d, yyyy').parse(item['flight_date'])
           : null;
+      oldValues["departure_date"] = _selectedDate;
 
       _lastDateToReceive = item['lastReceiveDate'] != null
           ? DateFormat('MMM d, yyyy').parse(item['lastReceiveDate'])
           : null;
+      oldValues["last_received_date"] = _lastDateToReceive;
 
       // Parse price and currency
       final priceWithSymbol = item['price'] ?? '';
@@ -111,17 +79,20 @@ class _EditListingScreenState extends State<EditListingScreen> {
       if (matchedCurrency != null) {
         _selectedCurrency =
             currencyMap[matchedCurrency]!; // Get the 3-letter currency code
+        oldValues["currency"] = _selectedCurrency;
         _priceController.text = Formatter.formatPrice(
             Formatter.removeCommas(
                 priceWithSymbol.replaceAll(RegExp(r'[^\d,.]'), '')),
             null);
       } else {
         // Handle the case where no currency symbol matches
+        oldValues["currency"] = "KRW";
         print('Unknown currency symbol');
       }
 
       _lastPriceValue = _priceController.text;
-      
+      oldValues["price"] = _lastPriceValue;
+
       _priceController.addListener(() {
         String rawValue =
             _priceController.text.replaceAll(',', ''); // Remove commas
@@ -132,11 +103,12 @@ class _EditListingScreenState extends State<EditListingScreen> {
         int oldCaretPosition = _priceController.selection.baseOffset;
 
         // Format the new value
-        String formattedValue =
-            NumberFormat('#,##0').format(int.tryParse(rawValue) ?? Formatter.formatPrice(
-            Formatter.removeCommas(
-                priceWithSymbol.replaceAll(RegExp(r'[^\d,.]'), '')),
-            null));
+        String formattedValue = NumberFormat('#,##0').format(
+            int.tryParse(rawValue) ??
+                Formatter.formatPrice(
+                    Formatter.removeCommas(
+                        priceWithSymbol.replaceAll(RegExp(r'[^\d,.]'), '')),
+                    null));
 
         // Calculate the new caret position based on the difference in string lengths
         int adjustment = formattedValue.length - rawValue.length;
@@ -153,14 +125,14 @@ class _EditListingScreenState extends State<EditListingScreen> {
         });
       });
 
-
-
       // Parse weight (remove 'kg' and trim whitespace)
       _weightController.text =
           item['available_weight']?.replaceAll('kg', '').trim() ?? '';
+      oldValues["weight"] = _weightController.text;
 
       // Parse additional fields
       _additionalInfoController.text = item['description'] ?? '';
+      oldValues["description"] = _additionalInfoController.text;
 
       final encryptedHolder =
           enc.Encrypted.fromBase64(item['accountHolderName']);
@@ -181,6 +153,10 @@ class _EditListingScreenState extends State<EditListingScreen> {
       _bankName.text = item['bankName'];
       _bankAccountNo.text = accountNumber;
       _accountHolderName.text = accountHolderName;
+
+      oldValues["bank_name"] = item['bankName'];
+      oldValues["bank_account_holder"] = accountHolderName;
+      oldValues["bank_account_number"] = accountNumber;
     }
   }
 
@@ -504,7 +480,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
+                  backgroundColor: ColorsTheme.skyBlue,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
@@ -534,91 +510,124 @@ class _EditListingScreenState extends State<EditListingScreen> {
                       removeFlags(_selectedCountry ?? '').trim(),
                     ].where((element) => element.isNotEmpty).join(', ');
                   }
-                  print('Selected Country: $location');
-                  print('Selected State: $_selectedState');
-                  print('Selected City: $_selectedCity');
-                  print('Weight Available: ${_weightController.text}');
-                  print('Price per KG: ${_priceController.text}');
-                  print('Selected Currency: $_selectedCurrency');
-                  print(
-                      'Departure Date: ${_selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : 'Not Selected'}');
-                  print(
-                      'Last Date to Receive: ${_lastDateToReceive != null ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!) : 'Not Selected'}');
-                  print('Additional Info: ${_additionalInfoController.text}');
+                  // print('Selected Country: $location');
+                  // print('Selected State: $_selectedState');
+                  // print('Selected City: $_selectedCity');
+                  // print('Weight Available: ${_weightController.text}');
+                  // print('Price per KG: ${_priceController.text}');
+                  // print('Selected Currency: $_selectedCurrency');
+                  // print(
+                  //     'Departure Date: ${_selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : 'Not Selected'}');
+                  // print(
+                  //     'Last Date to Receive: ${_lastDateToReceive != null ? DateFormat('yyyy-MM-dd').format(_lastDateToReceive!) : 'Not Selected'}');
+                  // print('Additional Info: ${_additionalInfoController.text}');
 
-                  // Prepare the data for the addListing call
-                  double weight =
-                      double.tryParse(_weightController.text) ?? 0.0;
+                  // print("OLD DATE ${oldValues["departure_date"]}");
+                  // print("NEW DATE $_selectedDate");
 
-                  double price = double.tryParse(Formatter.removeCommas(_priceController.text)) ?? 0.0;
-
-                  String formatDateWithTimeZone(DateTime dateTime) {
-                    String formattedDate =
-                        DateFormat('yyyy-MM-dd').format(dateTime);
-                    String timeZoneOffset = dateTime.timeZoneOffset.inHours >= 0
-                        ? '+${dateTime.timeZoneOffset.inHours.toString().padLeft(2, '0')}'
-                        : dateTime.timeZoneOffset.inHours
-                            .toString()
-                            .padLeft(3, '0');
-                    // Adjust for minutes if needed
-                    if (dateTime.timeZoneOffset.inMinutes % 60 != 0) {
-                      int minutes =
-                          (dateTime.timeZoneOffset.inMinutes.abs() % 60);
-                      timeZoneOffset += minutes < 10 ? '0$minutes' : '$minutes';
-                    } else {
-                      timeZoneOffset +=
-                          '00'; // Append zero minutes if no additional offset
-                    }
-                    // Assuming KST as a constant, you can replace this with a dynamic value if needed
-                    String timeZoneAbbreviation =
-                        'KST'; // Change this according to the actual timezone if needed
-                    return '$formattedDate $timeZoneOffset$timeZoneAbbreviation';
+                  if (location == "") {
+                    location = oldValues["destination"];
                   }
 
-                  String date = _selectedDate != null
-                      ? formatDateWithTimeZone(_selectedDate!)
-                      : '';
-                  String lastDate = _lastDateToReceive != null
-                      ? formatDateWithTimeZone(_lastDateToReceive!)
-                      : '';
-                  // Print statements
-                  print('Departure Date: $date');
-                  print('Last Date to Receive: $lastDate');
-
-                  final encrypted = encryptData(
-                    accountHolder: _accountHolderName.text,
-                    accountNumber: _bankAccountNo.text,
-                  );
-
-                  // Call the API to add the listing
-                  dynamic result = await modifyListing(
-                    id: id,
-                    destination: location,
-                    weight: weight,
-                    price: price,
-                    currency: _selectedCurrency ?? '',
-                    date: date,
-                    lastDate: lastDate,
-                    additionalInfo: _additionalInfoController.text,
-                    accountHolder: encrypted["holder"]!.base64,
-                    accountNumber: encrypted["number"]!.base64,
-                    bankName: _bankName.text,
-                    api: "/listing",
-                  );
-
-                  print(result);
-
-                  if (result["status"] == "error") {
+                  if (location == oldValues["destination"] &&
+                      _weightController.text == oldValues["weight"] &&
+                      _priceController.text == oldValues["price"] &&
+                      _selectedCurrency == oldValues["currency"] &&
+                      _selectedDate == oldValues["departure_date"] &&
+                      _lastDateToReceive == oldValues["last_received_date"] &&
+                      _additionalInfoController.text ==
+                          oldValues["description"] &&
+                      _accountHolderName.text ==
+                          oldValues["bank_account_holder"] &&
+                      _bankName.text == oldValues["bank_name"] &&
+                      _bankAccountNo.text == oldValues["bank_account_number"]) {
                     AwesomeDialog(
                       context: context,
-                      dialogType: DialogType.error,
+                      dialogType: DialogType.warning,
                       animType: AnimType.topSlide,
-                      title: 'Edit Listing Failed',
-                      desc: result["message"].toString().capitalizeFirst,
+                      title: 'Warning',
+                      desc: "You didn't modified anything",
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {},
                     ).show();
                   } else {
+                    // Prepare the data for the addListing call
+                    double weight =
+                        double.tryParse(_weightController.text) ?? 0.0;
+
+                    double price = double.tryParse(
+                            Formatter.removeCommas(_priceController.text)) ??
+                        0.0;
+
+                    String formatDateWithTimeZone(DateTime dateTime) {
+                      String formattedDate =
+                          DateFormat('yyyy-MM-dd').format(dateTime);
+                      String timeZoneOffset = dateTime.timeZoneOffset.inHours >=
+                              0
+                          ? '+${dateTime.timeZoneOffset.inHours.toString().padLeft(2, '0')}'
+                          : dateTime.timeZoneOffset.inHours
+                              .toString()
+                              .padLeft(3, '0');
+                      // Adjust for minutes if needed
+                      if (dateTime.timeZoneOffset.inMinutes % 60 != 0) {
+                        int minutes =
+                            (dateTime.timeZoneOffset.inMinutes.abs() % 60);
+                        timeZoneOffset +=
+                            minutes < 10 ? '0$minutes' : '$minutes';
+                      } else {
+                        timeZoneOffset +=
+                            '00'; // Append zero minutes if no additional offset
+                      }
+                      // Assuming KST as a constant, you can replace this with a dynamic value if needed
+                      String timeZoneAbbreviation =
+                          'KST'; // Change this according to the actual timezone if needed
+                      return '$formattedDate $timeZoneOffset$timeZoneAbbreviation';
+                    }
+
+                    String date = _selectedDate != null
+                        ? formatDateWithTimeZone(_selectedDate!)
+                        : '';
+                    String lastDate = _lastDateToReceive != null
+                        ? formatDateWithTimeZone(_lastDateToReceive!)
+                        : '';
+                    // Print statements
+                    print('Departure Date: $date');
+                    print('Last Date to Receive: $lastDate');
+
+                    final encrypted = encryptData(
+                      accountHolder: _accountHolderName.text,
+                      accountNumber: _bankAccountNo.text,
+                    );
+
+                    // Call the API to add the listing
+                    dynamic result = await modifyListing(
+                      id: id,
+                      destination: location,
+                      weight: weight,
+                      price: price,
+                      currency: _selectedCurrency ?? '',
+                      date: date,
+                      lastDate: lastDate,
+                      additionalInfo: _additionalInfoController.text,
+                      accountHolder: encrypted["holder"]!.base64,
+                      accountNumber: encrypted["number"]!.base64,
+                      bankName: _bankName.text,
+                      api: "/listing",
+                    );
+
+                    print(result);
+
+                    if (result["status"] == "error") {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.error,
+                        animType: AnimType.topSlide,
+                        title: 'Edit Listing Failed',
+                        desc: result["message"].toString().capitalizeFirst,
+                        btnOkIcon: Icons.check,
+                        btnOkOnPress: () {},
+                      ).show();
+                    } else {
                     AwesomeDialog(
                       context: context,
                       dialogType: DialogType.success,
@@ -627,19 +636,19 @@ class _EditListingScreenState extends State<EditListingScreen> {
                       desc: 'Modify listing successful',
                       btnOkIcon: Icons.check,
                       btnOkOnPress: () {
-                        // Get.to(() => const BottomBar(0));
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const BottomBar(0),
+                              builder: (context) => const BottomBar(1),
                             ),
                           );
                       },
                     ).show();
+                    }
                   }
                 },
                 child:
-                    const Text('EDIT', style: TextStyle(color: Colors.white)),
+                    const Text('Edit', style: TextStyle(color: Colors.black)),
               ),
             ),
           ],
