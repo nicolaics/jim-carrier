@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
 
+import '../../utils/send_email.dart';
 import '../review/review_page.dart';
 
 class NewOrder extends StatefulWidget {
@@ -348,6 +349,26 @@ class _NewOrderState extends State<NewOrder> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Example: Open a generic email action or specify a behavior
+          if (carrier.isNotEmpty) {
+            // Launch email for the first carrier (as an example)
+            launchEmail(carrier['carrierEmail']);
+          } else {
+            // Show a message if there are no items
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("No carriers available to email."),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        backgroundColor: Colors.blue,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.email, color: Colors.white),
       ),
 
     );
