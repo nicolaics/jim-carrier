@@ -185,7 +185,7 @@ class _HomeScreenState extends State<ProfileScreen> {
                 },
               ),
               ProfileMenuWidget(
-                title: "Update Bank Details",
+                title: "Bank Details",
                 icon: LineAwesomeIcons.wallet_solid,
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
