@@ -9,6 +9,7 @@ import 'dart:typed_data' as typed_data;
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jim/src/api/bank_detail.dart';
 import 'package:jim/src/api/listing.dart';
 import 'package:jim/src/api/order.dart';
 import 'package:jim/src/api/review.dart';
@@ -131,7 +132,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     );
 
                     if (response["status"] == "success") {
-                        AwesomeDialog(
+                      AwesomeDialog(
                         context: context,
                         dialogType: DialogType.success,
                         animType: AnimType.topSlide,
@@ -141,8 +142,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         btnOkOnPress: () {
                           Navigator.pop(context); // Close the modal
                         },
-                        ).show();
-
+                      ).show();
                     } else {
                       AwesomeDialog(
                         context: context,
@@ -448,8 +448,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     ElevatedButton(
                       onPressed: () {
                         // Add logic for deleting the listing
-                        print(
-                            "Delete button pressed for ${item['id']}");
+                        print("Delete button pressed for ${item['id']}");
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.warning,
@@ -460,14 +459,18 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           btnOkOnPress: () async {
                             print('Deleting the listing...');
                             try {
-                              dynamic response = await deleteListing(id: item['id'], api: '/listing'); // Await the response
+                              dynamic response = await deleteListing(
+                                  id: item['id'],
+                                  api: '/listing'); // Await the response
                               if (response['status'] == "error") {
                                 AwesomeDialog(
                                   context: context,
                                   dialogType: DialogType.error,
                                   animType: AnimType.topSlide,
                                   title: 'Error',
-                                  desc: response["message"].toString().capitalizeFirst,
+                                  desc: response["message"]
+                                      .toString()
+                                      .capitalizeFirst,
                                   btnOkIcon: Icons.check,
                                   btnOkOnPress: () {},
                                 ).show();
@@ -493,16 +496,14 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                 dialogType: DialogType.error,
                                 animType: AnimType.topSlide,
                                 title: 'Error',
-                                desc: 'Something went wrong. Please try again later.',
+                                desc:
+                                    'Something went wrong. Please try again later.',
                                 btnOkIcon: Icons.check,
                                 btnOkOnPress: () {},
                               ).show();
                             }
                           },
                         ).show();
-
-
-
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent.withOpacity(0.7),
@@ -544,7 +545,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             orderStatus == "waiting" ||
             orderStatus == "cancelled";
 
-        bool isReviewDisabled = false; 
+        bool isReviewDisabled = false;
         if (paymentStatus == "completed" && orderStatus == "completed") {
           isReviewDisabled = true;
         }
@@ -589,7 +590,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                               String api = "/order/get-payment-details";
 
                               try {
-                                dynamic response = await getBankDetails(
+                                dynamic response = await getCarrierBankDetail(
                                     carrierID: 3, api: api);
 
                                 if (response["status"] == "success" &&
@@ -824,8 +825,9 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                               }
                             },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            isPayNowDisabled ? Colors.grey[300] : Colors.redAccent.withOpacity(0.7),
+                        backgroundColor: isPayNowDisabled
+                            ? Colors.grey[300]
+                            : Colors.redAccent.withOpacity(0.7),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -847,13 +849,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                               );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            isReviewDisabled ? Colors.grey[300] : ColorsTheme.skyBlue,
+                        backgroundColor: isReviewDisabled
+                            ? Colors.grey[300]
+                            : ColorsTheme.skyBlue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: const Text("Leave Review", style: TextStyle(color: Colors.black)),
+                      child: const Text("Leave Review",
+                          style: TextStyle(color: Colors.black)),
                     ),
                   ],
                 ),
