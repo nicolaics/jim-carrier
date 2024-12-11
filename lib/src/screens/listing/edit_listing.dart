@@ -209,7 +209,7 @@ class _EditListingScreenState extends State<EditListingScreen> {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Destination',
+              'Destination (optional)',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
