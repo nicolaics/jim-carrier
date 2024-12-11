@@ -65,6 +65,7 @@ class _BottomBar extends State<BottomBar> {
             selectedIndex: controller.selectedindex.value,
             onDestinationSelected: (index) {
               if (index == 2) {
+                //api call to check whether the bank details are present or not.
                 // Navigate to the Add Listing screen separately
                 Navigator.push(
                   context,
