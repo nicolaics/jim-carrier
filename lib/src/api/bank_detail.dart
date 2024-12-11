@@ -21,12 +21,14 @@ Future<dynamic> getBankDetail() async {
 }
 
 Future<dynamic> updateBankDetail(
-    {required String bankName, required String accountNumber, required String accountHolder}) async {
+    {required String bankName,
+    required String accountNumber,
+    required String accountHolder}) async {
   Map<String, String> body = {
     'bankName': bankName,
     'accountNumber': accountNumber,
     'accountHolder': accountHolder
-    };
+  };
 
   try {
     final response = await dio.post("/bank-detail/update", data: body);
