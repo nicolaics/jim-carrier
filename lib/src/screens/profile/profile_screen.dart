@@ -174,16 +174,6 @@ class _HomeScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 30),
               const Divider(),
-              const SizedBox(height: 10),
-              ProfileMenuWidget(
-                title: "Settings",
-                icon: LineAwesomeIcons.cog_solid,
-                fontWeight: FontWeight.normal,
-                fontStyle: FontStyle.normal,
-                onPress: () {
-                  Get.to(() => const ComingSoonScreen(), arguments: 'Settings');
-                },
-              ),
               ProfileMenuWidget(
                 title: "Bank Details",
                 icon: LineAwesomeIcons.wallet_solid,
@@ -194,25 +184,15 @@ class _HomeScreenState extends State<ProfileScreen> {
                 },
               ),
               ProfileMenuWidget(
-                title: "Billing Details",
-                icon: LineAwesomeIcons.wallet_solid,
+                title: "Billing History",
+                icon: LineAwesomeIcons.list_solid,
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
                 onPress: () {
                   Get.to(() => const ComingSoonScreen(), arguments: 'Billing Details');
                 },
               ),
-              ProfileMenuWidget(
-                title: "User Management",
-                icon: LineAwesomeIcons.user_check_solid,
-                fontWeight: FontWeight.normal,
-                fontStyle: FontStyle.normal,
-                onPress: () {
-                  Get.to(() => const ComingSoonScreen(), arguments: 'User Management');
-                },
-              ),
               const Divider(),
-              const SizedBox(height: 10),
               ProfileMenuWidget(
                 title: "Information",
                 icon: LineAwesomeIcons.info_solid,
@@ -222,8 +202,16 @@ class _HomeScreenState extends State<ProfileScreen> {
                   Get.to(() => const ComingSoonScreen(), arguments: 'Information');
                 },
               ),
+              ProfileMenuWidget(
+                title: "Settings",
+                icon: LineAwesomeIcons.cog_solid,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.normal,
+                onPress: () {
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Settings');
+                },
+              ),
               const Divider(),
-              const SizedBox(height: 10),
               ProfileMenuWidget(
                 title: "Log Out",
                 icon: LineAwesomeIcons.sign_out_alt_solid,
