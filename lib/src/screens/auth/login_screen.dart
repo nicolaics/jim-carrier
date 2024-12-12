@@ -222,8 +222,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 try {
                                   final controller =
                                       Controller(); // Create an instance of Controller
+                                  print("CONTROLLER 1");
                                   final user = await controller
                                       .loginWithGoogle(); // Call the method on the instance
+                                  print("CONTROLLER 2");
 
                                   dynamic response;
 
@@ -435,11 +437,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   )));
                                 } catch (error) {
                                   print(error);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                          content: Text(
-                                    error.toString(),
-                                  )));
                                 }
                               },
                               label: const Text('Login with Google',

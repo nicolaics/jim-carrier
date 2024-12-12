@@ -488,11 +488,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   )));
                                 } catch (error) {
                                   print(error);
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                          content: Text(
-                                    error.toString(),
-                                  )));
                                 }
                               },
                               label: const Text('Sign Up with Google',
