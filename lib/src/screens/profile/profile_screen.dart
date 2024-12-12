@@ -185,7 +185,7 @@ class _HomeScreenState extends State<ProfileScreen> {
               ),
               ProfileMenuWidget(
                 title: "Billing History",
-                icon: LineAwesomeIcons.list_solid,
+                icon: LineAwesomeIcons.file_invoice_dollar_solid,
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
                 onPress: () {
