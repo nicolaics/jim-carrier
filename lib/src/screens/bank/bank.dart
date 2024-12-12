@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jim/src/api/bank_detail.dart';
 import 'package:encrypt/encrypt.dart' as enc;
+import 'package:jim/src/constants/colors.dart';
 import '../../auth/encryption.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 
@@ -41,8 +42,10 @@ class _BankScreenState extends State<BankScreen> {
         String accountNumber = '';
 
         if (encryptedHolderBase64 != null && encryptedNumberBase64 != null) {
-          final encryptedHolder = enc.Encrypted.fromBase64(encryptedHolderBase64);
-          final encryptedNumber = enc.Encrypted.fromBase64(encryptedNumberBase64);
+          final encryptedHolder =
+              enc.Encrypted.fromBase64(encryptedHolderBase64);
+          final encryptedNumber =
+              enc.Encrypted.fromBase64(encryptedNumberBase64);
 
           final decrypted = decryptData(
             accountHolder: encryptedHolder,
@@ -136,7 +139,9 @@ class _BankScreenState extends State<BankScreen> {
                   String bankNumber = _bankAccountNo.text.trim();
 
                   // Validate Fields
-                  if (bankName.isEmpty || accountHolder.isEmpty || bankNumber.isEmpty) {
+                  if (bankName.isEmpty ||
+                      accountHolder.isEmpty ||
+                      bankNumber.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please fill in all fields.'),
@@ -149,21 +154,29 @@ class _BankScreenState extends State<BankScreen> {
                     final message = response['message'];
 
                     if (message != null) {
-                      final encryptedHolderBase64 = message['accountHolder'] as String?;
-                      final encryptedNumberBase64 = message['accountNumber'] as String?;
-                      final existingBankName = message['bankName'] as String? ?? '';
+                      final encryptedHolderBase64 =
+                          message['accountHolder'] as String?;
+                      final encryptedNumberBase64 =
+                          message['accountNumber'] as String?;
+                      final existingBankName =
+                          message['bankName'] as String? ?? '';
 
-                      if (encryptedHolderBase64 != null && encryptedNumberBase64 != null) {
-                        final encryptedHolder = enc.Encrypted.fromBase64(encryptedHolderBase64);
-                        final encryptedNumber = enc.Encrypted.fromBase64(encryptedNumberBase64);
+                      if (encryptedHolderBase64 != null &&
+                          encryptedNumberBase64 != null) {
+                        final encryptedHolder =
+                            enc.Encrypted.fromBase64(encryptedHolderBase64);
+                        final encryptedNumber =
+                            enc.Encrypted.fromBase64(encryptedNumberBase64);
 
                         final decrypted = decryptData(
                           accountHolder: encryptedHolder,
                           accountNumber: encryptedNumber,
                         );
 
-                        String existingAccountHolderName = decrypted['holder'] ?? '';
-                        String existingAccountNumber = decrypted['number'] ?? '';
+                        String existingAccountHolderName =
+                            decrypted['holder'] ?? '';
+                        String existingAccountNumber =
+                            decrypted['number'] ?? '';
 
                         if (existingAccountHolderName == accountHolder &&
                             existingAccountNumber == bankNumber &&
@@ -207,28 +220,30 @@ class _BankScreenState extends State<BankScreen> {
                           });
                         },
                       ).show();
-                    }
-                    else {
+                    } else {
                       AwesomeDialog(
                         context: context,
                         dialogType: DialogType.error,
                         animType: AnimType.topSlide,
                         title: 'Update Failed',
-                        desc: updateResponse["message"].toString().capitalizeFirst,
+                        desc: updateResponse["message"]
+                            .toString()
+                            .capitalizeFirst,
                         btnOkIcon: Icons.check,
                         btnOkOnPress: () {},
                       ).show();
                     }
                   }
                 },
-
                 style: OutlinedButton.styleFrom(
-                  shape: const RoundedRectangleBorder(),
-                  backgroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  backgroundColor: ColorsTheme.skyBlue,
                 ),
                 child: const Text(
                   'Update Details',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(color: Colors.black, fontSize: 20),
                 ),
               ),
             )
