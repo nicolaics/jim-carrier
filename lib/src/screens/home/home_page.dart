@@ -6,8 +6,6 @@ import 'package:jim/src/constants/colors.dart';
 import 'package:jim/src/screens/order/new_order.dart';
 import 'package:jim/src/utils/formatter.dart';
 
-import '../../utils/send_email.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
