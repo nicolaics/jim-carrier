@@ -46,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         body: SingleChildScrollView(
             child: Container(
+              color: Colors.white,
                 padding: const EdgeInsets.all(tDefaultSize),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,7 +397,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       context: context,
                                       dialogType: DialogType.error,
                                       animType: AnimType.topSlide,
-                                      title: 'Login not Successful',
+                                      title: 'Error',
                                       desc: response["message"]
                                           .toString()
                                           .capitalizeFirst,
@@ -457,6 +458,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     text: "Sign Up",
                                     style: TextStyle(color: Colors.blue))
                               ])),
+                        ),
+                        const SizedBox(
+                          height: 1000,
                         ),
                       ],
                     )

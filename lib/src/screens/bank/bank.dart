@@ -82,7 +82,10 @@ class _BankScreenState extends State<BankScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Bank Details')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+          backgroundColor:Colors.white,
+          title: const Text('Bank Details')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

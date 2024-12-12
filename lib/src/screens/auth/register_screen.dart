@@ -60,6 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Scaffold(
         body: SingleChildScrollView(
             child: Container(
+              color: Colors.white,
                 padding: const EdgeInsets.all(tDefaultSize),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -498,8 +499,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   style: TextStyle(color: Colors.black))),
                         ),
                         const SizedBox(
-                          height: 10,
+                          height: 1000,
                         ),
+
                       ],
                     )
                   ],

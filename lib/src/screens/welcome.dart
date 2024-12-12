@@ -47,6 +47,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Container(
+            color: Colors.white,
             padding: const EdgeInsets.all(tDefaultSize),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

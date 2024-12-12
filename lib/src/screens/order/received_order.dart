@@ -213,6 +213,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -250,6 +251,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return Card(
+                  color: Colors.white,
                   elevation: 4,
                   margin: const EdgeInsets.symmetric(
                       vertical: 8, horizontal: 16),

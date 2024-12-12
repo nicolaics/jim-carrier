@@ -34,6 +34,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   int _selectedRating = 0;
   Uint8List? photoPayment;
   bool isLoading = true;
+  bool isLoading2=true;
 
   @override
   void initState() {
@@ -228,7 +229,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   Future<void> fetchOrder() async {
     try {
       setState(() {
-        isLoading = true;
+        isLoading2= true;
       });
       String api = "/order/giver"; // Correct endpoint
       dynamic response = await getAllOrders(api: api); // Fetch API data
@@ -250,6 +251,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
             "created_at": Formatter.formatDate(data['createdAt']),
             "listing": {
               "carrier_name": data['listing']?['carrierName'] ?? 'Unknown',
+              "carrier_id": data['listing']?['carrierId'] ?? 'Unknown',
               "destination":
                   data['listing']?['destination'] ?? 'No destination',
               "flight_date":
@@ -260,15 +262,15 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
         setState(() {
           orderData = updatedOrders;
-          isLoading = false;
+          isLoading2 = false;
         });
       } else {
         print("Error: API returned a failure status. Response: $response");
-        isLoading = false;
+        isLoading2 = false;
       }
     } catch (e) {
       print('Error fetching order data: $e');
-      isLoading = false;
+      isLoading2 = false;
     }
   }
 
@@ -277,6 +279,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -300,6 +303,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
               children: [
                 // Tab-like buttons
                 Container(
+                  color: Colors.white,
                   margin: const EdgeInsets.all(10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -383,6 +387,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
           children: [
             Card(
               elevation: 4,
+              color: Colors.white,
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -598,9 +603,18 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
 
   // Method to build the Order view with dynamic data
   Widget _buildOrderView() {
-    if (isLoading) {
+    if (isLoading2) {
       return const Center(
         child: CircularProgressIndicator(),
+      );
+    }
+    if (orderData.isEmpty) {
+      // Show "No listing yet" message when the list is empty
+      return Center(
+        child: Text(
+          "No order yet",
+          style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+        ),
       );
     }
     return ListView.builder(
@@ -628,6 +642,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
           children: [
             Card(
               elevation: 4,
+              color: Colors.white,
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -753,7 +768,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                   try {
                                     dynamic response =
                                         await getCarrierBankDetail(
-                                            carrierID: 3, api: api);
+                                            carrierID: item['listing']['carrierId'], api: api);
 
                                     if (response["status"] == "success" &&
                                         response["message"]["status"] ==

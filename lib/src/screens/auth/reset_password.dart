@@ -27,6 +27,7 @@ class _PasswordChangeState extends State<ResetPassword> {
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
+        color: Colors.white,
         padding: const EdgeInsets.all(tDefaultSize),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,12 +176,15 @@ class _PasswordChangeState extends State<ResetPassword> {
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 1000,),
                 ],
               ),
             )),
           ],
+
         ),
+
       ),
     ));
   }

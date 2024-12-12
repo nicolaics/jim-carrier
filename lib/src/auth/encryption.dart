@@ -18,12 +18,10 @@ Map<String, enc.Encrypted> encryptData(
   print(holderIv);
 
   final holderEncrypter = enc.Encrypter(enc.AES(holderKey));
-  print("hoho");
   final numberEncrypter = enc.Encrypter(enc.AES(numberKey));
 
   print(accountHolder);
   final holderEncrypted = holderEncrypter.encrypt(accountHolder, iv: holderIv);
-  print("hoho");
   final numberEncrypted = numberEncrypter.encrypt(accountNumber, iv: numberIv);
 
   // send it later using .base64

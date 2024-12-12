@@ -39,6 +39,7 @@ class _OtpScreenState extends State<OtpScreen> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
+            color: Colors.white,
             padding: const EdgeInsets.all(tDefaultSize),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -22,6 +22,7 @@ class _ForgetPassword extends State<ForgetPassword> {
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
+        color: Colors.white,
         padding: const EdgeInsets.all(tDefaultSize),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +132,11 @@ class _ForgetPassword extends State<ForgetPassword> {
                         style: TextStyle(color: Colors.white, fontSize: 20),
                       ),
                     ),
-                  )
+
+                  ),
+                  const SizedBox(
+                    height: 1000,
+                  ),
                 ],
               ),
             )),

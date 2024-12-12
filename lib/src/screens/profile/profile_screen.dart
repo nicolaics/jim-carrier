@@ -94,6 +94,7 @@ class _HomeScreenState extends State<ProfileScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
+          color: Colors.white,
           padding: const EdgeInsets.all(tDefaultSize),
           child: Column(
             children: [
@@ -230,10 +231,14 @@ class _HomeScreenState extends State<ProfileScreen> {
                   }
                 },
               ),
+              const SizedBox(height: 1000),
             ],
+
           ),
+
         ),
       ),
+
     );
   }
 }

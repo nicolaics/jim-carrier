@@ -15,6 +15,8 @@ import '../../constants/sizes.dart';
 import 'dart:typed_data';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 
+import '../auth/login_screen.dart';
+
 class UpdateProfileScreen extends StatefulWidget {
   const UpdateProfileScreen({super.key});
 
@@ -372,7 +374,49 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.warning,
+                              animType: AnimType.scale,
+                              title: 'Delete Account',
+                              desc: 'Are you sure you want to delete your account?',
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () async {
+                                // If confirmed, navigate to the login page or close the app
+                                dynamic response= await deleteAccount();
+                                if (response['status']=='success') {
+                                  AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.success,
+                                    animType: AnimType.topSlide,
+                                    title: 'Success',
+                                    desc: 'Account Deleted',
+                                    btnOkIcon: Icons.check,
+                                    btnOkOnPress: () {
+                                      Get.to(() => const LoginScreen());
+                                    },
+                                  ).show();
+                                  /***
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(builder: (context) => const LoginScreen()));***/
+                                }
+                                else{
+                                  AwesomeDialog(
+                                    context: context,
+                                    dialogType: DialogType.error,
+                                    animType: AnimType.topSlide,
+                                    title: 'Error',
+                                    desc: response["message"]
+                                        .toString()
+                                        .capitalizeFirst,
+                                    btnOkIcon: Icons.check,
+                                    btnOkOnPress: () {},
+                                  ).show();
+                                }
+                              },
+                            ).show();
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent.withOpacity(0.1),
                             elevation: 0,

@@ -27,6 +27,7 @@ class _OtpScreenState extends State<OtpScreen2> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
+            color: Colors.white,
             padding: const EdgeInsets.all(tDefaultSize),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -128,6 +129,9 @@ class _OtpScreenState extends State<OtpScreen2> {
                           color: Colors.white), // Set the text color to white
                     ),
                   ),
+                ),
+                const SizedBox(
+                  height: 1000,
                 ),
               ],
             ),
