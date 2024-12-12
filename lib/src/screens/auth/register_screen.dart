@@ -68,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       height: 50,
                     ),
                     Text(
-                      "Let's get \nStarted",
+                      "Let's Get\nStarted",
                       style: GoogleFonts.anton(fontSize: 40),
                     ),
                     Form(
@@ -242,9 +242,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 backgroundColor: Colors.black,
                               ),
-                              child: Text(
-                                tSignup.toUpperCase(),
-                                style: const TextStyle(
+                              child: const Text(
+                                tSignup,
+                                style: TextStyle(
                                     color: Colors.white, fontSize: 20),
                               ),
                             ),
@@ -494,7 +494,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   )));
                                 }
                               },
-                              label: const Text('Sign In With Google',
+                              label: const Text('Sign Up with Google',
                                   style: TextStyle(color: Colors.black))),
                         ),
                         const SizedBox(

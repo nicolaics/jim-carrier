@@ -103,7 +103,6 @@ class _OtpScreenState extends State<OtpScreen2> {
                             Get.to(() => const ResetPassword());
                           },
                         ).show();
-
                       } else {
                         AwesomeDialog(
                           context: context,
@@ -112,17 +111,19 @@ class _OtpScreenState extends State<OtpScreen2> {
                           title: 'Error',
                           desc: response["message"].toString().capitalizeFirst,
                           btnOkIcon: Icons.check,
-                          btnOkOnPress: () {
-                          },
+                          btnOkOnPress: () {},
                         ).show();
                       }
                     },
                     style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       backgroundColor:
                           Colors.black, // Set the background color to black
                     ),
                     child: const Text(
-                      "VERIFY",
+                      "Verify Code",
                       style: TextStyle(
                           color: Colors.white), // Set the text color to white
                     ),

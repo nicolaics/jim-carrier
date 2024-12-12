@@ -1,4 +1,3 @@
-
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -47,7 +46,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 const SizedBox(height: tDefaultSize),
                 Text(
                   'CO\nDE',
-                  style: GoogleFonts.montserrat(fontSize: 80, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.montserrat(
+                      fontSize: 80, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'VERIFICATION',
@@ -69,9 +69,11 @@ class _OtpScreenState extends State<OtpScreen> {
                   filled: true,
                   onSubmit: (code) {
                     setState(() {
-                      otp = code; // Update the otp variable with the submitted code
+                      otp =
+                          code; // Update the otp variable with the submitted code
                     });
-                    print("OTP is: => $otp"); // Debugging print to verify OTP value
+                    print(
+                        "OTP is: => $otp"); // Debugging print to verify OTP value
                   },
                 ),
                 const SizedBox(height: 20),
@@ -83,7 +85,8 @@ class _OtpScreenState extends State<OtpScreen> {
                     onPressed: () async {
                       // Check if the OTP is empty
                       if (otp.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
                           content: Text('Please enter the OTP.'),
                           backgroundColor: Colors.red,
                         ));
@@ -94,9 +97,10 @@ class _OtpScreenState extends State<OtpScreen> {
                       print("Before API call - OTP: $otp");
 
                       // TODO: check if file name is the default, don't need to send the img
-                      ByteData byteData = await rootBundle.load('assets/images/welcomePage/welcome_screen.png');
+                      ByteData byteData = await rootBundle
+                          .load('assets/images/welcomePage/welcome_screen.png');
                       Uint8List imageBytes = byteData.buffer.asUint8List();
-                      
+
                       final fcmToken = await StorageService.getFcmToken();
 
                       // Call the API with the OTP and other user data
@@ -111,7 +115,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         api: '/user/register', // Provide your API base URL
                       );
 
-                      if(response["status"] == "success"){
+                      if (response["status"] == "success") {
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.success,
@@ -123,8 +127,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             Get.to(() => const LoginScreen());
                           },
                         ).show();
-                      }
-                      else {
+                      } else {
                         AwesomeDialog(
                           context: context,
                           dialogType: DialogType.error,
@@ -142,11 +145,17 @@ class _OtpScreenState extends State<OtpScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black, // Set the background color to black
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      backgroundColor:
+                          Colors.black, // Set the background color to black
                     ),
                     child: const Text(
-                      "Verify",
-                      style: TextStyle(color: Colors.white), // Set the text color to white
+                      "Verify Code",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20), // Set the text color to white
                     ),
                   ),
                 ),

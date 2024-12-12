@@ -13,13 +13,14 @@ class ForgetPassword extends StatefulWidget {
   @override
   _ForgetPassword createState() => _ForgetPassword();
 }
+
 class _ForgetPassword extends State<ForgetPassword> {
   final TextEditingController _emailController = TextEditingController();
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+        body: SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(tDefaultSize),
         child: Column(
@@ -31,114 +32,112 @@ class _ForgetPassword extends State<ForgetPassword> {
               style: GoogleFonts.anton(fontSize: 40),
             ),
             Text('Please enter the email you use to sign in with.',
-                style: GoogleFonts.cormorant(
-                    fontSize: 15, color: Colors.black),
+                style: GoogleFonts.cormorant(fontSize: 15, color: Colors.black),
                 textAlign: TextAlign.center),
             Form(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.person_outline_outlined),
-                            labelText: "Email",
-                            hintText: "your@gmail.com",
-                            border: OutlineInputBorder()),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            // Get the trimmed email text
-                            String email = _emailController.text.trim();
-
-                            // Debug to ensure email is being read correctly
-                            debugPrint("Email entered: $email");
-
-                            // Check if the email text box is empty
-                            if (email.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please enter your email.'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                              return; // Exit if the email is empty
-                            }
-
-                            // Email format validation using regex
-                            final RegExp emailRegex = RegExp(
-                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                            );
-
-                            if (!emailRegex.hasMatch(email)) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please enter a valid email address.'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                              return; // Exit if the email format is invalid
-                            }
-
-                            // Call the API to request verification code
-                            dynamic result = await requestVerificationCode(
-                              email: email,
-                              api: '/user/send-verification',
-                            );
-
-                            // Proceed only if the API call is successful
-                            if (result['status'] == 'success') {
-                              await StorageService.storeTempEmail(email);
-                              
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Verification code sent successfully!'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                              Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const OtpScreen2()),
-                                  );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Failed to send code. Please try again.'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          },
-
-
-                          style: OutlinedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(),
-                            backgroundColor: Colors.black,
-                          ),
-                          child: const Text(
-                            'SEND CODE',
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                        ),
-                      )
-
-
-                    ],
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.person_outline_outlined),
+                        labelText: "Email",
+                        hintText: "your@gmail.com",
+                        border: OutlineInputBorder()),
                   ),
-                )),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // Get the trimmed email text
+                        String email = _emailController.text.trim();
+
+                        // Debug to ensure email is being read correctly
+                        debugPrint("Email entered: $email");
+
+                        // Check if the email text box is empty
+                        if (email.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enter your email.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return; // Exit if the email is empty
+                        }
+
+                        // Email format validation using regex
+                        final RegExp emailRegex = RegExp(
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                        );
+
+                        if (!emailRegex.hasMatch(email)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('Please enter a valid email address.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return; // Exit if the email format is invalid
+                        }
+
+                        // Call the API to request verification code
+                        dynamic result = await requestVerificationCode(
+                          email: email,
+                          api: '/user/send-verification',
+                        );
+
+                        // Proceed only if the API call is successful
+                        if (result['status'] == 'success') {
+                          await StorageService.storeTempEmail(email);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('Verification code sent successfully!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const OtpScreen2()),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Failed to send code. Please try again.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const Text(
+                        'Request Code',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )),
           ],
         ),
       ),
-      )
-    );
+    ));
   }
 }

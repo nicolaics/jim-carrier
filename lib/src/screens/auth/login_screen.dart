@@ -193,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       backgroundColor: Colors.black),
-                                  child: Text(tLogin.toUpperCase(),
+                                  child: Text(tLogin,
                                       style: const TextStyle(
                                           color: Colors.white, fontSize: 20)))),
                         ],
@@ -441,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   )));
                                 }
                               },
-                              label: const Text('Sign In With Google',
+                              label: const Text('Login with Google',
                                   style: TextStyle(color: Colors.black))),
                         ),
                         const SizedBox(
