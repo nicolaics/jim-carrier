@@ -25,10 +25,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   Future<void> checkTokens() async {
     try {
-      final response = await autoLogin(api: "/user/auto-login");
+      final response = await autoLogin(api: "/user/login/auto");
       if (response["status"] == "success") {
-        await StorageService.storeAccessToken(response["message"]["access_token"]);
-        await StorageService.storeRefreshToken(response["message"]["refresh_token"]);
+        await StorageService.storeAccessToken(
+            response["message"]["access_token"]);
+        await StorageService.storeRefreshToken(
+            response["message"]["refresh_token"]);
         Get.to(() => const BottomBar(0));
       }
     } catch (e) {
@@ -74,8 +76,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           onPressed: () => Get.to(() => const LoginScreen()),
                           style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              )),
+                            borderRadius: BorderRadius.circular(8),
+                          )),
                           child: Text(tLogin.toUpperCase(),
                               style: const TextStyle(
                                   color: Colors.black, fontSize: 20))),
