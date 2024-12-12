@@ -970,9 +970,36 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                                             height: 20),
                                                         Center(
                                                           child: ElevatedButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
+                                                            onPressed: () async{
+                                                              dynamic response= await updatePaymentStatus(orderNo: item['id'], paymentStatus: 'completed', paymentProof: photoPayment, api: "/order/payment-status");
+                                                              if(response['status']=='success'){
+                                                                AwesomeDialog(
+                                                                  context: context,
+                                                                  dialogType: DialogType.success,
+                                                                  animType: AnimType.topSlide,
+                                                                  title: 'Success',
+                                                                  desc: 'Login successful',
+                                                                  btnOkIcon: Icons.check,
+                                                                  btnOkOnPress: () {
+                                                                    setState(() {
+                                                                      fetchOrder();
+                                                                    });
+                                                                    Navigator.pop(context);
+                                                                  },
+                                                                ).show();
+                                                              }else{
+                                                                AwesomeDialog(
+                                                                  context: context,
+                                                                  dialogType: DialogType.error,
+                                                                  animType: AnimType.topSlide,
+                                                                  title: 'Error',
+                                                                  desc: response["message"]
+                                                                      .toString()
+                                                                      .capitalizeFirst,
+                                                                  btnOkIcon: Icons.check,
+                                                                  btnOkOnPress: () {},
+                                                                ).show();
+                                                              }
                                                             },
                                                             style:
                                                                 ElevatedButton
