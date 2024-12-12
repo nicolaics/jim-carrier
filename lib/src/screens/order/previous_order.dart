@@ -712,7 +712,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           'Created At:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           '${item["created_at"] ?? "Unknown"}',
                         ),
@@ -724,7 +724,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           'Carrier:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           '${item["listing"]["carrier_name"]}',
                         ),
@@ -736,7 +736,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           'Destination:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           '${item["listing"]["destination"]}',
                         ),
@@ -748,7 +748,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           'Flight Date:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(
                           '${item["listing"]["flight_date"]}',
                         ),
