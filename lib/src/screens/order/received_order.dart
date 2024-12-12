@@ -266,7 +266,7 @@ class _ReceivedOrder extends State<ReceivedOrder> {
                       radius: 20,
                     ),
                     title: Text(
-                      "Order ID: ${item['id']}",
+                      "Order #${item['id']}",
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
