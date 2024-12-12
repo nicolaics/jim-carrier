@@ -10,8 +10,6 @@ import 'package:jim/src/constants/currency.dart';
 import 'package:jim/src/screens/home/bottom_bar.dart';
 import 'package:jim/src/utils/formatter.dart';
 import '../../api/listing.dart';
-import '../../auth/encryption.dart';
-import 'package:encrypt/encrypt.dart' as enc;
 
 class EditListingScreen extends StatefulWidget {
   const EditListingScreen({super.key});
