@@ -20,10 +20,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-    checkTokens();
+    autoLoginProcess();
   }
 
-  Future<void> checkTokens() async {
+  Future<void> autoLoginProcess() async {
     try {
       final response = await autoLogin(api: "/user/login/auto");
       if (response["status"] == "success") {
