@@ -76,7 +76,9 @@ class _ReviewPageState extends State<ReviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Carrier Reviews'),
       ),
       body: Padding(
@@ -96,6 +98,7 @@ class _ReviewPageState extends State<ReviewPage> {
             final review = reviews[index];
             final rating = (review['rating'] ?? 0).toDouble();
             return Card(
+              color: Colors.white,
               margin: const EdgeInsets.symmetric(vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),

@@ -221,14 +221,25 @@ class _HomeScreenState extends State<ProfileScreen> {
                 textColor: Colors.black,
                 endIcon: false,
                 onPress: () async {
-                  await logout(api: '/user/logout');
-                  await StorageService.deleteTokens();
-                  final controller = Controller();
-                  await controller.signOut();
-                  if (mounted) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
-                  }
+                  AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.warning,
+                    animType: AnimType.scale,
+                    title: 'Log Out',
+                    desc: 'Are you sure you want to log out?',
+                    btnCancelOnPress: () {},
+                    btnOkOnPress: () async {
+                      // If confirmed, navigate to the login page or close the app
+                      await logout(api: '/user/logout');
+                      await StorageService.deleteTokens();
+                      final controller = Controller();
+                      await controller.signOut();
+                      if (mounted) {
+                        Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (context) => const LoginScreen()));
+                      }
+                    },
+                  ).show();
                 },
               ),
               const SizedBox(height: 1000),

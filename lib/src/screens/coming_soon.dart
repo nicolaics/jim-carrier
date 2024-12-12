@@ -11,7 +11,9 @@ class ComingSoonScreen extends StatelessWidget {
     final String title = Get.arguments ?? 'Coming Soon'; // Use a default value if no argument is passed
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(title), // Display the dynamic title
       ),
       body: Center(

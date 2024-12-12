@@ -56,15 +56,15 @@ class _OtpScreenState extends State<OtpScreen2> {
                   numberOfFields: 6,
                   fillColor: Colors.black.withOpacity(0.1),
                   filled: true,
+                  keyboardType: TextInputType.visiblePassword, // Ensure the numeric keyboard is used
                   onSubmit: (code) {
                     setState(() {
-                      otp =
-                          code; // Update the otp variable with the submitted code
+                      otp = code; // Update the OTP variable with the submitted code
                     });
-                    print(
-                        "OTP is: => $otp"); // Debugging print to verify OTP value
+                    print("OTP is: => $otp"); // Debugging print to verify OTP value
                   },
                 ),
+
                 const SizedBox(height: 20),
 
                 // Elevated Button to verify OTP

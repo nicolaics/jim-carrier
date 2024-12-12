@@ -90,6 +90,8 @@ class _EditListingScreenState extends State<EditListingScreen> {
       _lastPriceValue = _priceController.text;
       oldValues["price"] = _lastPriceValue;
 
+      fullDestination=oldValues['destination'];
+
       /*
       _priceController.addListener(() {
         String rawValue =

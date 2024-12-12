@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,6 +66,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   numberOfFields: 6,
                   fillColor: Colors.black.withOpacity(0.1),
                   filled: true,
+                  keyboardType: TextInputType.visiblePassword, // Ensure the numeric keyboard is used
                   onSubmit: (code) {
                     setState(() {
                       otp =
@@ -149,7 +148,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       backgroundColor:
-                          Colors.black, // Set the background color to black
+                      Colors.black, // Set the background color to black
                     ),
                     child: const Text(
                       "Verify Code",
@@ -157,8 +156,10 @@ class _OtpScreenState extends State<OtpScreen> {
                           color: Colors.white,
                           fontSize: 20), // Set the text color to white
                     ),
+
                   ),
                 ),
+                const SizedBox(height: 1000),
               ],
             ),
           ),

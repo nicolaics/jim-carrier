@@ -233,6 +233,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       });
       String api = "/order/giver"; // Correct endpoint
       dynamic response = await getAllOrders(api: api); // Fetch API data
+     // print("Order data ${response['message']['listing']}");
 
       if (response["status"] == "success") {
         response["message"] = response["message"] as List;
@@ -764,11 +765,13 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                   print(
                                       "Processing payment for Order ID: ${item['id']}");
                                   String api = "/order/get-payment-details";
+                                  print(
+                                      "Processing payment for carrier ID: ${item['listing']['carrier_id']}");
 
                                   try {
                                     dynamic response =
                                         await getCarrierBankDetail(
-                                            carrierID: item['listing']['carrierId'], api: api);
+                                            carrierID: item['listing']['carrier_id'], api: api);
 
                                     if (response["status"] == "success" &&
                                         response["message"]["status"] ==
