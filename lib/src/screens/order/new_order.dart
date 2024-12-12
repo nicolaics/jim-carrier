@@ -71,7 +71,7 @@ class _NewOrderState extends State<NewOrder> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          "ORDER DETAILS",
+          "Order Details",
           style: TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
