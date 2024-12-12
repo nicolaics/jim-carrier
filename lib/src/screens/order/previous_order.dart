@@ -978,7 +978,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                                                                   dialogType: DialogType.success,
                                                                   animType: AnimType.topSlide,
                                                                   title: 'Success',
-                                                                  desc: 'Login successful',
+                                                                  desc: 'Payment successful',
                                                                   btnOkIcon: Icons.check,
                                                                   btnOkOnPress: () {
                                                                     setState(() {
