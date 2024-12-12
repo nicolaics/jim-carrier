@@ -96,7 +96,6 @@ class _OtpScreenState extends State<OtpScreen> {
                       // Debugging print to check OTP value before API call
                       print("Before API call - OTP: $otp");
 
-                      // TODO: check if file name is the default, don't need to send the img
                       ByteData byteData = await rootBundle
                           .load('assets/images/welcomePage/welcome_screen.png');
                       Uint8List imageBytes = byteData.buffer.asUint8List();
