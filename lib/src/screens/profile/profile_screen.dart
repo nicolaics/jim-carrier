@@ -189,7 +189,7 @@ class _HomeScreenState extends State<ProfileScreen> {
                 fontWeight: FontWeight.normal,
                 fontStyle: FontStyle.normal,
                 onPress: () {
-                  Get.to(() => const ComingSoonScreen(), arguments: 'Billing Details');
+                  Get.to(() => const ComingSoonScreen(), arguments: 'Billing History');
                 },
               ),
               const Divider(),
