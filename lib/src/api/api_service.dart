@@ -64,7 +64,10 @@ void setupInterceptors() {
         } else {
           handler.next(error); // Pass the error forward if refresh fails
         }
+      } else if (error.type == DioExceptionType.connectionTimeout) {
+        handler.reject(error);
       } else {
+        print("ERROR DIO HERE: $error");
         handler.next(error); // Forward other errors
       }
     },
