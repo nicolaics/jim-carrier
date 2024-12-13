@@ -369,7 +369,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       // Show "No listing yet" message when the list is empty
       return Center(
         child: Text(
-          "No listings yet",
+          "No Listings Made Yet",
           style: TextStyle(fontSize: 18, color: Colors.grey[600]),
         ),
       );
@@ -610,10 +610,10 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
       );
     }
     if (orderData.isEmpty) {
-      // Show "No listing yet" message when the list is empty
+      // Show "No order yet" message when the list is empty
       return Center(
         child: Text(
-          "No order yet",
+          "No Orders Made Yet",
           style: TextStyle(fontSize: 18, color: Colors.grey[600]),
         ),
       );
