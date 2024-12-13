@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: items.isEmpty
                           ? Center(
                               child: Text(
-                                "No listings yet",
+                                "No Available Carriers Yet",
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.grey[600]),
                               ),
