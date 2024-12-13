@@ -661,6 +661,42 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                     Row(
                       children: [
                         const Text(
+                          'Destination:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${item["listing"]["destination"]}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Flight Date:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${item["listing"]["flight_date"]}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Carrier:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${item["listing"]["carrier_name"]}',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text(
                           'Payment Status:',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
@@ -715,42 +751,6 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                         const SizedBox(width: 8),
                         Text(
                           '${item["created_at"] ?? "Unknown"}',
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'Carrier:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${item["listing"]["carrier_name"]}',
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'Destination:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${item["listing"]["destination"]}',
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'Flight Date:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          '${item["listing"]["flight_date"]}',
                         ),
                       ],
                     ),
