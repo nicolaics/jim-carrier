@@ -1050,7 +1050,7 @@ class _PreviousOrderScreenState extends State<PreviousOrderScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isReviewDisabled
                                 ? Colors.grey[300]
-                                : Colors.blue,
+                                : ColorsTheme.skyBlue,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
