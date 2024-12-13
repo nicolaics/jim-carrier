@@ -29,8 +29,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (response["status"] == "success") {
         await StorageService.storeAccessToken(
             response["message"]["access_token"]);
-        await StorageService.storeRefreshToken(
-            response["message"]["refresh_token"]);
         Get.to(() => const BottomBar(0));
       }
     } catch (e) {
