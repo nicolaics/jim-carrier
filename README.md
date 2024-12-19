@@ -119,7 +119,7 @@
 └── README.md
 ```
 
-#MOTIVATION
+## MOTIVATION
 - Living in a foreign country as an international student or immigrant worker can be challenging.  
 - Differences in food, culture, and familiar items from home can make adjusting difficult.  
 - Missing or needing important documents left in the home country is a common issue.  
@@ -127,7 +127,7 @@
 - A solution is utilizing travelers with unused baggage space to transport items at a lower cost.  
 - This approach provides faster delivery and is more affordable for those in need.
 
-#MAIN FEATURES
+## MAIN FEATURES
 User Features:
 •	Create, modify, and delete accounts.
 •	Verification of Account via Emai.
@@ -140,7 +140,7 @@ Core Features:
 •	Confirm Orders by Carrier.
 •	Leave Reviews.
 •	Browse Listings.
-#Additional Features:
+## Additional Features:
 •	Uploading Profile Pictures.
 •	Upload Payment Proof.
 •	Upload Package Image.
@@ -148,7 +148,7 @@ Core Features:
   o	Payment proof images are sent to the corresponding user via email.
   o	Package images are shared with the relevant user through email.
 
-#TECHNICAL STACK
+## TECHNICAL STACK
 •	Frontend
 -	Flutter framework
 -	Dart programming language
@@ -163,7 +163,8 @@ Core Features:
 •	Project Management Software Tool
 -	Jira by Atlassian
 
-#FRONTEND FLOWCHART
+## FRONTEND FLOWCHART
+Below is the visual representation of interaction among different interfaces in our application.
 ![Flowchart](https://github.com/user-attachments/assets/ea401fcc-8446-45fa-915a-6a383aa20932)
 
 
