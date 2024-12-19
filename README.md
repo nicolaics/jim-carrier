@@ -128,13 +128,13 @@
 - This approach provides faster delivery and is more affordable for those in need.
 
 ## MAIN FEATURES
-# User Features:
+## User Features:
 •	Create, modify, and delete accounts.
 •	Verification of Account via Emai.
 •	Reset Password.
 •	Add and modify Bank Details.
 •	Communicate via Email.
-# Core Features:
+## Core Features:
 •	Create, modify, and delete listing.
 •	Create, modify, and delete order.
 •	Confirm Orders by Carrier.
