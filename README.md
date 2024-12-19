@@ -119,3 +119,55 @@
 └── README.md
 ```
 
+#MOTIVATION
+- Living in a foreign country as an international student or immigrant worker can be challenging.  
+- Differences in food, culture, and familiar items from home can make adjusting difficult.  
+- Missing or needing important documents left in the home country is a common issue.  
+- Traditional services like post offices are expensive and slow, making them unsuitable for students or cost-conscious workers.  
+- A solution is utilizing travelers with unused baggage space to transport items at a lower cost.  
+- This approach provides faster delivery and is more affordable for those in need.
+
+#MAIN FEATURES
+User Features:
+•	Create, modify, and delete accounts.
+•	Verification of Account via Emai.
+•	Reset Password.
+•	Add and modify Bank Details.
+•	Communicate via Email.
+Core Features:
+•	Create, modify, and delete listing.
+•	Create, modify, and delete order.
+•	Confirm Orders by Carrier.
+•	Leave Reviews.
+•	Browse Listings.
+#Additional Features:
+•	Uploading Profile Pictures.
+•	Upload Payment Proof.
+•	Upload Package Image.
+•	Email Notifications for Images: 
+  o	Payment proof images are sent to the corresponding user via email.
+  o	Package images are shared with the relevant user through email.
+
+#TECHNICAL STACK
+•	Frontend
+-	Flutter framework
+-	Dart programming language
+-	Figma for initial designs
+•	Backend
+-	Golang programming language
+-	MySQL for the database
+•	Deployment
+-	EC2 instance at Amazon Web Service
+-	RDS at Amazon Web Service
+-	Tailscale for testing and debugging
+•	Project Management Software Tool
+-	Jira by Atlassian
+
+#FRONTEND FLOWCHART
+![Flowchart](https://github.com/user-attachments/assets/ea401fcc-8446-45fa-915a-6a383aa20932)
+
+
+
+
+
+
